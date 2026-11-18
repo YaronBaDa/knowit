@@ -794,7 +794,7 @@ const QUESTIONS = [
   { id:"g24", category:"Geography", difficulty:"hard", question:"Which African country was never colonized by a European power?", options:["Kenya","Nigeria","Ethiopia","Ghana"], correctIndex:2, didYouKnow:"Ethiopia defeated Italy at the Battle of Adwa in 1896, securing its independence." },
   { id:"g25", category:"Geography", difficulty:"easy", question:"What is the capital of France?", options:["Lyon","Marseille","Paris","Nice"], correctIndex:2, didYouKnow:"Paris has been the capital since 508 AD, making it one of Europe's oldest capitals." },
   { id:"g26", category:"Geography", difficulty:"medium", question:"The Dead Sea is bordered by which two countries?", options:["Egypt and Israel","Jordan and Israel","Syria and Lebanon","Turkey and Greece"], correctIndex:1, didYouKnow:"The Dead Sea's surface is about 430 meters below sea level — the lowest land elevation on Earth." },
-  { id:"g27", category:"Geography", difficulty:"hard", question:"Which sea has no coastline?", options:["Red Sea","Caspian Sea","Black Sea","Mediterranean Sea"], correctIndex:1, didYouKnow:"The Caspian Sea is technically a lake, but it's so large it's classified as a sea." },
+  { id:"g27", category:"Geography", difficulty:"hard", question:"Which sea in the North Atlantic has no land boundaries?", options:["Sargasso Sea","Caspian Sea","Black Sea","Baltic Sea"], correctIndex:0, didYouKnow:"The Sargasso Sea is defined by ocean currents rather than coastlines, and is named for its floating Sargassum seaweed." },
   { id:"g28", category:"Geography", difficulty:"easy", question:"Which country has the Great Wall?", options:["Japan","India","China","South Korea"], correctIndex:2, didYouKnow:"The Great Wall is not a single continuous wall but a series of fortifications built over centuries." },
   { id:"g29", category:"Geography", difficulty:"medium", question:"What is the southernmost capital city in the world?", options:["Sydney","Buenos Aires","Wellington","Cape Town"], correctIndex:2, didYouKnow:"Wellington, New Zealand sits at about 41°S latitude." },
   { id:"g30", category:"Geography", difficulty:"hard", question:"Which country has the most active volcanoes?", options:["Japan","Indonesia","USA","Iceland"], correctIndex:1, didYouKnow:"Indonesia sits on the Pacific Ring of Fire and has over 120 active volcanoes." },
@@ -820,7 +820,7 @@ const QUESTIONS = [
   { id:"p8", category:"Pop Culture", difficulty:"hard", question:"Who composed the film score for The Lion King (1994)?", options:["John Williams","Alan Menken","Hans Zimmer","Danny Elfman"], correctIndex:2, didYouKnow:"Zimmer won an Oscar for the score, which incorporated African choral music and rhythms." },
   { id:"p9", category:"Pop Culture", difficulty:"easy", question:"What is the name of the snowman in Frozen?", options:["Olaf","Sven","Kristoff","Hans"], correctIndex:0, didYouKnow:"Olaf's song In Summer was almost cut from the film but became one of its most popular numbers." },
   { id:"p10", category:"Pop Culture", difficulty:"medium", question:"Which Marvel character wields the hammer Mjolnir?", options:["Iron Man","Captain America","Thor","Hulk"], correctIndex:2, didYouKnow:"The inscription on Mjolnir reads: Whosoever holds this hammer, if he be worthy, shall possess the power of Thor." },
-  { id:"p11", category:"Pop Culture", difficulty:"hard", question:"What is the highest-grossing film of all time (not adjusted for inflation)?", options:["Titanic","Avengers: Endgame","Avatar","Star Wars: The Force Awakens"], correctIndex:1, didYouKnow:"Avengers: Endgame surpassed Avatar in 2019, earning about $2.798 billion worldwide." },
+  { id:"p11", category:"Pop Culture", difficulty:"hard", question:"What is the highest-grossing film of all time (not adjusted for inflation)?", options:["Titanic","Avengers: Endgame","Avatar","Star Wars: The Force Awakens"], correctIndex:2, didYouKnow:"Avatar (2009) retook the top spot after a 2021 re-release, passing Avengers: Endgame." },
   { id:"p12", category:"Pop Culture", difficulty:"easy", question:"Who is the main character in The Simpsons?", options:["Bart","Lisa","Marge","Homer"], correctIndex:3, didYouKnow:"Homer's iconic D'oh! was added to the Oxford English Dictionary in 2001." },
   { id:"p13", category:"Pop Culture", difficulty:"medium", question:"Which artist painted the Mona Lisa?", options:["Michelangelo","Leonardo da Vinci","Raphael","Donatello"], correctIndex:1, didYouKnow:"Leonardo carried the Mona Lisa with him for years and never delivered it to the commissioner." },
   { id:"p14", category:"Pop Culture", difficulty:"hard", question:"What was the first feature-length animated film?", options:["Bambi","Snow White and the Seven Dwarfs","Pinocchio","Fantasia"], correctIndex:1, didYouKnow:"Snow White (1937) took three years to make and was nicknamed Disney's Folly before becoming a smash hit." },
@@ -1385,10 +1385,10 @@ function getDailyQuestions() {
   const seed = getDailySeed();
   const dayIndex = getDailyNum();
   const indices = seededShuffle(QUESTIONS.map((_,i)=>i), seed);
-  const rotation = dayIndex % 4; // per-day offset so correct answers spread across A/B/C/D
   return indices.slice(0, Q_PER_DAY).map((qi, pos) => {
     const rng = mulberry32(dayIndex * 1000 + pos);
-    return shuffleIntoSlot(QUESTIONS[qi], rng, (rotation + pos) % 4);
+    const slot = Math.floor(mulberry32(dayIndex * 7919 + pos * 104729)() * 4);
+    return shuffleIntoSlot(QUESTIONS[qi], rng, slot);
   });
 }
 function getRandomQuestion() {
@@ -1897,25 +1897,22 @@ function finishGame() {
 
   // Share texts — grid rows split 2x5; blindspot folded into the challenge payload
   const dailyNum = getDailyNum();
-  const shareBody = state.answers.map(a => {
-    if (a.bet) return a.correct ? '✅' : '❌';
-    return a.correct ? '🟩' : '🟥';
-  }).join('');
-  const row1 = shareBody.slice(0, 5);
-  const row2 = shareBody.slice(5, 10);
+  const cells = state.answers.map(a => a.bet ? (a.correct ? '✅' : '❌') : (a.correct ? '🟩' : '🟥'));
+  const row1 = cells.slice(0, 5).join('');
+  const row2 = cells.slice(5, 10).join('');
   const challengeUrl = getDuelUrl(correct, totalTimeSec);
   const blindspot = missedCats.length ? missedCats[0][0] : null;
   if (state.mode === 'daily') {
     const head = `KNOWIT Daily #${dailyNum} ⚡ ${correct}/${total}`;
     // Copy Grid Only — clean emoji blocks, no duel link
-    state.shareClean = `${head}\n${row1}\n${row2}`;
+    state.shareClean = `${head}\n${row1}${row2 ? '\n' + row2 : ''}`;
     // Challenge payload — archetype + time, 2-row grid, blindspot, CTA + duel link
-    let full = `${head}\n${dailyArch.name} (${fmtTimeSec(totalTimeSec)})\n\n${row1}\n${row2}`;
+    let full = `${head}\n${dailyArch.name} (${fmtTimeSec(totalTimeSec)})\n\n${row1}${row2 ? '\n' + row2 : ''}`;
     if (blindspot) full += `\n\nBlindspot: ${blindspot} ❄️`;
     full += `\nCan you beat my score?\n${challengeUrl}`;
     state.shareFull = full;
   } else {
-    state.shareClean = `KNOWIT Endless ⚡\nStreak: ${state.endlessStreak}\nCorrect: ${correct}/${total}\n${row1}\n${row2}`;
+    state.shareClean = `KNOWIT Endless ⚡\nStreak: ${state.endlessStreak}\nCorrect: ${correct}/${total}\n${row1}${row2 ? '\n' + row2 : ''}`;
     state.shareFull = `${state.shareClean}\n\nThink you can beat my streak?\n${challengeUrl}`;
   }
   $('share-text').textContent = state.shareFull;
