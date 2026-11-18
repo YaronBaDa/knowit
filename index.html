@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#09090b">
 <meta name="description" content="KNOWIT — a daily 10-question trivia game. Same set for everyone, once a day. Bet on your answers, beat the clock, and challenge your friends.">
 <link rel="canonical" href="https://yaronbada.github.io/synapse-trivia/">
@@ -79,7 +79,8 @@
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; margin: 0; font-family: var(--font-sans); background: var(--bg-canvas); color: var(--text-primary); overflow: hidden; }
+button:focus-visible { outline: 2px solid var(--accent-brand); outline-offset: 2px; }
+html, body { height: 100%; margin: 0; font-family: var(--font-sans); background: var(--bg-canvas); color: var(--text-primary); overflow: hidden; touch-action: manipulation; }
 #app { max-width: 640px; margin: 0 auto; height: 100vh; height: 100dvh; display: flex; flex-direction: column; position: relative; }
 .screen { display: none; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; padding: 16px; }
 .screen.active { display: flex; }
@@ -123,7 +124,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 
 /* Landing */
-.landing-body { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 16px; }
+.landing-body { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; text-align: center; gap: 16px; overflow-y: auto; min-height: 0; }
+.landing-body::before, .landing-body::after, .results-body::before, .results-body::after { content: ''; margin: auto; }
 .landing-body h2 { font-size: 34px; font-weight: 900; margin: 0; letter-spacing: -0.01em; font-family: 'Lexend', sans-serif; }
 .landing-body p { font-size: 15px; color: var(--ink-faint); max-width: 320px; margin: 0; line-height: 1.5; }
 .landing-streak-bar {
@@ -220,7 +222,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .option-btn.dimmed { opacity: 0.35; pointer-events: none; }
 .option-btn.timeout { border-color: var(--accent-bet); }
 .option-btn.timeout .option-body { box-shadow: inset 0 0 0 999px var(--accent-bet-tint); }
-.option-btn.bet { border-color: var(--accent-indigo); box-shadow: 0 0 0 2px var(--accent-indigo), 0 0 16px rgba(126,140,232,0.4); }
+.option-btn.bet { border-color: var(--accent-bet); box-shadow: 0 0 0 2px var(--accent-bet), 0 0 16px rgba(245,158,11,0.4); }
 .option-btn.nudge .option-body { animation: nudgeRight 0.9s ease; }
 @keyframes nudgeRight {
   0%, 100% { transform: translateX(0); }
@@ -272,7 +274,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .feedback-strip .fb-insight { font-size: 13px; color: var(--text-secondary); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* Share / results */
-.results-body { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 10px; min-height: 0; overflow-y: auto; padding-bottom: 16px; }
+.results-body { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; text-align: center; gap: 10px; min-height: 0; overflow-y: auto; padding-bottom: 16px; }
 
 /* Hero score */
 .results-hero { display: flex; flex-direction: column; align-items: center; }
@@ -317,8 +319,9 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   box-shadow: var(--shadow); transition: transform .12s, filter .12s; font-family: var(--font-sans);
 }
 .btn-emerald:active { transform: scale(0.97); filter: brightness(1.1); }
-.btn-emerald, .btn-secondary { display: flex; align-items: center; justify-content: center; gap: 8px; }
+.btn-emerald, .btn-secondary, .btn-primary { display: flex; align-items: center; justify-content: center; gap: 8px; }
 .btn-emerald svg, .btn-secondary svg { width: 16px; height: 16px; flex-shrink: 0; }
+.btn-primary svg { width: 16px; height: 16px; flex-shrink: 0; }
 .link-home {
   background: none; border: none; color: var(--ink-dim); font-size: 13px; font-weight: 600;
   cursor: pointer; padding: 8px; font-family: var(--font-sans);
@@ -394,9 +397,9 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   background: var(--bg-surface-subtle); border: 1px solid var(--border-subtle);
   border-radius: 999px; padding: 3px 9px;
 }
-.bet-token-bolt { display: inline-flex; color: var(--accent-indigo); }
+.bet-token-bolt { display: inline-flex; color: var(--accent-bet); }
 .bet-token-bolt svg { width: 12px; height: 12px; }
-.header-pip { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-indigo); border: 1px solid var(--accent-indigo); box-shadow: 0 0 6px rgba(126,140,232,0.7); transition: background .2s, box-shadow .2s; }
+.header-pip { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-bet); border: 1px solid var(--accent-bet); box-shadow: 0 0 6px rgba(245,158,11,0.7); transition: background .2s, box-shadow .2s; }
 .header-pip.spent { background: transparent; border-color: var(--text-secondary); opacity: 0.4; box-shadow: none; animation: pipSpent .35s ease; }
 @keyframes pipSpent { 0% { transform: scale(1.6); opacity: 1; } 100% { transform: scale(1); opacity: 0.4; } }
 
@@ -409,6 +412,11 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 .swipe-tip svg { width: 14px; height: 14px; color: var(--accent); flex-shrink: 0; }
 
+/* Visible bet toggle (replaces the hidden-gesture-only affordance) */
+.bet-toggle { flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 36px; margin-bottom: 6px; border-radius: var(--radius-sm); border: 1px solid var(--accent-bet); background: var(--accent-bet-tint); color: var(--accent-bet); font-family: var(--font-mono); font-size: 12px; font-weight: 700; cursor: pointer; touch-action: manipulation; }
+.bet-toggle.armed { background: var(--accent-bet); color: var(--bg-canvas); }
+.bet-toggle svg { width: 14px; height: 14px; }
+
 /* Progress strip (daily only) */
 .progress-strip { display: flex; gap: 3px; margin-bottom: 8px; flex-shrink: 0; }
 .prog-seg {
@@ -418,12 +426,12 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .prog-seg.current { background: transparent; box-shadow: inset 0 0 0 1.5px var(--ink-dim); }
 .prog-seg.right { background: var(--correct); }
 .prog-seg.wrong { background: var(--wrong); }
-.prog-seg .glyph { color: var(--bg); font-weight: 800; font-size: 9px; line-height: 1; }
+.prog-seg .glyph { color: var(--bg); font-weight: 800; font-size: 10px; line-height: 1; }
 
 /* Results grid bet cells + glyphs */
 .share-cell { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
 .share-cell .cell-glyph { color: var(--bg); font-weight: 800; font-size: 14px; line-height: 1; }
-.share-cell.bet { box-shadow: inset 0 0 0 2px var(--accent-indigo); }
+.share-cell.bet { box-shadow: inset 0 0 0 2px var(--accent-bet); }
 
 /* Hero aurora title */
 .hero-title.aurora {
@@ -459,18 +467,12 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
   <!-- LANDING -->
   <div id="screen-landing" class="screen active">
-    <div class="game-header">
-      <div class="brand">
-        <span class="logo-mark-sm"><span class="logo-letter">K</span></span>
-        <h1>KNOWIT</h1>
-      </div>
-      <div class="meta">Daily Trivia</div>
-    </div>
     <div class="landing-body">
       <div class="logo-mark">
         <span class="logo-letter">K</span>
       </div>
       <h2>KNOWIT</h2>
+      <div class="grid-hint" id="landing-puzzle"></div>
       <p>10 questions. Same set for everyone. Once per day.</p>
 
       <div class="landing-streak-bar" id="streak-bar" style="display:none;">
@@ -544,13 +546,15 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
       <div class="question-text" id="q-text">Loading...</div>
     </div>
 
-    <div id="feedback-strip" class="feedback-strip">
+    <div id="feedback-strip" class="feedback-strip" role="status" aria-live="polite">
       <div class="fb-result" id="fb-result"></div>
       <div class="fb-insight" id="fb-insight"></div>
     </div>
 
     <!-- Swipe-to-bet day-1 tip (daily only) -->
     <div class="swipe-tip" id="swipe-tip" style="display:none;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span>Swipe right to bet (+2 if correct, -1 if wrong)</span></div>
+
+    <button type="button" class="bet-toggle" id="bet-toggle" aria-pressed="false" style="display:none;"></button>
 
     <div class="options-grid" id="options-grid"></div>
   </div>
@@ -603,7 +607,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
       <div class="share-text" id="share-text"></div>
 
       <!-- Actions -->
-      <button class="btn-emerald" id="btn-challenge">Challenge a Friend</button>
+      <button class="btn-primary" id="btn-challenge">Challenge a Friend</button>
       <button class="btn-secondary" id="btn-copy">Copy Grid Only</button>
       <button class="btn-secondary" id="btn-endless-result" style="display:none;">Play Endless Mode</button>
       <button class="link-home" id="btn-home">Home Menu</button>
@@ -1415,6 +1419,7 @@ function renderLanding() {
   renderStreakBar();
 
   const completedToday = stats.completedDaily === getToday();
+  $('landing-puzzle').textContent = `Daily #${getDailyNum()}`;
   $('btn-daily').style.display = completedToday ? 'none' : 'block';
   $('daily-lock').style.display = completedToday ? 'block' : 'none';
   if (completedToday) $('next-set-line').textContent = nextSetLine();
@@ -1541,6 +1546,7 @@ function renderQuestion() {
     $('header-pips').style.display = 'none';
     $('progress-strip').style.display = 'none';
     $('swipe-tip').style.display = 'none';
+    $('bet-toggle').style.display = 'none';
   }
 
   if (state.timerId) cancelAnimationFrame(state.timerId);
@@ -1635,6 +1641,13 @@ function updateBetUI() {
   pips.innerHTML = `<span class="bet-token-bolt">${ICONS.lightning}</span>` +
     Array.from({length:3}, (_,i)=>`<span class="header-pip ${i < n ? '' : 'spent'}"></span>`).join('');
   pips.setAttribute('aria-label', `${n} ${n === 1 ? 'bet' : 'bets'} left`);
+  // Visible bet toggle
+  const tg = $('bet-toggle');
+  const show = state.mode === 'daily' && state.betsLeft > 0;
+  tg.style.display = show ? 'flex' : 'none';
+  tg.classList.toggle('armed', !!state.armed);
+  tg.setAttribute('aria-pressed', String(!!state.armed));
+  tg.innerHTML = ICONS.lightning + (state.armed ? '<span>BET ON · tap your answer (tap here to cancel)</span>' : '<span>Bet this question · +2 / −1</span>');
 }
 function renderProgressStrip() {
   const el = $('progress-strip');
@@ -1664,7 +1677,6 @@ function showSwipeTip() {
     setTimeout(()=>{ try { first.classList.remove('nudge'); } catch(e){} }, 1000);
   }
   const tip = $('swipe-tip');
-  tip.style.display = 'flex';
   const dismiss = () => {
     tip.style.display = 'none';
     try { localStorage.setItem('knowit_seen_swipe_tip', '1'); } catch(e){}
@@ -1705,8 +1717,8 @@ function startQTimer(offsetMs = 0) {
     if (txt) {
       txt.textContent = fmtClock(sec);
       let cls = 'q-timer-text';
-      if (sec >= 8) cls += ' danger';
-      else if (sec >= 5) cls += ' warn';
+      if (pct < 25) cls += ' danger';
+      else if (pct < 55) cls += ' warn';
       txt.className = cls;
     }
     if (elapsed >= max) { handleTimeout(); return; }
@@ -1960,10 +1972,6 @@ function finishGame(opts = {}) {
       sb.innerHTML = `${ICONS.flame}<span>${stats.streak}-day streak</span>`;
       sb.className = 'streak-badge';
       sb.style.display = 'inline-flex';
-    } else if (state.mode === 'daily' && stats.maxStreak > 0) {
-      sb.innerHTML = `${ICONS.flame}<span>Streak broken</span>`;
-      sb.className = 'streak-badge broken';
-      sb.style.display = 'inline-flex';
     } else {
       sb.style.display = 'none';
     }
@@ -2184,6 +2192,12 @@ $('btn-endless').onclick = ()=>{ audio.click(); startEndless(); };
 $('btn-endless-result').onclick = ()=>{ audio.click(); startEndless(); };
 $('btn-practice').onclick = ()=>{ audio.click(); startDaily(); };
 $('btn-view-results').onclick = ()=>{ audio.click(); viewTodaysResults(); };
+$('bet-toggle').onclick = () => {
+  if (state.waiting || state.mode !== 'daily' || state.betsLeft <= 0) return;
+  state.armed = !state.armed;
+  vibrate(10);
+  updateBetUI();
+};
 
 $('btn-close').onclick = ()=>{
   const msg = state.mode === 'daily'
