@@ -170,13 +170,14 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .endless-teaser .gt-label { font-size: 12px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
 
 /* Question */
-.question-stage { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; min-height: 0; overflow-y: auto; padding-bottom: 8px; }
+.question-stage { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-start; min-height: 0; overflow-y: auto; padding-top: 8px; padding-bottom: 8px; }
 .question-tracker { display: none; }
 .category-tag {
   display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
   padding: 3px 8px; border-radius: 6px; background: var(--surface-2); color: var(--accent); margin-bottom: 12px;
 }
 .question-text { font-size: 20px; font-weight: 700; line-height: 1.35; margin: 0; }
+@media (max-height: 600px) { .question-text { font-size: 17px; line-height: 1.3; } .category-tag { margin-bottom: 6px; } }
 
 /* Options — FIXED FOOTER, always fully visible */
 .options-grid {
@@ -260,9 +261,12 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 @keyframes microshake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-1px)} 75%{transform:translateX(1px)} }
 
 /* Feedback strip */
+/* Feedback strip — floats over the bottom of the question area; takes no space when hidden */
+.mid-slot { position: relative; flex-shrink: 0; }
 .feedback-strip {
-  text-align: center; padding: 10px 12px; border-radius: var(--radius); margin-bottom: 8px;
-  border: 1px solid var(--border-subtle); background: var(--bg-surface); opacity: 0; transform: translateY(4px); transition: opacity .2s, transform .2s;
+  position: absolute; left: 0; right: 0; bottom: 6px; margin: 0; z-index: 5; background: var(--bg-surface); pointer-events: none;
+  text-align: center; padding: 10px 12px; border-radius: var(--radius);
+  border: 1px solid var(--border-subtle); opacity: 0; transform: translateY(4px); transition: opacity .2s, transform .2s;
   height: 80px; overflow: hidden; flex-shrink: 0;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
 }
@@ -391,7 +395,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .btn-copied { background: var(--correct) !important; border-color: var(--correct) !important; color: var(--bg) !important; }
 
 /* Header bet pips */
-.header-status { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+.header-status { display: flex; flex-direction: row; align-items: center; gap: 10px; }
 .header-pips {
   display: flex; align-items: center; gap: 5px;
   background: var(--bg-surface-subtle); border: 1px solid var(--border-subtle);
@@ -474,6 +478,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
       <h2>KNOWIT</h2>
       <div class="grid-hint" id="landing-puzzle"></div>
       <p>10 questions. Same set for everyone. Once per day.</p>
+      <p class="grid-hint" id="landing-rules" style="display:none;">3 bets a day: +2 if right, −1 if wrong.</p>
 
       <div class="landing-streak-bar" id="streak-bar" style="display:none;">
         <span class="fire" id="streak-fire"></span>
@@ -506,10 +511,6 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   <!-- PLAYING -->
   <div id="screen-playing" class="screen">
     <div class="game-header">
-      <div class="brand">
-        <span class="logo-mark-sm"><span class="logo-letter">K</span></span>
-        <h1>KNOWIT</h1>
-      </div>
       <div class="header-status">
         <div class="meta" id="header-meta">#1020 · Q1/10</div>
         <div class="header-pips" id="header-pips" role="img" aria-label="3 bets left" style="display:none;"></div>
@@ -546,15 +547,17 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
       <div class="question-text" id="q-text">Loading...</div>
     </div>
 
-    <div id="feedback-strip" class="feedback-strip" role="status" aria-live="polite">
-      <div class="fb-result" id="fb-result"></div>
-      <div class="fb-insight" id="fb-insight"></div>
-    </div>
-
     <!-- Swipe-to-bet day-1 tip (daily only) -->
     <div class="swipe-tip" id="swipe-tip" style="display:none;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span>Swipe right to bet (+2 if correct, -1 if wrong)</span></div>
 
-    <button type="button" class="bet-toggle" id="bet-toggle" aria-pressed="false" style="display:none;"></button>
+    <div class="mid-slot" id="mid-slot">
+      <button type="button" class="bet-toggle" id="bet-toggle" aria-pressed="false" style="display:none;"></button>
+
+      <div id="feedback-strip" class="feedback-strip" role="status" aria-live="polite">
+        <div class="fb-result" id="fb-result"></div>
+        <div class="fb-insight" id="fb-insight"></div>
+      </div>
+    </div>
 
     <div class="options-grid" id="options-grid"></div>
   </div>
@@ -1355,8 +1358,8 @@ function msUntilNextSet(now = new Date()) { return Date.UTC(now.getUTCFullYear()
 function fmtCountdown(ms) { const m = Math.max(0, Math.ceil(ms / 60000)); const h = Math.floor(m / 60); return h > 0 ? `${h}h ${m % 60}m` : `${m}m`; }
 function nextSetLine(now = new Date()) {
   const nextMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1);
-  const local = new Date(nextMs).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-  return `Next set in ${fmtCountdown(nextMs - now.getTime())} (${local} your time)`;
+  const local = new Date(nextMs).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
+  return `Next set in ${fmtCountdown(nextMs - now.getTime())} (${local})`;
 }
 
 // ---- Ghost Duel ----
@@ -1394,7 +1397,7 @@ function $(id){ return document.getElementById(id); }
 // ---- Inline monochrome icons (Lucide-style, 1.5px stroke) ----
 const ICONS = {
   lightning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>',
-  flame: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 1.5 2 4.5 2 8a2.5 2.5 0 1 1-5 0z"/></svg>',
+  flame: '<svg viewBox="3.5 1 15.5 15.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 1.5 2 4.5 2 8a2.5 2.5 0 1 1-5 0z"/></svg>',
   swords: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"/><line x1="5" x2="9" y1="14" y2="18"/><line x1="7" x2="4" y1="17" y2="20"/><line x1="3" x2="5" y1="19" y2="21"/></svg>',
   bulb: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>',
   skull: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1.6"/><circle cx="15" cy="10" r="1.6"/><path d="M12 14v2M9 18c0 1.5 1.3 2.2 3 2.2s3-.7 3-2.2"/></svg>',
@@ -1425,12 +1428,15 @@ function renderLanding() {
 
   const completedToday = stats.completedDaily === getToday();
   $('landing-puzzle').textContent = `Daily #${getDailyNum()}`;
+  $('landing-rules').style.display = stats.completedDaily ? 'none' : 'block';
   $('btn-daily').style.display = completedToday ? 'none' : 'block';
   $('daily-lock').style.display = completedToday ? 'block' : 'none';
   if (completedToday) $('next-set-line').textContent = nextSetLine();
   // Saved results for today (re-open results / share again)
   const savedRes = loadResult();
-  $('btn-view-results').style.display = (savedRes && savedRes.date === getToday()) ? 'block' : 'none';
+  const showView = !!(savedRes && savedRes.date === getToday());
+  $('btn-view-results').style.display = showView ? 'block' : 'none';
+  if (showView) $('btn-view-results').className = 'btn-primary';
   // Resume label when a run is in progress for today
   if (!completedToday) {
     const prog = loadProgress();
@@ -1446,9 +1452,10 @@ function renderLanding() {
 }
 function renderLandingStats() {
   const el = $('landing-stats');
+  el.style.display = stats.played === 0 ? 'none' : 'flex';
   el.innerHTML = `
     <div class="stat-chip">Played<b>${stats.played}</b></div>
-    <div class="stat-chip">Best<b>${stats.maxStreak}</b></div>
+    <div class="stat-chip">Best streak<b>${stats.maxStreak}</b></div>
   `;
 }
 function renderStreakBar() {
@@ -1460,7 +1467,7 @@ function renderStreakBar() {
     $('streak-text').textContent = stats.completedDaily === getToday()
       ? `${eff} day streak`
       : `${eff} day streak · play today to keep it`;
-    fire.innerHTML = eff >= 3 ? ICONS.lightning : ICONS.flame;
+    fire.innerHTML = ICONS.flame;
     fire.classList.remove('broken');
   } else if (stats.maxStreak > 0) {
     bar.style.display = 'flex';
@@ -1710,11 +1717,6 @@ function renderProgressStrip() {
 }
 function showSwipeTip() {
   try { if (localStorage.getItem('knowit_seen_swipe_tip')) return; } catch(e){}
-  const first = document.querySelectorAll('.option-btn')[0];
-  if (first) {
-    first.classList.add('nudge');
-    setTimeout(()=>{ try { first.classList.remove('nudge'); } catch(e){} }, 1000);
-  }
   const tip = $('swipe-tip');
   const dismiss = () => {
     tip.style.display = 'none';
@@ -1984,7 +1986,7 @@ function finishGame(opts = {}) {
   // A duel run is consumed on results — drop the URL param so a refresh can't replay it
   if (!replay) clearDuelParam();
   $('result-title').textContent = state.mode === 'daily' ? 'Daily 10' : 'Endless Mode';
-  $('result-meta').textContent = state.mode === 'daily' ? today : 'Endless Mode';
+  $('result-meta').textContent = state.mode === 'daily' ? `Daily #${getDailyNum()}` : 'Endless Mode';
 
   const betUsed = state.answers.filter(a=>a.bet).length;
   const betHit = state.answers.filter(a=>a.bet && a.correct).length;
@@ -1999,7 +2001,7 @@ function finishGame(opts = {}) {
     $('hero-sub').textContent = `${correct}/${total} correct • Total ${fmtTimeSec(totalTimeSec)} • ${dailyArch.sub}`;
   } else {
     $('hero-score').innerHTML = `${state.endlessStreak}`;
-    const eT = state.endlessStreak >= 20 ? ['LEGENDARY','flame'] : state.endlessStreak >= 10 ? ['UNSTOPPABLE','lightning'] : state.endlessStreak >= 5 ? ['ON A ROLL','target'] : ['WARM-UP RUN','skull'];
+    const eT = state.endlessStreak >= 20 ? ['LEGENDARY','flame'] : state.endlessStreak >= 10 ? ['UNSTOPPABLE','heart'] : state.endlessStreak >= 5 ? ['ON A ROLL','target'] : ['WARM-UP RUN','skull'];
     $('hero-title').className = 'hero-title';
     $('hero-title').innerHTML = `${ICONS[eT[1]]}<span>${eT[0]}</span>`;
     $('hero-sub').textContent = `Best Endless: ${stats.bestEndless} • Total ${fmtTimeSec(totalTimeSec)}`;
@@ -2025,14 +2027,15 @@ function finishGame(opts = {}) {
     if (a.correct) categories[a.category].correct++;
   });
   const entries = Object.entries(categories);
-  const perfectCats = entries.filter(([,d]) => d.correct === d.total).map(([c]) => c);
-  const missedCats = entries.filter(([,d]) => d.correct < d.total);
+  const perfectCats = entries.filter(([,d]) => d.total >= 2 && d.correct === d.total).map(([c]) => c);
+  const missedCats = entries.filter(([,d]) => d.total >= 2 && d.correct / d.total < 0.5);
   missedCats.sort((a,b) => (a[1].correct/a[1].total) - (b[1].correct/b[1].total));
   let hl = '';
+  const betBonus = state.answers.reduce((s,a) => s + (a.bet ? (a.points - (a.correct ? 1 : 0)) : 0), 0);
   // Bets line first (daily only) — 0 bets becomes a discovery hook
   if (state.mode === 'daily') {
     hl = betUsed > 0
-      ? `${ICONS.lightning} <b>Bets:</b> ${betHit}/${betUsed} hit · ${totalPoints} pts`
+      ? `${ICONS.lightning} <b>Bets:</b> ${betHit}/${betUsed} hit · net ${betBonus >= 0 ? '+' : ''}${betBonus} pts`
       : `${ICONS.lightning} <b>0/3 bets placed</b> · Tip: Swipe right on an answer you know to bet +2 / -1!`;
   }
   // Mastery (top categories, capped for scannability)
@@ -2161,7 +2164,7 @@ function getArchetype(correct, total, totalTimeSec, betUsed, betHit) {
   if (correct < 5) return { name: 'THE EGO CHECK', icon: 'skull', sub: 'Back to basics' };
   if (betUsed === 3 && betHit === 0) return { name: 'THE ADRENALINE JUNKIE', icon: 'dice', sub: 'Missed all 3 bets' };
   if (betUsed === 3 && betHit === 3) return { name: 'THE SNIPER', icon: 'target', sub: '3/3 bets hit' };
-  if (correct >= 9 && fast) return { name: 'THE SYNTHESIZER', icon: 'lightning', sub: 'Fast and accurate' };
+  if (correct >= 9 && fast) return { name: 'THE SYNTHESIZER', icon: 'bulb', sub: 'Fast and accurate' };
   if (correct >= 7 && !fast) return { name: 'THE GRANDMASTER', icon: 'chess', sub: 'Slow & steady' };
   if (correct >= 7) return { name: 'THE SNIPER', icon: 'target', sub: 'Sharp run' };
   return { name: 'THE GRANDMASTER', icon: 'chess', sub: 'Steady progress' };
@@ -2283,7 +2286,7 @@ $('btn-copy').onclick = ()=>{
 // Inject inline SVG icons into action buttons (monochrome, matches core UI)
 $('btn-challenge').innerHTML = `${ICONS.swords}<span class="btn-label">Challenge a Friend</span>`;
 $('btn-copy').innerHTML = `${ICONS.copy}<span class="btn-label">Copy Grid Only</span>`;
-$('btn-endless-result').innerHTML = `${ICONS.lightning}<span class="btn-label">Play Endless Mode</span>`;
+$('btn-endless-result').innerHTML = `${ICONS.heart}<span class="btn-label">Play Endless Mode</span>`;
 // Review modal: tap wrong grid cell → open; backdrop/close button → close
 $('share-visual').addEventListener('click', e => {
   const cell = e.target.closest('.share-cell.wrong');
