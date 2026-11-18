@@ -482,7 +482,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
       <div class="daily-locked" id="daily-lock" style="display:none;">
         <b>Daily 10 completed!</b><br>
-        Come back tomorrow for a new set.
+        <span id="next-set-line"></span>
       </div>
 
       <button class="btn-secondary" id="btn-view-results" style="display:none;">View results / Share</button>
@@ -597,6 +597,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
       <!-- Visual share grid (tappable) -->
       <div class="share-visual" id="share-visual"></div>
       <div class="grid-hint" id="grid-hint">Tap a red square to review the question</div>
+      <div class="grid-hint" id="next-set-results" style="display:none;"></div>
 
       <!-- Share text: constructed but hidden -->
       <div class="share-text" id="share-text"></div>
@@ -1324,6 +1325,30 @@ function getDailyNum(d = new Date()) {
   const todayUtc = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
   return Math.max(1, Math.floor((todayUtc - LAUNCH_UTC) / 86400000) + 1);
 }
+// ---- Streak (consecutive UTC days of completing the daily) ----
+function dayDiff(aStr, bStr) {   // whole days from a to b, both 'YYYY-MM-DD'
+  const p = s => { const [y,m,d] = s.split('-').map(Number); return Date.UTC(y, m-1, d); };
+  return Math.round((p(bStr) - p(aStr)) / 86400000);
+}
+function streakAfterCompletion(prevStreak, lastDate, today) {
+  if (!lastDate) return 1;
+  const gap = dayDiff(lastDate, today);
+  if (gap <= 0) return Math.max(1, prevStreak);   // same day or clock oddity: never decrease, never double count
+  if (gap === 1) return prevStreak + 1;
+  return 1;                                        // missed at least one day
+}
+function effectiveStreak(s, today = getToday()) {
+  if (!s.lastDate) return 0;
+  return dayDiff(s.lastDate, today) <= 1 ? s.streak : 0;   // gap 0 or 1 = alive; older = ended
+}
+// ---- Next set countdown (next UTC midnight) ----
+function msUntilNextSet(now = new Date()) { return Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1) - now.getTime(); }
+function fmtCountdown(ms) { const m = Math.max(0, Math.ceil(ms / 60000)); const h = Math.floor(m / 60); return h > 0 ? `${h}h ${m % 60}m` : `${m}m`; }
+function nextSetLine(now = new Date()) {
+  const nextMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1);
+  const local = new Date(nextMs).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  return `Next set in ${fmtCountdown(nextMs - now.getTime())} (${local} your time)`;
+}
 
 // ---- Ghost Duel ----
 function parseDuelParam() {
@@ -1384,6 +1409,7 @@ function toast(msg) {
 }
 
 // ---- Landing ----
+let lastRenderedDay = null;
 function renderLanding() {
   renderLandingStats();
   renderStreakBar();
@@ -1391,6 +1417,7 @@ function renderLanding() {
   const completedToday = stats.completedDaily === getToday();
   $('btn-daily').style.display = completedToday ? 'none' : 'block';
   $('daily-lock').style.display = completedToday ? 'block' : 'none';
+  if (completedToday) $('next-set-line').textContent = nextSetLine();
   // Saved results for today (re-open results / share again)
   const savedRes = loadResult();
   $('btn-view-results').style.display = (savedRes && savedRes.date === getToday()) ? 'block' : 'none';
@@ -1405,6 +1432,7 @@ function renderLanding() {
   // Gating: Endless only visible after daily is done
   $('endless-teaser').style.display = completedToday ? 'block' : 'none';
   $('gt-best').textContent = stats.bestEndless;
+  lastRenderedDay = getToday();
 }
 function renderLandingStats() {
   const el = $('landing-stats');
@@ -1416,14 +1444,17 @@ function renderLandingStats() {
 function renderStreakBar() {
   const bar = $('streak-bar');
   const fire = $('streak-fire');
-  if (stats.streak > 0) {
+  const eff = effectiveStreak(stats);
+  if (eff > 0) {
     bar.style.display = 'flex';
-    $('streak-text').textContent = `${stats.streak} day streak`;
-    fire.innerHTML = stats.streak >= 3 ? ICONS.lightning : ICONS.flame;
+    $('streak-text').textContent = stats.completedDaily === getToday()
+      ? `${eff} day streak`
+      : `${eff} day streak · play today to keep it`;
+    fire.innerHTML = eff >= 3 ? ICONS.lightning : ICONS.flame;
     fire.classList.remove('broken');
-  } else if (stats.played > 0 && stats.streak === 0) {
+  } else if (stats.maxStreak > 0) {
     bar.style.display = 'flex';
-    $('streak-text').textContent = `Streak broken`;
+    $('streak-text').textContent = `Streak ended`;
     fire.innerHTML = ICONS.flame;
     fire.classList.add('broken');
   } else {
@@ -1884,11 +1915,8 @@ function finishGame(opts = {}) {
     stats.totalAnswered += total;
     stats.totalCorrect += correct;
     if (state.mode === 'daily') {
-      if (correct >= 7) {
-        if (stats.lastDate !== today) { stats.streak++; stats.lastDate = today; }
-      } else {
-        stats.streak = 0;
-      }
+      stats.streak = streakAfterCompletion(stats.streak, stats.lastDate, today);
+      stats.lastDate = today;
       stats.maxStreak = Math.max(stats.maxStreak, stats.streak);
       stats.completedDaily = today;
     } else {
@@ -2001,7 +2029,7 @@ function finishGame(opts = {}) {
   const challengeUrl = getDuelUrl(totalPoints, totalTimeSec);
   const blindspot = missedCats.length ? missedCats[0][0] : null;
   if (state.mode === 'daily') {
-    const head = `KNOWIT Daily #${dailyNum} ⚡ ${totalPoints} pts (${correct}/${total})`;
+    const head = `KNOWIT Daily #${dailyNum} ⚡ ${totalPoints} pts (${correct}/${total})` + (stats.streak >= 2 ? ` 🔥${stats.streak}` : '');
     // Copy Grid Only — clean emoji blocks, no duel link
     state.shareClean = `${head}\n${row1}${row2 ? '\n' + row2 : ''}`;
     // Challenge payload — archetype + time, 2-row grid, blindspot, CTA + duel link
@@ -2037,6 +2065,14 @@ function finishGame(opts = {}) {
 
   // Show endless button on daily results
   $('btn-endless-result').style.display = state.mode === 'daily' ? 'block' : 'none';
+
+  // Next-set countdown (daily results only, replay included)
+  if (state.mode === 'daily') {
+    $('next-set-results').textContent = nextSetLine();
+    $('next-set-results').style.display = 'block';
+  } else {
+    $('next-set-results').style.display = 'none';
+  }
 
   // Confetti for perfect daily
   if (!replay && state.mode === 'daily' && correct === total) launchConfetti();
@@ -2224,6 +2260,15 @@ if (duelP) {
 
 // Lazy audio init on first interaction
 document.addEventListener('click', ()=>audio.init(), {once:true});
+
+// ---- Countdown ticker: keeps the next-set line fresh and unlocks a new day ----
+function tick() {
+  if ($('daily-lock').style.display === 'block') $('next-set-line').textContent = nextSetLine();
+  if ($('next-set-results').style.display === 'block') $('next-set-results').textContent = nextSetLine();
+  if (state.screen === 'landing' && getToday() !== lastRenderedDay) renderLanding();
+}
+setInterval(tick, 30000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
 </script>
 </body>
 </html>
