@@ -485,6 +485,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
         Come back tomorrow for a new set.
       </div>
 
+      <button class="btn-secondary" id="btn-view-results" style="display:none;">View results / Share</button>
+
       <div class="stats-bar" id="landing-stats"></div>
 
       <!-- Endless teaser -->
@@ -1265,6 +1267,56 @@ function loadStats() {
 function saveStats() {
   try { localStorage.setItem('knowit_stats_v3', JSON.stringify(stats)); } catch(e){}
 }
+// ---- Progress / result persistence (two extra keys; stats object untouched) ----
+const PROGRESS_KEY = 'knowit_progress_v1';
+const RESULT_KEY = 'knowit_result_v1';
+function compactAnswer(a) {
+  return { id: (a.q && a.q.id) || a.id, category: a.category, picked: (a.picked === undefined ? null : a.picked), correct: a.correct, time: a.time, bet: a.bet, points: a.points };
+}
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(PROGRESS_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e){ return null; }
+}
+function saveProgress(qShown) {
+  if (state.mode !== 'daily') return;
+  try {
+    const prev = loadProgress();
+    const keep = prev && prev.date === getToday() && prev.puzzle === getDailyNum() ? prev : null;
+    const obj = {
+      date: getToday(),
+      puzzle: getDailyNum(),
+      ids: state.questions.map(q => q.id),
+      answers: state.answers.map(compactAnswer),
+      betsLeft: state.betsLeft,
+      qShownAt: qShown ? qShown.at : (keep ? keep.qShownAt : null),
+      qShownIndex: qShown ? qShown.index : (keep ? keep.qShownIndex : null),
+      duel: state.duel || null,
+    };
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(obj));
+  } catch(e){}
+}
+function clearProgress() {
+  try { localStorage.removeItem(PROGRESS_KEY); } catch(e){}
+}
+function loadResult() {
+  try {
+    const raw = localStorage.getItem(RESULT_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e){ return null; }
+}
+function saveResult() {
+  try {
+    localStorage.setItem(RESULT_KEY, JSON.stringify({
+      date: getToday(),
+      puzzle: getDailyNum(),
+      ids: state.questions.map(q => q.id),
+      answers: state.answers.map(compactAnswer),
+      duel: state.duel || null,
+    }));
+  } catch(e){}
+}
 function getToday(d = new Date()) {
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`;
 }
@@ -1339,6 +1391,17 @@ function renderLanding() {
   const completedToday = stats.completedDaily === getToday();
   $('btn-daily').style.display = completedToday ? 'none' : 'block';
   $('daily-lock').style.display = completedToday ? 'block' : 'none';
+  // Saved results for today (re-open results / share again)
+  const savedRes = loadResult();
+  $('btn-view-results').style.display = (savedRes && savedRes.date === getToday()) ? 'block' : 'none';
+  // Resume label when a run is in progress for today
+  if (!completedToday) {
+    const prog = loadProgress();
+    const canResume = !!(prog && prog.date === getToday() && prog.puzzle === getDailyNum() && Array.isArray(prog.answers));
+    $('btn-daily').textContent = canResume ? `▶ Resume Daily 10 (Q${prog.answers.length+1}/10)` : '▶ Play Daily 10';
+  } else {
+    $('btn-daily').textContent = '▶ Play Daily 10';
+  }
   // Gating: Endless only visible after daily is done
   $('endless-teaser').style.display = completedToday ? 'block' : 'none';
   $('gt-best').textContent = stats.bestEndless;
@@ -1424,7 +1487,9 @@ function renderQuestion() {
     grid.appendChild(btn);
   });
   $('feedback-strip').className = 'feedback-strip';
-  state.qStartTime = performance.now();
+  const off = state.resumeOffsetMs || 0;
+  state.resumeOffsetMs = 0;
+  state.qStartTime = performance.now() - off;
   state.waiting = false;
   state.armed = false;
 
@@ -1448,7 +1513,8 @@ function renderQuestion() {
   }
 
   if (state.timerId) cancelAnimationFrame(state.timerId);
-  startQTimer();
+  startQTimer(off);
+  if (state.mode === 'daily') saveProgress({ at: Date.now() - off, index: state.currentQ });
 }
 function escapeHtml(t){ const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
 
@@ -1590,10 +1656,10 @@ function renderEndlessHUD() {
 }
 
 // ---- Per-question timer ----
-function startQTimer() {
+function startQTimer(offsetMs = 0) {
   const bar = $('q-timer-fill');
   const txt = $('q-timer-text');
-  const start = performance.now();
+  const start = performance.now() - offsetMs;
   function tick() {
     if (state.screen !== 'playing' || state.waiting) return;
     const elapsed = performance.now() - start;
@@ -1636,6 +1702,27 @@ function startDaily() {
   state.betsLeft = 3;
   state.armed = false;
   state.duel = parseDuelParam();
+  // Resume an interrupted daily for today's puzzle (same ids, same order)
+  const saved = loadProgress();
+  if (saved) {
+    const idsOk = Array.isArray(saved.ids) && saved.ids.length === state.questions.length
+      && saved.ids.every((id, i) => id === state.questions[i].id);
+    const valid = saved.date === getToday() && saved.puzzle === getDailyNum() && idsOk
+      && Array.isArray(saved.answers) && saved.answers.length <= 10;
+    if (valid) {
+      state.answers = saved.answers.map((a, i) => ({ ...a, q: state.questions[i] }));
+      state.betsLeft = saved.betsLeft;
+      state.currentQ = state.answers.length;
+      if (saved.duel) state.duel = saved.duel;
+      if (state.answers.length === 10) { finishGame(); return; }
+      // Clock keeps running: only resume the offset if the saved question is still the current one
+      state.resumeOffsetMs = (saved.qShownIndex === state.answers.length && typeof saved.qShownAt === 'number')
+        ? Math.max(0, Date.now() - saved.qShownAt)
+        : 0;
+    } else {
+      clearProgress();
+    }
+  }
   $('header-meta').textContent = `#${getDailyNum()} · Q01/10`;
   $('endless-hud').style.display = 'none';
   if (state.duel) {
@@ -1674,6 +1761,7 @@ function handleTimeout() {
   const time = performance.now() - state.qStartTime;
   const wasArmed = state.armed && state.betsLeft > 0;
   state.answers.push({correct:false, time, category:q.category, q, picked:null, bet:false, points:0});
+  saveProgress();
   state.waiting = true;
   stopQTimer();
   state.armed = false;
@@ -1731,6 +1819,7 @@ function handleAnswer(idx) {
     saveStats();
   }
   state.armed = false;
+  saveProgress();
 
   const btns = document.querySelectorAll('.option-btn');
   btns[idx].classList.add(correct ? 'correct' : 'wrong');
@@ -1779,7 +1868,8 @@ function handleAnswer(idx) {
   }, 2600);
 }
 
-function finishGame() {
+function finishGame(opts = {}) {
+  const replay = !!opts.replay;
   stopQTimer();
   const total = state.answers.length;
   const correct = state.answers.filter(a=>a.correct).length;
@@ -1788,27 +1878,31 @@ function finishGame() {
   const avgMs = total > 0 ? Math.round(totalTimeMs / total) : 0;
   const today = getToday();
 
-  // Stats
-  stats.played++;
-  stats.totalAnswered += total;
-  stats.totalCorrect += correct;
-  if (state.mode === 'daily') {
-    if (correct >= 7) {
-      if (stats.lastDate !== today) { stats.streak++; stats.lastDate = today; }
+  // Stats (never on a replay of already-saved results)
+  if (!replay) {
+    stats.played++;
+    stats.totalAnswered += total;
+    stats.totalCorrect += correct;
+    if (state.mode === 'daily') {
+      if (correct >= 7) {
+        if (stats.lastDate !== today) { stats.streak++; stats.lastDate = today; }
+      } else {
+        stats.streak = 0;
+      }
+      stats.maxStreak = Math.max(stats.maxStreak, stats.streak);
+      stats.completedDaily = today;
     } else {
-      stats.streak = 0;
+      stats.bestEndless = Math.max(stats.bestEndless, state.endlessStreak);
     }
-    stats.maxStreak = Math.max(stats.maxStreak, stats.streak);
-    stats.completedDaily = today;
-  } else {
-    stats.bestEndless = Math.max(stats.bestEndless, state.endlessStreak);
+    saveStats();
+    // Finished daily: persist the result, drop the in-progress copy
+    if (state.mode === 'daily') { saveResult(); clearProgress(); }
   }
-  saveStats();
 
   // Results screen
   showScreen('results');
   // A duel run is consumed on results — drop the URL param so a refresh can't replay it
-  clearDuelParam();
+  if (!replay) clearDuelParam();
   $('result-title').textContent = state.mode === 'daily' ? 'Daily 10' : 'Endless Mode';
   $('result-meta').textContent = state.mode === 'daily' ? today : 'Endless Mode';
 
@@ -1945,7 +2039,18 @@ function finishGame() {
   $('btn-endless-result').style.display = state.mode === 'daily' ? 'block' : 'none';
 
   // Confetti for perfect daily
-  if (state.mode === 'daily' && correct === total) launchConfetti();
+  if (!replay && state.mode === 'daily' && correct === total) launchConfetti();
+}
+
+// Re-render today's saved results (no stats, no confetti, no storage writes)
+function viewTodaysResults() {
+  const r = loadResult();
+  if (!r || r.date !== getToday()) return;
+  state.mode = 'daily';
+  state.questions = getDailyQuestions();
+  state.duel = r.duel || null;
+  state.answers = r.answers.map((a,i)=>({ ...a, q: (state.questions[i] && state.questions[i].id === a.id) ? state.questions[i] : null }));
+  finishGame({ replay: true });
 }
 
 // ---- Review modal ----
@@ -2042,9 +2147,13 @@ $('btn-daily').onclick = ()=>{ audio.click(); startDaily(); };
 $('btn-endless').onclick = ()=>{ audio.click(); startEndless(); };
 $('btn-endless-result').onclick = ()=>{ audio.click(); startEndless(); };
 $('btn-practice').onclick = ()=>{ audio.click(); startDaily(); };
+$('btn-view-results').onclick = ()=>{ audio.click(); viewTodaysResults(); };
 
 $('btn-close').onclick = ()=>{
-  if (confirm('Quit current game? Progress will be lost.')) { stopQTimer(); showScreen('landing'); renderLanding(); }
+  const msg = state.mode === 'daily'
+    ? 'Leave the game? You can resume today, but the clock keeps running on the current question.'
+    : 'Quit current game? Progress will be lost.';
+  if (confirm(msg)) { stopQTimer(); showScreen('landing'); renderLanding(); }
 };
 function setBtnLabel(btn, txt) {
   const l = btn.querySelector('.btn-label');
