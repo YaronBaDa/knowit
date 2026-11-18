@@ -1225,6 +1225,7 @@ const QUESTIONS = [
 // ---- State ----
 const STATE_VERSION = 3;
 const Q_PER_DAY = 10;
+const FAST_TIME_SEC = 55;
 const GAUNTLET_LIVES = 3;
 let state = {
   mode: 'daily', // 'daily' | 'endless'
@@ -1288,7 +1289,7 @@ function parseDuelParam() {
     const score = parseInt(parts[0]);
     const time = parseFloat(parts[1]);
     const name = parts[2] ? decodeURIComponent(parts.slice(2).join('_')) : 'Challenger';
-    if (isNaN(score) || isNaN(time) || score < 0 || score > 10) return null;
+    if (isNaN(score) || isNaN(time) || score < -3 || score > 13) return null;
     return { score, time, name };
   } catch(e) { return null; }
 }
@@ -1638,7 +1639,7 @@ function startDaily() {
   $('endless-hud').style.display = 'none';
   if (state.duel) {
     $('duel-banner').style.display = 'flex';
-    $('duel-banner-text').textContent = `DUELING: ${state.duel.name} (${state.duel.score}/10 · ${state.duel.time}s)`;
+    $('duel-banner-text').textContent = `DUELING: ${state.duel.name} (${state.duel.score} pts · ${state.duel.time}s)`;
   } else {
     $('duel-banner').style.display = 'none';
   }
@@ -1781,7 +1782,7 @@ function finishGame() {
   stopQTimer();
   const total = state.answers.length;
   const correct = state.answers.filter(a=>a.correct).length;
-  const totalTimeMs = performance.now() - state.startTime;
+  const totalTimeMs = state.answers.reduce((s,a)=>s+a.time,0);
   const totalTimeSec = totalTimeMs / 1000;
   const avgMs = total > 0 ? Math.round(totalTimeMs / total) : 0;
   const today = getToday();
@@ -1810,15 +1811,15 @@ function finishGame() {
 
   const betUsed = state.answers.filter(a=>a.bet).length;
   const betHit = state.answers.filter(a=>a.bet && a.correct).length;
-  const totalPoints = state.answers.reduce((s,a)=>s+(a.points||0),0);
+  const totalPoints = sumPoints(state.answers);
   const dailyArch = state.mode === 'daily' ? getArchetype(correct, total, totalTimeSec, betUsed, betHit) : null;
 
   // Hero
   if (state.mode === 'daily') {
-    $('hero-score').innerHTML = `${correct}<span class="of">/${total}</span>`;
+    $('hero-score').innerHTML = `${totalPoints}<span class="of"> pts</span>`;
     $('hero-title').className = 'hero-title' + (correct === total ? ' aurora perfect-flash' : '');
     $('hero-title').innerHTML = `${ICONS[dailyArch.icon]}<span>${dailyArch.name}</span>`;
-    $('hero-sub').textContent = `Total ${fmtTimeSec(totalTimeSec)} • ${dailyArch.sub}`;
+    $('hero-sub').textContent = `${correct}/${total} correct • Total ${fmtTimeSec(totalTimeSec)} • ${dailyArch.sub}`;
   } else {
     $('hero-score').innerHTML = `${state.endlessStreak}`;
     const eT = state.endlessStreak >= 20 ? ['LEGENDARY','flame'] : state.endlessStreak >= 10 ? ['UNSTOPPABLE','lightning'] : state.endlessStreak >= 5 ? ['ON A ROLL','target'] : ['WARM-UP RUN','skull'];
@@ -1900,10 +1901,10 @@ function finishGame() {
   const cells = state.answers.map(a => a.bet ? (a.correct ? '✅' : '❌') : (a.correct ? '🟩' : '🟥'));
   const row1 = cells.slice(0, 5).join('');
   const row2 = cells.slice(5, 10).join('');
-  const challengeUrl = getDuelUrl(correct, totalTimeSec);
+  const challengeUrl = getDuelUrl(totalPoints, totalTimeSec);
   const blindspot = missedCats.length ? missedCats[0][0] : null;
   if (state.mode === 'daily') {
-    const head = `KNOWIT Daily #${dailyNum} ⚡ ${correct}/${total}`;
+    const head = `KNOWIT Daily #${dailyNum} ⚡ ${totalPoints} pts (${correct}/${total})`;
     // Copy Grid Only — clean emoji blocks, no duel link
     state.shareClean = `${head}\n${row1}${row2 ? '\n' + row2 : ''}`;
     // Challenge payload — archetype + time, 2-row grid, blindspot, CTA + duel link
@@ -1922,13 +1923,13 @@ function finishGame() {
     const d = state.duel;
     $('duel-card').style.display = 'block';
     $('duel-them-name').textContent = d.name;
-    $('duel-them-score').textContent = `${d.score}/10`;
+    $('duel-them-score').textContent = `${d.score} pts`;
     $('duel-them-time').textContent = fmtTimeSec(d.time);
-    $('duel-you-score').textContent = `${correct}/${total}`;
+    $('duel-you-score').textContent = `${totalPoints} pts`;
     $('duel-you-time').textContent = fmtTimeSec(totalTimeSec);
     let outcome = 'TIED', oIcon = null, oColor = 'var(--accent-warm)';
-    if (correct > d.score) { outcome = 'VICTORY'; oIcon = 'trophy'; oColor = 'var(--correct)'; }
-    else if (correct < d.score) { outcome = 'DEFEATED'; oIcon = 'skull'; oColor = 'var(--wrong)'; }
+    if (totalPoints > d.score) { outcome = 'VICTORY'; oIcon = 'trophy'; oColor = 'var(--correct)'; }
+    else if (totalPoints < d.score) { outcome = 'DEFEATED'; oIcon = 'skull'; oColor = 'var(--wrong)'; }
     else if (totalTimeSec < d.time) { outcome = 'VICTORY'; oIcon = 'trophy'; oColor = 'var(--correct)'; }
     else if (totalTimeSec > d.time) { outcome = 'DEFEATED'; oIcon = 'skull'; oColor = 'var(--wrong)'; }
     $('duel-outcome').innerHTML = `${outcome}${oIcon ? ICONS[oIcon] : ''}`;
@@ -1962,12 +1963,13 @@ function fmtTimeSec(s) {
   const r = Math.round(s%60);
   return m ? `${m}m ${r}s` : `${r}s`;
 }
+function sumPoints(answers){ return answers.reduce((s,a)=>s+(a.points||0),0); }
 function getArchetype(correct, total, totalTimeSec, betUsed, betHit) {
-  const fast = totalTimeSec < 55;
+  const fast = totalTimeSec < FAST_TIME_SEC;
   if (correct < 5) return { name: 'THE EGO CHECK', icon: 'skull', sub: 'Back to basics' };
   if (betUsed === 3 && betHit === 0) return { name: 'THE ADRENALINE JUNKIE', icon: 'dice', sub: 'Missed all 3 bets' };
   if (betUsed === 3 && betHit === 3) return { name: 'THE SNIPER', icon: 'target', sub: '3/3 bets hit' };
-  if (correct >= 9 && fast) return { name: 'THE SYNTHESIZER', icon: 'lightning', sub: 'Top 2% latency' };
+  if (correct >= 9 && fast) return { name: 'THE SYNTHESIZER', icon: 'lightning', sub: 'Fast and accurate' };
   if (correct >= 7 && !fast) return { name: 'THE GRANDMASTER', icon: 'chess', sub: 'Slow & steady' };
   if (correct >= 7) return { name: 'THE SNIPER', icon: 'target', sub: 'Sharp run' };
   return { name: 'THE GRANDMASTER', icon: 'chess', sub: 'Steady progress' };
