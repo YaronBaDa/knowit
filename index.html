@@ -2093,14 +2093,11 @@ function finishGame(opts = {}) {
     const head = `KNOWIT #${dailyNum} · ${totalPoints} pts (${correct}/${total})` + (stats.streak >= 2 ? `  🔥${stats.streak}` : '');
     // Copy Result — clean emoji blocks, no duel link
     state.shareClean = `${head}\n${row1}${row2 ? '\n' + row2 : ''}`;
-    // Challenge payload — archetype + time, 2-row grid, blindspot, CTA + duel link
-    let full = `${head}\n${dailyArch.name} (${fmtTimeSec(totalTimeSec)})\n\n${row1}${row2 ? '\n' + row2 : ''}`;
-    if (blindspot) full += `\n\nBlindspot: ${blindspot} ❄️`;
-    full += `\nCan you beat my score?\n${challengeUrl}`;
-    state.shareFull = full;
+    // Challenge payload — head, grid, archetype + optional blindspot, duel link
+    state.shareFull = `${head}\n${row1}${row2 ? '\n' + row2 : ''}\n${dailyArch.name} (${fmtTimeSec(totalTimeSec)})${blindspot ? ` · Blindspot: ${blindspot}` : ''}\n${challengeUrl}`;
   } else {
     state.shareClean = `KNOWIT Endless ⚡\nStreak: ${state.endlessStreak}\nCorrect: ${correct}/${total}\n${row1}${row2 ? '\n' + row2 : ''}`;
-    state.shareFull = `${state.shareClean}\n\nThink you can beat my streak?\n${challengeUrl}`;
+    state.shareFull = `${state.shareClean}\n\nBeat my streak.\n${challengeUrl}`;
   }
   $('share-text').textContent = state.shareFull;
 
@@ -2313,11 +2310,11 @@ if (duelP) {
   if (duelP.puzzle !== getDailyNum()) {
     // Link is for a different day's puzzle — never start, never compare
     clearDuelParam();
-    toast(`That challenge was for puzzle #${duelP.puzzle}. Today is #${getDailyNum()}.`);
+    toast(`That link was for #${duelP.puzzle}. Today is #${getDailyNum()}.`);
   } else if (stats.completedDaily === getToday()) {
     // Daily already locked — don't let a link bypass it
     clearDuelParam();
-    toast("You already played today's set. Challenge accepted tomorrow.");
+    toast("You already played today's set. Rematch tomorrow.");
   } else {
     // Small delay so landing renders first, then jump straight in
     setTimeout(()=>startDaily(), 400);
