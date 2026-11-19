@@ -265,10 +265,10 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .mid-slot { position: relative; flex-shrink: 0; }
 .feedback-strip {
   position: absolute; left: 0; right: 0; bottom: 6px; margin: 0; z-index: 5; background: var(--bg-surface); pointer-events: none;
-  text-align: center; padding: 10px 12px; border-radius: var(--radius);
+  text-align: left; padding: 10px 12px; border-radius: var(--radius);
   border: 1px solid var(--border-subtle); opacity: 0; transform: translateY(4px); transition: opacity .2s, transform .2s;
   height: 80px; overflow: hidden; flex-shrink: 0;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 4px;
 }
 .feedback-strip.show { opacity: 1; transform: translateY(0); }
 .feedback-strip.correct { border-color: var(--accent-correct); }
