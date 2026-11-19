@@ -160,11 +160,52 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
 /* Endless teaser */
 .endless-teaser {
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 14px 16px; max-width: 280px; width: 100%; text-align: center;
+  background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius);
+  padding: 16px; max-width: 340px; width: 100%; text-align: left;
 }
-.endless-teaser .gt-streak { font-family: var(--font-mono); font-size: 22px; font-weight: 700; color: var(--accent-brand); }
-.endless-teaser .gt-label { font-size: 12px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+.endless-teaser .et-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-brand); font-weight: 600; margin-bottom: 8px; }
+.endless-teaser .et-title { font-size: 17px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+.endless-teaser .et-line { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
+.endless-teaser .btn-primary { width: 100%; max-width: none; }
+
+/* ---- Completed-day hub (zero-scroll) ---- */
+.hub-head, .hub-cards { display: none; }
+#screen-landing.is-completed .landing-body {
+  justify-content: space-between; gap: 12px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+}
+#screen-landing.is-completed .landing-body::before,
+#screen-landing.is-completed .landing-body::after { content: none; }
+#screen-landing.is-completed .logo-mark,
+#screen-landing.is-completed .landing-body > h2,
+#screen-landing.is-completed #landing-puzzle,
+#screen-landing.is-completed .landing-body > p,
+#screen-landing.is-completed #landing-rules,
+#screen-landing.is-completed #btn-daily,
+#screen-landing.is-completed #daily-lock,
+#screen-landing.is-completed #streak-bar,
+#screen-landing.is-completed #btn-practice { display: none !important; }
+#screen-landing.is-completed .hub-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; max-width: 340px; flex-shrink: 0; }
+#screen-landing.is-completed .hub-cards { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 340px; }
+.hub-brand { display: flex; align-items: center; gap: 8px; }
+.hub-wordmark { font-family: var(--font-display); font-size: 16px; font-weight: 800; letter-spacing: 0.02em; color: var(--text-primary); }
+.streak-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(255, 90, 140, 0.35); background: var(--accent-brand-tint); color: var(--accent-brand); font-family: var(--font-mono); font-size: 12px; font-weight: 600; }
+.streak-pill .fire { display: inline-flex; }
+.streak-pill svg { width: 13px; height: 13px; }
+.trophy-card { width: 100%; max-width: 340px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius); padding: 16px; text-align: left; }
+.tc-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); font-weight: 600; margin-bottom: 8px; }
+.tc-score { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+.tc-score b { font-size: 20px; font-weight: 800; }
+.tc-score .muted { color: var(--text-secondary); font-weight: 500; font-size: 14px; }
+.tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin: 10px 0; }
+.tc-cell { height: 12px; border-radius: 3px; background: var(--bg-surface-subtle); }
+.tc-cell.ok { background: var(--correct); }
+.tc-cell.miss { background: var(--wrong); }
+.tc-cell.bet { box-shadow: inset 0 0 0 1.5px var(--accent-bet); }
+.tc-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); }
+.tc-actions { display: flex; gap: 8px; margin-top: 12px; }
+.tc-actions .btn-secondary { flex: 1 1 0; max-width: none; padding: 10px 12px; font-size: 14px; }
+#screen-landing.is-completed #landing-stats { font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); text-align: center; }
 
 /* Question */
 .question-stage { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-start; min-height: 0; overflow-y: auto; padding-top: 8px; padding-bottom: 8px; }
@@ -477,6 +518,16 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   <!-- LANDING -->
   <div id="screen-landing" class="screen active">
     <div class="landing-body">
+      <!-- completed-day header row -->
+      <div class="hub-head" id="hub-head">
+        <div class="hub-brand">
+          <span class="logo-mark-sm" aria-hidden="true"><svg viewBox="0 0 48 48" preserveAspectRatio="xMidYMid meet"><use href="#knowit-symbol"></use></svg></span>
+          <span class="hub-wordmark">KNOWIT</span>
+        </div>
+        <span class="streak-pill" id="streak-pill" style="display:none;"><span class="fire" id="streak-pill-fire"></span><span id="streak-pill-text"></span></span>
+      </div>
+
+      <!-- pre-completion hero -->
       <div class="logo-mark" aria-hidden="true">
         <svg viewBox="0 0 48 48" role="img" aria-label="KNOWIT" preserveAspectRatio="xMidYMid meet"><use href="#knowit-symbol"></use></svg>
       </div>
@@ -493,21 +544,31 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
       <button class="btn-primary" id="btn-daily">Play Today's Set</button>
 
       <div class="daily-locked" id="daily-lock" style="display:none;">
-        <b>Today's set complete.</b><br>
-        <span id="next-set-line"></span>
+        <b>Today's set complete.</b>
       </div>
 
-      <button class="btn-secondary" id="btn-view-results" style="display:none;">View Results &amp; Share</button>
+      <!-- completed-day cards -->
+      <div class="hub-cards" id="hub-cards">
+        <div class="trophy-card" id="trophy-card">
+          <div class="tc-eyebrow" id="trophy-eyebrow">TODAY'S RUN</div>
+          <div class="tc-score" id="trophy-score">Today's set complete.</div>
+          <div class="tc-grid" id="trophy-grid"></div>
+          <div class="tc-count" id="next-set-line"></div>
+          <div class="tc-actions">
+            <button class="btn-secondary" id="btn-view-results" style="display:none;">Review</button>
+            <button class="btn-secondary" id="btn-quick-share" style="display:none;">Share</button>
+          </div>
+        </div>
+
+        <div class="endless-teaser" id="endless-teaser" style="display:none;">
+          <div class="et-eyebrow">KEEP GOING</div>
+          <div class="et-title">Endless Mode · 3 lives</div>
+          <div class="et-line" id="gt-line">Set your first streak.</div>
+          <button class="btn-primary" id="btn-endless">Play Endless</button>
+        </div>
+      </div>
 
       <div class="stats-bar" id="landing-stats"></div>
-
-      <!-- Endless teaser -->
-      <div class="endless-teaser" id="endless-teaser" style="display:none;">
-        <div class="gt-streak" id="gt-best">0</div>
-        <div class="gt-label">Best Endless Streak</div>
-        <div style="font-size:12px;color:var(--ink-faint);margin-bottom:10px;">Keep playing until you miss 3.</div>
-        <button class="btn-secondary" id="btn-endless" style="max-width:100%;">Play Endless</button>
-      </div>
 
       <button class="btn-secondary" id="btn-practice" style="display:none;">Practice Mode</button>
     </div>
@@ -1432,20 +1493,16 @@ function toast(msg) {
 // ---- Landing ----
 let lastRenderedDay = null;
 function renderLanding() {
+  const completedToday = stats.completedDaily === getToday();
+  $('screen-landing').classList.toggle('is-completed', completedToday);
   renderLandingStats();
   renderStreakBar();
 
-  const completedToday = stats.completedDaily === getToday();
   $('landing-puzzle').textContent = `Daily #${getDailyNum()}`;
   $('landing-rules').style.display = stats.completedDaily ? 'none' : 'block';
   $('btn-daily').style.display = completedToday ? 'none' : 'block';
-  $('daily-lock').style.display = completedToday ? 'block' : 'none';
-  if (completedToday) $('next-set-line').textContent = nextSetLine();
-  // Saved results for today (re-open results / share again)
-  const savedRes = loadResult();
-  const showView = !!(savedRes && savedRes.date === getToday());
-  $('btn-view-results').style.display = showView ? 'block' : 'none';
-  if (showView) $('btn-view-results').className = 'btn-primary';
+  $('daily-lock').style.display = 'none';
+
   // Resume label when a run is in progress for today
   if (!completedToday) {
     const prog = loadProgress();
@@ -1454,13 +1511,73 @@ function renderLanding() {
   } else {
     $('btn-daily').textContent = "Play Today's Set";
   }
-  // Gating: Endless only visible after daily is done
+
+  // Endless card: only after the daily is done
   $('endless-teaser').style.display = completedToday ? 'block' : 'none';
-  $('gt-best').textContent = stats.bestEndless;
+  $('gt-line').textContent = stats.bestEndless > 0
+    ? `Beat your best of ${stats.bestEndless} in a row.`
+    : 'Set your first streak.';
+
+  if (completedToday) renderHub();
+
   lastRenderedDay = getToday();
+}
+// Completed-day retention hub: header pill, trophy card, footer
+function renderHub() {
+  // streak pill
+  const eff = effectiveStreak(stats);
+  const pill = $('streak-pill');
+  if (eff > 0) {
+    pill.style.display = 'inline-flex';
+    $('streak-pill-fire').innerHTML = ICONS.flame;
+    $('streak-pill-text').textContent = `${eff}-day`;
+  } else {
+    pill.style.display = 'none';
+  }
+
+  // trophy card
+  $('trophy-eyebrow').textContent = `TODAY'S RUN · #${getDailyNum()}`;
+  $('next-set-line').textContent = nextSetLine();
+  const savedRes = loadResult();
+  const hasRes = !!(savedRes && savedRes.date === getToday());
+  const scoreEl = $('trophy-score');
+  const gridEl = $('trophy-grid');
+  gridEl.innerHTML = '';
+  if (hasRes && Array.isArray(savedRes.answers)) {
+    const answers = savedRes.answers;
+    const totalPoints = sumPoints(answers);
+    const correct = answers.filter(a => a.correct).length;
+    const total = answers.length;
+    const totalTimeSec = answers.reduce((s, a) => s + (a.time || 0), 0) / 1000;
+    const betUsed = answers.filter(a => a.bet).length;
+    const betHit = answers.filter(a => a.bet && a.correct).length;
+    const arch = getArchetype(correct, total, totalTimeSec, betUsed, betHit);
+    scoreEl.innerHTML = `<b>${totalPoints} pts</b> <span class="muted">(${correct}/${total}) · ${arch.name}</span>`;
+    for (let i = 0; i < 10; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'tc-cell';
+      const a = answers[i];
+      if (a) {
+        cell.classList.add(a.correct ? 'ok' : 'miss');
+        if (a.bet) cell.classList.add('bet');
+      }
+      gridEl.appendChild(cell);
+    }
+    $('btn-view-results').style.display = 'flex';
+    $('btn-quick-share').style.display = 'flex';
+  } else {
+    scoreEl.textContent = "Today's set complete.";
+    $('btn-view-results').style.display = 'none';
+    $('btn-quick-share').style.display = 'none';
+  }
 }
 function renderLandingStats() {
   const el = $('landing-stats');
+  if (stats.completedDaily === getToday()) {
+    el.style.display = 'block';
+    el.textContent = `Played ${stats.played} · Best streak ${stats.maxStreak}`;
+    return;
+  }
   el.style.display = stats.played === 0 ? 'none' : 'flex';
   el.innerHTML = `
     <div class="stat-chip">Played<b>${stats.played}</b></div>
@@ -1963,6 +2080,40 @@ function handleAnswer(idx) {
   }, correct ? FEEDBACK_MS_CORRECT : FEEDBACK_MS_WRONG);
 }
 
+// ---- Share payload (single source of truth for results + landing card) ----
+function shareRows(answers) {
+  const cells = answers.map(a => a.bet ? (a.correct ? '✅' : '❌') : (a.correct ? '🟩' : '🟥'));
+  return { row1: cells.slice(0, 5).join(''), row2: cells.slice(5, 10).join('') };
+}
+function shareBlindspot(answers) {
+  const cats = {};
+  answers.forEach(a => {
+    if (!cats[a.category]) cats[a.category] = { total: 0, correct: 0 };
+    cats[a.category].total++;
+    if (a.correct) cats[a.category].correct++;
+  });
+  const missed = Object.entries(cats).filter(([, d]) => d.total >= 2 && d.correct / d.total < 0.5);
+  missed.sort((a, b) => (a[1].correct / a[1].total) - (b[1].correct / b[1].total));
+  return missed.length ? missed[0][0] : null;
+}
+function buildDailySharePayload(answers, puzzleNum, streak) {
+  const { row1, row2 } = shareRows(answers);
+  const totalPoints = sumPoints(answers);
+  const correct = answers.filter(a => a.correct).length;
+  const total = answers.length;
+  const totalTimeSec = answers.reduce((s, a) => s + (a.time || 0), 0) / 1000;
+  const betUsed = answers.filter(a => a.bet).length;
+  const betHit = answers.filter(a => a.bet && a.correct).length;
+  const arch = getArchetype(correct, total, totalTimeSec, betUsed, betHit);
+  const blindspot = shareBlindspot(answers);
+  const head = `KNOWIT #${puzzleNum} · ${totalPoints} pts (${correct}/${total})` + (streak >= 2 ? `  🔥${streak}` : '');
+  const grid = `${row1}${row2 ? '\n' + row2 : ''}`;
+  return {
+    head, row1, row2, totalPoints, correct, total, totalTimeSec, arch, blindspot,
+    shareClean: `${head}\n${grid}`,
+    shareFull: `${head}\n${grid}\n${arch.name} (${fmtTimeSec(totalTimeSec)})${blindspot ? ` · Blindspot: ${blindspot}` : ''}\n${getDuelUrl(totalPoints, totalTimeSec)}`,
+  };
+}
 function finishGame(opts = {}) {
   const replay = !!opts.replay;
   stopQTimer();
@@ -2084,17 +2235,12 @@ function finishGame(opts = {}) {
 
   // Share texts — grid rows split 2x5; blindspot folded into the challenge payload
   const dailyNum = getDailyNum();
-  const cells = state.answers.map(a => a.bet ? (a.correct ? '✅' : '❌') : (a.correct ? '🟩' : '🟥'));
-  const row1 = cells.slice(0, 5).join('');
-  const row2 = cells.slice(5, 10).join('');
+  const { row1, row2 } = shareRows(state.answers);
   const challengeUrl = getDuelUrl(totalPoints, totalTimeSec);
-  const blindspot = missedCats.length ? missedCats[0][0] : null;
   if (state.mode === 'daily') {
-    const head = `KNOWIT #${dailyNum} · ${totalPoints} pts (${correct}/${total})` + (stats.streak >= 2 ? `  🔥${stats.streak}` : '');
-    // Copy Result — clean emoji blocks, no duel link
-    state.shareClean = `${head}\n${row1}${row2 ? '\n' + row2 : ''}`;
-    // Challenge payload — head, grid, archetype + optional blindspot, duel link
-    state.shareFull = `${head}\n${row1}${row2 ? '\n' + row2 : ''}\n${dailyArch.name} (${fmtTimeSec(totalTimeSec)})${blindspot ? ` · Blindspot: ${blindspot}` : ''}\n${challengeUrl}`;
+    const payload = buildDailySharePayload(state.answers, dailyNum, stats.streak);
+    state.shareClean = payload.shareClean;
+    state.shareFull = payload.shareFull;
   } else {
     state.shareClean = `KNOWIT Endless ⚡\nStreak: ${state.endlessStreak}\nCorrect: ${correct}/${total}\n${row1}${row2 ? '\n' + row2 : ''}`;
     state.shareFull = `${state.shareClean}\n\nBeat my streak.\n${challengeUrl}`;
@@ -2241,6 +2387,19 @@ $('btn-endless').onclick = ()=>{ audio.click(); startEndless(); };
 $('btn-endless-result').onclick = ()=>{ audio.click(); startEndless(); };
 $('btn-practice').onclick = ()=>{ audio.click(); startDaily(); };
 $('btn-view-results').onclick = ()=>{ audio.click(); viewTodaysResults(); };
+// Landing card: share today's result (same payload finishGame produced)
+$('btn-quick-share').onclick = ()=>{
+  audio.click();
+  const r = loadResult();
+  if (!r || r.date !== getToday() || !Array.isArray(r.answers)) return;
+  const payload = buildDailySharePayload(r.answers, r.puzzle || getDailyNum(), stats.streak);
+  const btn = $('btn-quick-share');
+  if (navigator.share) {
+    navigator.share({ title: 'KNOWIT', text: payload.shareFull }).catch(()=>{});
+  } else {
+    copyText(payload.shareFull, btn, 'Share');
+  }
+};
 $('bet-toggle').onclick = () => {
   if (state.waiting || state.mode !== 'daily' || state.betsLeft <= 0) return;
   state.armed = !state.armed;
@@ -2326,7 +2485,7 @@ document.addEventListener('click', ()=>audio.init(), {once:true});
 
 // ---- Countdown ticker: keeps the next-set line fresh and unlocks a new day ----
 function tick() {
-  if ($('daily-lock').style.display === 'block') $('next-set-line').textContent = nextSetLine();
+  if (stats.completedDaily === getToday()) $('next-set-line').textContent = nextSetLine();
   if ($('next-set-results').style.display === 'block') $('next-set-results').textContent = nextSetLine();
   if (state.screen === 'landing' && getToday() !== lastRenderedDay) renderLanding();
 }
