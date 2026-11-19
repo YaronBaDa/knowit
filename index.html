@@ -199,10 +199,16 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .tc-score b { font-size: 20px; font-weight: 800; }
 .tc-score .muted { color: var(--text-secondary); font-weight: 500; font-size: 14px; }
 .tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; margin: 10px 0; padding: 3px 2px; }
-.tc-cell { height: 12px; border-radius: 3px; background: var(--bg-surface-subtle); }
+.tc-cell { position: relative; height: 12px; border-radius: 3px; background: var(--bg-surface-subtle); }
 .tc-cell.ok { background: var(--correct); }
 .tc-cell.miss { background: var(--wrong); }
-.tc-cell.bet { box-shadow: 0 0 0 1.5px #FFFFFF, 0 0 0 3px var(--accent-brand); }
+/* Bet rubric (mini): inset stroke, transparent buffer, rounded inner fill */
+.tc-cell.bet { background: transparent; box-shadow: none; border: 1px solid transparent; }
+.tc-cell.bet::before { content: ''; position: absolute; inset: 1.5px; border-radius: 2px; z-index: 0; }
+.tc-cell.bet.ok { border-color: var(--correct); }
+.tc-cell.bet.ok::before { background: var(--correct); }
+.tc-cell.bet.miss { border-color: var(--wrong); }
+.tc-cell.bet.miss::before { background: var(--wrong); }
 .tc-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); }
 .tc-actions { display: flex; gap: 8px; margin-top: 12px; }
 .tc-actions .btn-secondary { flex: 1 1 0; max-width: none; padding: 10px 12px; font-size: 14px; }
@@ -342,7 +348,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
 /* Visual share grid */
 .share-visual {
-  display: grid; grid-template-columns: repeat(5, 1fr); gap: 9px;
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
   padding: 14px 16px; max-width: 260px; width: 100%;
 }
@@ -465,19 +471,55 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* Progress strip (daily only) */
 .progress-strip { display: flex; gap: 5px; margin-bottom: 8px; padding: 2px 0; flex-shrink: 0; }
 .prog-seg {
-  flex: 1; height: 14px; border-radius: 4px; background: var(--surface-3);
+  flex: 1; min-width: 0; height: 14px; border-radius: 4px; border: 1px solid transparent; background: var(--surface-3);
   display: flex; align-items: center; justify-content: center; position: relative;
 }
 .prog-seg.current { background: transparent; box-shadow: inset 0 0 0 1.5px var(--ink-dim); }
 .prog-seg.right { background: var(--correct); }
 .prog-seg.wrong { background: var(--wrong); }
-.prog-seg.bet { box-shadow: 0 0 0 1.5px #FFFFFF, 0 0 0 3px var(--accent-brand); }
-.prog-seg .glyph { color: var(--bg); font-weight: 800; font-size: 10px; line-height: 1; }
+/* Bet rubric (strip): inset stroke, transparent buffer, rounded inner fill */
+.prog-seg.bet { background: transparent; box-shadow: none; }
+.prog-seg.bet::before { content: ''; position: absolute; inset: 1.5px; border-radius: 2px; z-index: 0; }
+.prog-seg.bet.right { border-color: var(--correct); }
+.prog-seg.bet.right::before { background: var(--correct); }
+.prog-seg.bet.wrong { border-color: var(--wrong); }
+.prog-seg.bet.wrong::before { background: var(--wrong); }
+.prog-seg .glyph { position: relative; z-index: 1; color: var(--bg); font-weight: 800; font-size: 10px; line-height: 1; }
 
 /* Results grid bet cells + glyphs */
-.share-cell { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
-.share-cell .cell-glyph { color: var(--bg); font-weight: 800; font-size: 14px; line-height: 1; }
-.share-cell.bet { box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px var(--accent-brand); }
+.share-cell {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.share-cell .cell-glyph {
+  position: relative;
+  z-index: 1;
+  color: var(--bg);
+  font-weight: 800;
+  font-size: 14px;
+  line-height: 1;
+}
+/* Bet rubric: border inside the box, transparent buffer, rounded inner fill */
+.share-cell.bet {
+  background: transparent;
+  box-shadow: none;
+  border: 2px solid transparent;
+}
+.share-cell.bet::before {
+  content: '';
+  position: absolute;
+  inset: 2.5px;
+  border-radius: 4px;
+  z-index: 0;
+}
+.share-cell.bet.correct { border-color: var(--correct); }
+.share-cell.bet.correct::before { background: var(--correct); }
+.share-cell.bet.wrong { border-color: var(--wrong); }
+.share-cell.bet.wrong::before { background: var(--wrong); }
 
 /* Hero aurora title */
 .hero-title.aurora {
