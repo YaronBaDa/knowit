@@ -40,17 +40,18 @@
   --on-brand: #140F12;
 
   /* Semantic actions & feedback */
-  --accent-correct: #10B981;
-  --accent-incorrect: #FB7185;
+  --accent-correct: #21C868;
+  --accent-incorrect: #F22933;
+  --accent-incorrect-text: #FF5C63;
   --accent-bet: #F59E0B;
-  --accent-brand: #FF5A8C;
-  --accent-indigo: #FF85AA;
+  --accent-brand: #F454B0;
+  --accent-indigo: #FF7BC8;
 
   /* Soft glow / background-wash tints */
-  --accent-correct-tint: rgba(16, 185, 129, 0.14);
-  --accent-incorrect-tint: rgba(251, 113, 133, 0.16);
+  --accent-correct-tint: rgba(33, 200, 104, 0.14);
+  --accent-incorrect-tint: rgba(242, 41, 51, 0.16);
   --accent-bet-tint: rgba(245, 158, 11, 0.14);
-  --accent-brand-tint: rgba(255, 90, 140, 0.14);
+  --accent-brand-tint: rgba(244, 84, 176, 0.14);
 
   /* Elevation */
   --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 4px 16px rgba(0,0,0,0.18);
@@ -72,7 +73,7 @@
   --wrong: var(--accent-incorrect);
   --warning: var(--accent-bet);
   --ice: var(--accent-brand);
-  --aurora: linear-gradient(90deg, #FF5A8C, #10B981);
+  --aurora: linear-gradient(90deg, #F454B0, #21C868);
   --radius: 14px;
   --radius-sm: 10px;
   --font-sans: 'Lexend', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -189,7 +190,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 #screen-landing.is-completed .hub-cards { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 340px; }
 .hub-brand { display: flex; align-items: center; gap: 8px; }
 .hub-wordmark { font-family: var(--font-display); font-size: 16px; font-weight: 800; letter-spacing: 0.02em; color: var(--text-primary); }
-.streak-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(255, 90, 140, 0.35); background: var(--accent-brand-tint); color: var(--accent-brand); font-family: var(--font-mono); font-size: 12px; font-weight: 600; }
+.streak-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(244, 84, 176, 0.35); background: var(--accent-brand-tint); color: var(--accent-brand); font-family: var(--font-mono); font-size: 12px; font-weight: 600; }
 .streak-pill .fire { display: inline-flex; }
 .streak-pill svg { width: 13px; height: 13px; }
 .trophy-card { width: 100%; max-width: 340px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius); padding: 16px; text-align: left; }
@@ -197,11 +198,11 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .tc-score { font-size: 18px; font-weight: 700; color: var(--text-primary); }
 .tc-score b { font-size: 20px; font-weight: 800; }
 .tc-score .muted { color: var(--text-secondary); font-weight: 500; font-size: 14px; }
-.tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin: 10px 0; }
+.tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; margin: 10px 0; padding: 3px 2px; }
 .tc-cell { height: 12px; border-radius: 3px; background: var(--bg-surface-subtle); }
 .tc-cell.ok { background: var(--correct); }
 .tc-cell.miss { background: var(--wrong); }
-.tc-cell.bet { box-shadow: inset 0 0 0 1.5px var(--accent-bet); }
+.tc-cell.bet { box-shadow: 0 0 0 1.5px #FFFFFF, 0 0 0 3px var(--accent-brand); }
 .tc-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); }
 .tc-actions { display: flex; gap: 8px; margin-top: 12px; }
 .tc-actions .btn-secondary { flex: 1 1 0; max-width: none; padding: 10px 12px; font-size: 14px; }
@@ -280,8 +281,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .endless-hud .life.lost { opacity: 0.25; filter: grayscale(1); transform: scale(0.85); }
 .endless-hud .streak { font-family: var(--font-mono); font-size: 16px; font-weight: 700; color: var(--accent-brand); transition: all .3s; }
 .endless-hud .streak.blazing {
-  color: var(--accent-brand); text-shadow: 0 0 12px rgba(255, 90, 140, 0.5);
-  border: 1px solid rgba(255, 90, 140, 0.4); background: var(--accent-brand-tint);
+  color: var(--accent-brand); text-shadow: 0 0 12px rgba(244, 84, 176, 0.5);
+  border: 1px solid rgba(244, 84, 176, 0.4); background: var(--accent-brand-tint);
   padding: 4px 10px; border-radius: 20px;
 }
 
@@ -328,7 +329,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .streak-badge {
   display: inline-flex; align-items: center; gap: 6px;
   font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--ink);
-  background: var(--accent-brand-tint); border: 1px solid rgba(255, 90, 140, 0.35);
+  background: var(--accent-brand-tint); border: 1px solid rgba(244, 84, 176, 0.35);
   padding: 4px 12px; border-radius: 999px; margin-top: 10px;
 }
 .streak-badge svg { width: 14px; height: 14px; color: var(--accent-brand); }
@@ -341,7 +342,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
 /* Visual share grid */
 .share-visual {
-  display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 9px;
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
   padding: 14px 16px; max-width: 260px; width: 100%;
 }
@@ -410,7 +411,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* Duel banner */
 .duel-banner {
   display: flex; align-items: center; justify-content: center; gap: 8px;
-  background: var(--accent-brand-tint); border: 1px solid rgba(255, 90, 140, 0.35);
+  background: var(--accent-brand-tint); border: 1px solid rgba(244, 84, 176, 0.35);
   border-radius: var(--radius-sm); padding: 8px 14px; margin-bottom: 10px;
   font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--accent-brand);
 }
@@ -462,7 +463,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .bet-toggle svg { width: 14px; height: 14px; }
 
 /* Progress strip (daily only) */
-.progress-strip { display: flex; gap: 3px; margin-bottom: 8px; flex-shrink: 0; }
+.progress-strip { display: flex; gap: 5px; margin-bottom: 8px; padding: 2px 0; flex-shrink: 0; }
 .prog-seg {
   flex: 1; height: 14px; border-radius: 4px; background: var(--surface-3);
   display: flex; align-items: center; justify-content: center; position: relative;
@@ -470,12 +471,13 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .prog-seg.current { background: transparent; box-shadow: inset 0 0 0 1.5px var(--ink-dim); }
 .prog-seg.right { background: var(--correct); }
 .prog-seg.wrong { background: var(--wrong); }
+.prog-seg.bet { box-shadow: 0 0 0 1.5px #FFFFFF, 0 0 0 3px var(--accent-brand); }
 .prog-seg .glyph { color: var(--bg); font-weight: 800; font-size: 10px; line-height: 1; }
 
 /* Results grid bet cells + glyphs */
 .share-cell { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
 .share-cell .cell-glyph { color: var(--bg); font-weight: 800; font-size: 14px; line-height: 1; }
-.share-cell.bet { box-shadow: inset 0 0 0 2px var(--accent-bet); }
+.share-cell.bet { box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px var(--accent-brand); }
 
 /* Hero aurora title */
 .hero-title.aurora {
@@ -689,7 +691,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   <div class="modal-backdrop" id="review-modal" style="display:none;">
     <div class="modal-card">
       <div class="mq" id="rm-question"></div>
-      <div class="mrow"><span class="mlabel">You picked</span><span id="rm-picked" style="color:var(--wrong)"></span></div>
+      <div class="mrow"><span class="mlabel">You picked</span><span id="rm-picked" style="color:var(--accent-incorrect-text)"></span></div>
       <div class="mrow"><span class="mlabel">Correct</span><span id="rm-correct" style="color:var(--correct)"></span></div>
       <div class="mrow"><span class="mlabel">Bet</span><span id="rm-bet"></span></div>
       <div class="mdyk"><div class="mdyk-label">Did you know?</div><span id="rm-dyk"></span></div>
@@ -1833,6 +1835,7 @@ function renderProgressStrip() {
       const a = state.answers[i];
       seg.classList.add(a.correct ? 'right' : 'wrong');
       if (a.bet) {
+        seg.classList.add('bet');
         const g = document.createElement('span');
         g.className = 'glyph';
         g.textContent = a.correct ? '✓' : '✕';
@@ -2044,10 +2047,10 @@ function handleAnswer(idx) {
   const fb = $('feedback-strip');
   if (bet) {
     $('fb-result').textContent = correct ? `Knew it. +2` : `Overconfident. −1`;
-    $('fb-result').style.color = correct ? 'var(--accent-bet)' : 'var(--accent-incorrect)';
+    $('fb-result').style.color = correct ? 'var(--accent-bet)' : 'var(--accent-incorrect-text)';
   } else {
     $('fb-result').textContent = correct ? 'Obviously.' : 'Bold guess.';
-    $('fb-result').style.color = correct ? 'var(--correct)' : 'var(--wrong)';
+    $('fb-result').style.color = correct ? 'var(--correct)' : 'var(--accent-incorrect-text)';
   }
   $('fb-insight').textContent = q.didYouKnow;
   fb.className = 'feedback-strip show ' + (correct ? 'correct' : 'wrong');
@@ -2335,7 +2338,7 @@ function launchConfetti() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   const pieces = [];
-  const colors = ['#10B981','#FF5A8C','#F59E0B','#FB7185','#F3F4F6','#1F181C'];
+  const colors = ['#21C868', '#F454B0', '#F22933', '#F59E0B', '#F3F4F6', '#1F181C'];
   for (let i=0; i<120; i++) {
     pieces.push({
       x: Math.random()*canvas.width,
