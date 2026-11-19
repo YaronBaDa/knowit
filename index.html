@@ -328,10 +328,10 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
 /* Hero score */
 .results-hero { display: flex; flex-direction: column; align-items: center; }
-.hero-score { font-size: 64px; font-weight: 800; line-height: 1; letter-spacing: -0.02em; }
+.hero-score { display: none; font-size: 64px; font-weight: 800; line-height: 1; letter-spacing: -0.02em; }
 .hero-score .of { color: var(--ink-dim); font-size: 32px; font-weight: 700; }
 .hero-title { font-size: 19px; font-weight: 800; letter-spacing: 0.01em; margin-top: 6px; }
-.hero-sub { font-family: var(--font-mono); font-size: 12px; color: var(--ink-faint); margin-top: 4px; }
+.hero-sub { display: none; font-family: var(--font-mono); font-size: 12px; color: var(--ink-faint); margin-top: 4px; }
 .streak-badge {
   display: inline-flex; align-items: center; gap: 6px;
   font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--ink);
@@ -347,16 +347,47 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .highlights b { color: var(--ink); font-weight: 700; }
 
 /* Visual share grid */
-.share-visual {
-  display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 14px 16px; max-width: 260px; width: 100%;
+/* Scorecard: the grid, stat bar and hint share one card */
+.scorecard {
+  width: 100%; max-width: 340px; box-sizing: border-box;
+  background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius);
+  padding: 14px 14px 12px;
 }
-.share-cell { aspect-ratio: 1; border-radius: 6px; }
+.share-visual {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+  background: none; border: none; border-radius: 0; padding: 0; max-width: none; width: 100%;
+}
+.share-cell { position: relative; aspect-ratio: 1; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
 .share-cell.correct { background: var(--correct); }
-.share-cell.wrong { background: var(--wrong); cursor: pointer; transition: transform .12s, outline .12s; }
+.share-cell.wrong { background: transparent; border: 2px solid var(--wrong); cursor: pointer; transition: transform .12s; }
 .share-cell.wrong:active { transform: scale(0.92); }
 .share-cell.empty { background: var(--surface-3); }
+/* Bet marker: bolt in the corner (no glyphs, no extra ring) */
+.share-cell .bet-bolt { position: absolute; top: 2px; right: 2px; width: 11px; height: 11px; display: block; z-index: 2; }
+.share-cell .bet-bolt svg { width: 100%; height: 100%; display: block; }
+.share-cell.correct .bet-bolt { color: var(--bg-canvas); }
+.share-cell.wrong .bet-bolt { color: var(--accent-bet); }
+.share-cell.bet.empty .bet-bolt { color: var(--text-secondary); }
+/* Divider + 4-column stat bar */
+.sc-divider { height: 1px; background: var(--border-subtle); margin: 12px 0 10px; }
+.sc-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center; }
+.sc-stats.three { grid-template-columns: repeat(3, 1fr); }
+.sc-stat b { display: block; font-family: var(--font-mono); font-size: 18px; font-weight: 600; line-height: 1.15; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+.sc-stat-primary b { font-size: 24px; font-weight: 800; }
+.sc-stat span { display: block; font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.08em; color: var(--text-secondary); margin-top: 3px; }
+.scorecard .grid-hint { margin-top: 10px; text-align: center; }
+/* Actions + footer */
+.results-actions { width: 100%; max-width: 340px; display: flex; flex-direction: column; gap: 8px; }
+.results-actions .action-row { display: flex; gap: 8px; align-items: stretch; }
+.results-actions .action-row #btn-challenge { flex: 1 1 auto; width: auto; max-width: none; }
+.results-actions #btn-endless-result { width: 100%; max-width: none; }
+.copy-btn { flex: 0 0 44px; width: 44px; height: 44px; min-height: 44px; padding: 0; border-radius: var(--radius); }
+.copy-btn svg { width: 18px; height: 18px; }
+.results-footer { display: flex; align-items: center; justify-content: center; gap: 4px; font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); }
+.results-footer .footer-dot { opacity: 0.6; }
+.results-footer.no-count .footer-dot { display: none; }
+.copy-ok { font-size: 16px; font-weight: 700; line-height: 1; }
+.results-footer .link-home { min-height: 44px; display: inline-flex; align-items: center; padding: 0 10px; text-underline-offset: 4px; }
 .grid-hint { font-size: 11px; color: var(--ink-dim); font-family: var(--font-mono); margin-top: -4px; }
 
 /* Share text stays constructed but hidden from UI */
@@ -485,41 +516,6 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .prog-seg.bet.wrong { border-color: var(--wrong); }
 .prog-seg.bet.wrong::before { background: var(--wrong); }
 .prog-seg .glyph { position: relative; z-index: 1; color: var(--bg); font-weight: 800; font-size: 10px; line-height: 1; }
-
-/* Results grid bet cells + glyphs */
-.share-cell {
-  position: relative;
-  aspect-ratio: 1;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.share-cell .cell-glyph {
-  position: relative;
-  z-index: 1;
-  color: var(--bg);
-  font-weight: 800;
-  font-size: 14px;
-  line-height: 1;
-}
-/* Bet rubric: border inside the box, transparent buffer, rounded inner fill */
-.share-cell.bet {
-  background: transparent;
-  box-shadow: none;
-  border: 2px solid transparent;
-}
-.share-cell.bet::before {
-  content: '';
-  position: absolute;
-  inset: 2.5px;
-  border-radius: 4px;
-  z-index: 0;
-}
-.share-cell.bet.correct { border-color: var(--correct); }
-.share-cell.bet.correct::before { background: var(--correct); }
-.share-cell.bet.wrong { border-color: var(--wrong); }
-.share-cell.bet.wrong::before { background: var(--wrong); }
 
 /* Hero aurora title */
 .hero-title.aurora {
@@ -710,22 +706,40 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
         </div>
       </div>
 
-      <!-- Highlights -->
-      <div class="highlights" id="highlights"></div>
+      <!-- Scorecard: grid + divider + stat bar + tap hint -->
+      <div class="scorecard" id="scorecard">
+        <div class="share-visual" id="share-visual"></div>
+        <div class="sc-divider"></div>
+        <div class="sc-stats" id="sc-stats">
+          <div class="sc-stat sc-stat-primary"><b id="stat-pts">0</b><span id="stat-pts-label">PTS</span></div>
+          <div class="sc-stat"><b id="stat-correct">0/10</b><span>CORRECT</span></div>
+          <div class="sc-stat"><b id="stat-time">0s</b><span>TIME</span></div>
+          <div class="sc-stat" id="sc-bets"><b id="stat-bets">0/0</b><span>BETS</span></div>
+        </div>
+        <div class="grid-hint" id="grid-hint" style="display:none;">Tap a miss to see what got you.</div>
+      </div>
 
-      <!-- Visual share grid (tappable) -->
-      <div class="share-visual" id="share-visual"></div>
-      <div class="grid-hint" id="grid-hint">Tap a miss to see what got you.</div>
-      <div class="grid-hint" id="next-set-results" style="display:none;"></div>
+      <!-- Blindspot sits below the card, outside it -->
+      <div class="highlights" id="highlights"></div>
 
       <!-- Share text: constructed but hidden -->
       <div class="share-text" id="share-text"></div>
 
       <!-- Actions -->
-      <button class="btn-primary" id="btn-challenge">Challenge a Friend</button>
-      <button class="btn-secondary" id="btn-copy">Copy Result</button>
-      <button class="btn-secondary" id="btn-endless-result" style="display:none;">Play Endless</button>
-      <button class="link-home" id="btn-home">Back to Home</button>
+      <div class="results-actions">
+        <div class="action-row">
+          <button class="btn-primary" id="btn-challenge">Challenge a Friend</button>
+          <button class="btn-secondary copy-btn" id="btn-copy" aria-label="Copy result"></button>
+        </div>
+        <button class="btn-secondary" id="btn-endless-result" style="display:none;">Play Endless</button>
+      </div>
+
+      <!-- Footer: countdown + Home -->
+      <div class="results-footer">
+        <span id="next-set-results"></span>
+        <span class="footer-dot">·</span>
+        <button class="link-home" id="btn-home">Home</button>
+      </div>
     </div>
   </div>
 
@@ -2233,31 +2247,20 @@ function finishGame(opts = {}) {
     if (a.correct) categories[a.category].correct++;
   });
   const entries = Object.entries(categories);
-  const perfectCats = entries.filter(([,d]) => d.total >= 2 && d.correct === d.total).map(([c]) => c);
   const missedCats = entries.filter(([,d]) => d.total >= 2 && d.correct / d.total < 0.5);
   missedCats.sort((a,b) => (a[1].correct/a[1].total) - (b[1].correct/b[1].total));
-  let hl = '';
-  const betBonus = state.answers.reduce((s,a) => s + (a.bet ? (a.points - (a.correct ? 1 : 0)) : 0), 0);
-  // Bets line first (daily only) — 0 bets becomes a discovery hook
-  if (state.mode === 'daily') {
-    hl = betUsed > 0
-      ? `${ICONS.lightning} <b>Bets:</b> ${betHit}/${betUsed} hit · net ${betBonus >= 0 ? '+' : ''}${betBonus} pts`
-      : `${ICONS.lightning} <b>0/3 bets placed.</b> Playing it safe? Swipe right next time.`;
-  }
-  // Mastery (top categories, capped for scannability)
-  if (perfectCats.length) {
-    const top = perfectCats.slice(0, 3).join(', ');
-    hl += (hl ? '<br>' : '') + `${ICONS.flame} <b>Top Categories:</b> ${top} (100%)`;
-  }
-  // Blindspot (single worst category)
+  // Blindspot only — rendered below the scorecard, outside it
+  const hlEl = $('highlights');
   if (missedCats.length) {
     const [wc, wd] = missedCats[0];
-    hl += (hl ? '<br>' : '') + `${ICONS.snowflake} <b>Blindspot:</b> ${wc} (${wd.correct}/${wd.total})`;
+    hlEl.innerHTML = `${ICONS.snowflake} <b>Blindspot:</b> ${wc} (${wd.correct}/${wd.total})`;
+    hlEl.style.display = 'block';
+  } else {
+    hlEl.innerHTML = '';
+    hlEl.style.display = 'none';
   }
-  if (!hl) hl = 'Nothing to brag about, nothing to hide.';
-  $('highlights').innerHTML = hl;
 
-  // Visual share grid (5x2) — wrong cells tappable; bet cells ringed + glyph
+  // Scorecard grid (5x2): correct = solid, miss = hollow outline, bet = corner bolt
   const visualEl = $('share-visual');
   visualEl.innerHTML = '';
   let hasMiss = false;
@@ -2268,15 +2271,29 @@ function finishGame(opts = {}) {
       const a = state.answers[i];
       if (a.correct) cell.classList.add('correct');
       else { cell.classList.add('wrong'); cell.dataset.idx = i; hasMiss = true; }
-      const g = document.createElement('span');
-      g.className = 'cell-glyph';
-      g.textContent = a.correct ? '✓' : '✕';
-      cell.appendChild(g);
-      if (a.bet) cell.classList.add('bet');
+      if (a.bet) {
+        cell.classList.add('bet');
+        const bolt = document.createElement('span');
+        bolt.className = 'bet-bolt';
+        bolt.setAttribute('aria-hidden', 'true');
+        bolt.innerHTML = ICONS.lightning;
+        cell.appendChild(bolt);
+      }
     } else cell.classList.add('empty');
     visualEl.appendChild(cell);
   }
   $('grid-hint').style.display = hasMiss ? 'block' : 'none';
+
+  // Stat bar: points / correct / time / bets (placed, never a hard-coded cap)
+  // Endless has no points — the primary number is the run instead of a permanent 0.
+  const endlessRun = state.mode !== 'daily';
+  $('stat-pts').textContent = endlessRun ? state.endlessStreak : totalPoints;
+  $('stat-pts-label').textContent = endlessRun ? 'STREAK' : 'PTS';
+  $('stat-correct').textContent = `${correct}/${total}`;
+  $('stat-time').textContent = fmtTimeSec(totalTimeSec);
+  $('stat-bets').textContent = `${betHit}/${betUsed}`;
+  $('sc-bets').style.display = betUsed > 0 ? '' : 'none';
+  $('sc-stats').classList.toggle('three', betUsed === 0);
 
   // Share texts — grid rows split 2x5; blindspot folded into the challenge payload
   const dailyNum = getDailyNum();
@@ -2312,15 +2329,22 @@ function finishGame(opts = {}) {
     $('duel-card').style.display = 'none';
   }
 
-  // Show endless button on daily results
-  $('btn-endless-result').style.display = state.mode === 'daily' ? 'flex' : 'none';
+  // Show endless button on daily results, carrying the personal best when there is one
+  const endlessBtn = $('btn-endless-result');
+  endlessBtn.style.display = state.mode === 'daily' ? 'flex' : 'none';
+  if (state.mode === 'daily') {
+    setBtnLabel(endlessBtn, stats.bestEndless > 0 ? `Play Endless · Beat ${stats.bestEndless}` : 'Play Endless');
+  }
 
-  // Next-set countdown (daily results only, replay included)
+  // Footer: next-set countdown (daily results only, replay included) + Home
+  const footer = document.querySelector('.results-footer');
   if (state.mode === 'daily') {
     $('next-set-results').textContent = nextSetLine();
     $('next-set-results').style.display = 'block';
+    footer.classList.remove('no-count');
   } else {
     $('next-set-results').style.display = 'none';
+    footer.classList.add('no-count');
   }
 
   // Confetti for perfect daily
@@ -2489,13 +2513,32 @@ $('btn-challenge').onclick = ()=>{
   }
 };
 // Copy Result — clean emoji blocks for Reddit/Discord/group chats
+function copyGridOnly(btn) {
+  const text = state.shareClean || $('share-text').textContent;
+  const done = () => {
+    const prev = btn.innerHTML;
+    btn.classList.add('btn-copied');
+    btn.innerHTML = '<span class="copy-ok" aria-hidden="true">✓</span>';
+    setTimeout(()=>{ btn.classList.remove('btn-copied'); btn.innerHTML = prev; }, 1800);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(()=>{});
+  } else {
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+      done();
+    } catch(e){}
+  }
+}
 $('btn-copy').onclick = ()=>{
   audio.click();
-  copyText(state.shareClean || $('share-text').textContent, $('btn-copy'), 'Copy Result');
+  copyGridOnly($('btn-copy'));
 };
 // Inject inline SVG icons into action buttons (monochrome, matches core UI)
 $('btn-challenge').innerHTML = `${ICONS.swords}<span class="btn-label">Challenge a Friend</span>`;
-$('btn-copy').innerHTML = `${ICONS.copy}<span class="btn-label">Copy Result</span>`;
+$('btn-copy').innerHTML = ICONS.copy;
 $('btn-endless-result').innerHTML = `${ICONS.heart}<span class="btn-label">Play Endless</span>`;
 // Review modal: tap wrong grid cell → open; backdrop/close button → close
 $('share-visual').addEventListener('click', e => {
