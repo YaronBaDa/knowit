@@ -123,6 +123,35 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* Landing */
 .landing-body { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; text-align: center; gap: 16px; overflow-y: auto; min-height: 0; }
 .landing-body::before, .landing-body::after, .results-body::before, .results-body::after { content: ''; margin: auto; }
+/* Pre-completion hero: centres in the space left over by the pinned footer */
+#screen-landing:not(.is-completed) .landing-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+  min-height: 0;
+  overflow-y: auto;
+}
+#screen-landing:not(.is-completed) .landing-body::before,
+#screen-landing:not(.is-completed) .landing-body::after { content: none; margin: 0; }
+#screen-landing:not(.is-completed) .logo-mark { width: clamp(96px, 26vw, 116px); height: clamp(96px, 26vw, 116px); margin-bottom: 4px; }
+.landing-body p.landing-tagline { max-width: 340px; }
+/* Pinned CTA footer */
+.landing-footer {
+  flex-shrink: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0 max(20px, env(safe-area-inset-bottom));
+  background: var(--bg-canvas);
+}
+.landing-footer #landing-puzzle { margin: 0; }
+.landing-footer #btn-daily { width: 100%; max-width: 340px; }
 .landing-body h2 { font-family: var(--font-display); font-size: clamp(24px, 7vw, 30px); font-weight: 800; letter-spacing: 0.02em; line-height: 1.1; margin: 0; color: var(--text-primary); }
 .landing-body p { font-size: 15px; color: var(--ink-faint); max-width: 320px; margin: 0; line-height: 1.5; }
 .landing-streak-bar {
@@ -181,13 +210,13 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 #screen-landing.is-completed .landing-body > h2,
 #screen-landing.is-completed #landing-puzzle,
 #screen-landing.is-completed .landing-body > p,
-#screen-landing.is-completed #landing-rules,
 #screen-landing.is-completed #btn-daily,
 #screen-landing.is-completed #daily-lock,
 #screen-landing.is-completed #streak-bar,
 #screen-landing.is-completed #btn-practice { display: none !important; }
 #screen-landing.is-completed .hub-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; max-width: 340px; flex-shrink: 0; }
 #screen-landing.is-completed .hub-cards { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 340px; }
+#screen-landing.is-completed .landing-footer { display: none; }
 .hub-brand { display: flex; align-items: center; gap: 8px; }
 .hub-wordmark { font-family: var(--font-display); font-size: 16px; font-weight: 800; letter-spacing: 0.02em; color: var(--text-primary); }
 .streak-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(244, 84, 176, 0.35); background: var(--accent-brand-tint); color: var(--accent-brand); font-family: var(--font-mono); font-size: 12px; font-weight: 600; }
@@ -572,16 +601,12 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
         <svg viewBox="0 0 48 48" role="img" aria-label="KNOWIT" preserveAspectRatio="xMidYMid meet"><use href="#knowit-symbol"></use></svg>
       </div>
       <h2>KNOWIT</h2>
-      <div class="grid-hint" id="landing-puzzle"></div>
-      <p>10 daily trivia questions. Same set for everyone.</p>
-      <p class="grid-hint" id="landing-rules" style="display:none;">3 bets per game: +2 if right, −1 if wrong.</p>
+      <p class="landing-tagline">10 daily trivia questions.<br>Same set for everyone.</p>
 
       <div class="landing-streak-bar" id="streak-bar" style="display:none;">
         <span class="fire" id="streak-fire"></span>
         <span id="streak-text"></span>
       </div>
-
-      <button class="btn-primary" id="btn-daily">Play Today's Set</button>
 
       <div class="daily-locked" id="daily-lock" style="display:none;">
         <b>Today's set complete.</b>
@@ -611,6 +636,12 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
       <div class="stats-bar" id="landing-stats"></div>
 
       <button class="btn-secondary" id="btn-practice" style="display:none;">Practice Mode</button>
+    </div>
+
+    <!-- thumb-zone footer: Daily #N + primary CTA -->
+    <div class="landing-footer" id="landing-footer">
+      <div class="grid-hint" id="landing-puzzle"></div>
+      <button class="btn-primary" id="btn-daily">Play Today's Set</button>
     </div>
   </div>
 
@@ -1557,7 +1588,7 @@ function renderLanding() {
   renderStreakBar();
 
   $('landing-puzzle').textContent = `Daily #${getDailyNum()}`;
-  $('landing-rules').style.display = stats.completedDaily ? 'none' : 'block';
+  $('landing-footer').style.display = completedToday ? 'none' : 'flex';
   $('btn-daily').style.display = completedToday ? 'none' : 'block';
   $('daily-lock').style.display = 'none';
 
