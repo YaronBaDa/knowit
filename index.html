@@ -10,14 +10,14 @@
 <link rel="apple-touch-icon" href="https://yaronbada.github.io/synapse-trivia/apple-touch-icon.png">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="KNOWIT">
-<meta property="og:title" content="KNOWIT — Daily 10 Trivia">
+<meta property="og:title" content="KNOWIT — Daily Trivia">
 <meta property="og:description" content="10 questions. Once a day. Same set for everyone. Can you beat my score?">
 <meta property="og:image" content="https://yaronbada.github.io/synapse-trivia/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:url" content="https://yaronbada.github.io/synapse-trivia/">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="KNOWIT — Daily 10 Trivia">
+<meta name="twitter:title" content="KNOWIT — Daily Trivia">
 <meta name="twitter:description" content="10 questions. Once a day. Same set for everyone. Can you beat my score?">
 <meta name="twitter:image" content="https://yaronbada.github.io/synapse-trivia/og-image.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -282,7 +282,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .results-hero { display: flex; flex-direction: column; align-items: center; }
 .hero-score { font-size: 64px; font-weight: 800; line-height: 1; letter-spacing: -0.02em; }
 .hero-score .of { color: var(--ink-dim); font-size: 32px; font-weight: 700; }
-.hero-title { font-size: 19px; font-weight: 800; letter-spacing: 0.05em; margin-top: 6px; }
+.hero-title { font-size: 19px; font-weight: 800; letter-spacing: 0.01em; margin-top: 6px; }
 .hero-sub { font-family: var(--font-mono); font-size: 12px; color: var(--ink-faint); margin-top: 4px; }
 .streak-badge {
   display: inline-flex; align-items: center; gap: 6px;
@@ -482,22 +482,22 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
       </div>
       <h2>KNOWIT</h2>
       <div class="grid-hint" id="landing-puzzle"></div>
-      <p>10 questions. Same set for everyone. Once per day.</p>
-      <p class="grid-hint" id="landing-rules" style="display:none;">3 bets a day: +2 if right, −1 if wrong.</p>
+      <p>10 daily trivia questions. Same set for everyone.</p>
+      <p class="grid-hint" id="landing-rules" style="display:none;">3 bets per game: +2 if right, −1 if wrong.</p>
 
       <div class="landing-streak-bar" id="streak-bar" style="display:none;">
         <span class="fire" id="streak-fire"></span>
         <span id="streak-text"></span>
       </div>
 
-      <button class="btn-primary" id="btn-daily">▶ Play Daily 10</button>
+      <button class="btn-primary" id="btn-daily">Play Today's Set</button>
 
       <div class="daily-locked" id="daily-lock" style="display:none;">
-        <b>Daily 10 completed!</b><br>
+        <b>Today's set complete.</b><br>
         <span id="next-set-line"></span>
       </div>
 
-      <button class="btn-secondary" id="btn-view-results" style="display:none;">View results / Share</button>
+      <button class="btn-secondary" id="btn-view-results" style="display:none;">View Results &amp; Share</button>
 
       <div class="stats-bar" id="landing-stats"></div>
 
@@ -505,8 +505,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
       <div class="endless-teaser" id="endless-teaser" style="display:none;">
         <div class="gt-streak" id="gt-best">0</div>
         <div class="gt-label">Best Endless Streak</div>
-        <div style="font-size:12px;color:var(--ink-faint);margin-bottom:10px;">Survive as long as you can. 3 lives.</div>
-        <button class="btn-secondary" id="btn-endless" style="max-width:100%;">Play Endless Mode</button>
+        <div style="font-size:12px;color:var(--ink-faint);margin-bottom:10px;">Keep playing until you miss 3.</div>
+        <button class="btn-secondary" id="btn-endless" style="max-width:100%;">Play Endless</button>
       </div>
 
       <button class="btn-secondary" id="btn-practice" style="display:none;">Practice Mode</button>
@@ -553,7 +553,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
     </div>
 
     <!-- Swipe-to-bet day-1 tip (daily only) -->
-    <div class="swipe-tip" id="swipe-tip" style="display:none;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span>Swipe right to bet (+2 if correct, -1 if wrong)</span></div>
+    <div class="swipe-tip" id="swipe-tip" style="display:none;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span>Swipe right on an answer to bet (+2 / −1)</span></div>
 
     <div class="mid-slot" id="mid-slot">
       <button type="button" class="bet-toggle" id="bet-toggle" aria-pressed="false" style="display:none;"></button>
@@ -574,7 +574,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
         <span class="logo-mark-sm" aria-hidden="true">
           <svg viewBox="0 0 48 48" preserveAspectRatio="xMidYMid meet"><use href="#knowit-symbol"></use></svg>
         </span>
-        <h1 id="result-title">Daily 10</h1>
+        <h1 id="result-title">Today's Set</h1>
       </div>
       <div class="meta" id="result-meta"></div>
     </div>
@@ -589,7 +589,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
       <!-- Duel result card (duel runs only) -->
       <div class="duel-card" id="duel-card" style="display:none;">
-        <div class="duel-outcome" id="duel-outcome">VICTORY</div>
+        <div class="duel-outcome" id="duel-outcome">Outsmarted them.</div>
         <div class="duel-vs">
           <div class="duel-side duel-you">
             <div class="d-name">You</div>
@@ -610,7 +610,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
       <!-- Visual share grid (tappable) -->
       <div class="share-visual" id="share-visual"></div>
-      <div class="grid-hint" id="grid-hint">Tap a red square to review the question</div>
+      <div class="grid-hint" id="grid-hint">Tap a miss to see what got you.</div>
       <div class="grid-hint" id="next-set-results" style="display:none;"></div>
 
       <!-- Share text: constructed but hidden -->
@@ -618,9 +618,9 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
       <!-- Actions -->
       <button class="btn-primary" id="btn-challenge">Challenge a Friend</button>
-      <button class="btn-secondary" id="btn-copy">Copy Grid Only</button>
-      <button class="btn-secondary" id="btn-endless-result" style="display:none;">Play Endless Mode</button>
-      <button class="link-home" id="btn-home">Home Menu</button>
+      <button class="btn-secondary" id="btn-copy">Copy Result</button>
+      <button class="btn-secondary" id="btn-endless-result" style="display:none;">Play Endless</button>
+      <button class="link-home" id="btn-home">Back to Home</button>
     </div>
   </div>
 
@@ -1450,9 +1450,9 @@ function renderLanding() {
   if (!completedToday) {
     const prog = loadProgress();
     const canResume = !!(prog && prog.date === getToday() && prog.puzzle === getDailyNum() && Array.isArray(prog.answers));
-    $('btn-daily').textContent = canResume ? `▶ Resume Daily 10 (Q${prog.answers.length+1}/10)` : '▶ Play Daily 10';
+    $('btn-daily').textContent = canResume ? `Resume Today's Set (Q${prog.answers.length+1}/10)` : "Play Today's Set";
   } else {
-    $('btn-daily').textContent = '▶ Play Daily 10';
+    $('btn-daily').textContent = "Play Today's Set";
   }
   // Gating: Endless only visible after daily is done
   $('endless-teaser').style.display = completedToday ? 'block' : 'none';
@@ -1474,13 +1474,13 @@ function renderStreakBar() {
   if (eff > 0) {
     bar.style.display = 'flex';
     $('streak-text').textContent = stats.completedDaily === getToday()
-      ? `${eff} day streak`
-      : `${eff} day streak · play today to keep it`;
+      ? `${eff}-day streak`
+      : `${eff}-day streak · play today to keep it`;
     fire.innerHTML = ICONS.flame;
     fire.classList.remove('broken');
   } else if (stats.maxStreak > 0) {
     bar.style.display = 'flex';
-    $('streak-text').textContent = `Streak ended`;
+    $('streak-text').textContent = `Streak reset · start a new one`;
     fire.innerHTML = ICONS.flame;
     fire.classList.add('broken');
   } else {
@@ -1703,7 +1703,7 @@ function updateBetUI() {
   tg.style.visibility = state.waiting ? 'hidden' : '';
   tg.classList.toggle('armed', !!state.armed);
   tg.setAttribute('aria-pressed', String(!!state.armed));
-  tg.innerHTML = ICONS.lightning + (state.armed ? '<span>BET ON · tap your answer (tap here to cancel)</span>' : '<span>Bet this question · +2 / −1</span>');
+  tg.innerHTML = ICONS.lightning + (state.armed ? '<span>Bet armed · pick your answer</span>' : '<span>Bet on yourself · +2 / −1</span>');
 }
 function renderProgressStrip() {
   const el = $('progress-strip');
@@ -1866,7 +1866,7 @@ function handleTimeout() {
   if (!state.muted) audio.wrong();
 
   const fb = $('feedback-strip');
-  $('fb-result').textContent = wasArmed ? '✕ Time\'s up! Bet refunded.' : '✕ Time\'s up!';
+  $('fb-result').textContent = wasArmed ? 'Too slow. Bet refunded.' : 'Too slow.';
   $('fb-result').style.color = 'var(--warning)';
   $('fb-insight').textContent = q.didYouKnow;
   fb.className = 'feedback-strip show timeout';
@@ -1926,10 +1926,10 @@ function handleAnswer(idx) {
 
   const fb = $('feedback-strip');
   if (bet) {
-    $('fb-result').textContent = correct ? `✓ KNEW IT. +2` : `✕ NOPE. -1`;
+    $('fb-result').textContent = correct ? `Knew it. +2` : `Overconfident. −1`;
     $('fb-result').style.color = correct ? 'var(--accent-bet)' : 'var(--accent-incorrect)';
   } else {
-    $('fb-result').textContent = correct ? '✓ Correct!' : '✕ Incorrect';
+    $('fb-result').textContent = correct ? 'Obviously.' : 'Bold guess.';
     $('fb-result').style.color = correct ? 'var(--correct)' : 'var(--wrong)';
   }
   $('fb-insight').textContent = q.didYouKnow;
@@ -1995,7 +1995,7 @@ function finishGame(opts = {}) {
   showScreen('results');
   // A duel run is consumed on results — drop the URL param so a refresh can't replay it
   if (!replay) clearDuelParam();
-  $('result-title').textContent = state.mode === 'daily' ? 'Daily 10' : 'Endless Mode';
+  $('result-title').textContent = state.mode === 'daily' ? "Today's Set" : 'Endless Mode';
   $('result-meta').textContent = state.mode === 'daily' ? `Daily #${getDailyNum()}` : 'Endless Mode';
 
   const betUsed = state.answers.filter(a=>a.bet).length;
@@ -2011,7 +2011,7 @@ function finishGame(opts = {}) {
     $('hero-sub').textContent = `${correct}/${total} correct • Total ${fmtTimeSec(totalTimeSec)} • ${dailyArch.sub}`;
   } else {
     $('hero-score').innerHTML = `${state.endlessStreak}`;
-    const eT = state.endlessStreak >= 20 ? ['LEGENDARY','flame'] : state.endlessStreak >= 10 ? ['UNSTOPPABLE','heart'] : state.endlessStreak >= 5 ? ['ON A ROLL','target'] : ['WARM-UP RUN','skull'];
+    const eT = state.endlessStreak >= 20 ? ['Untouchable.','flame'] : state.endlessStreak >= 10 ? ['Show-off.','heart'] : state.endlessStreak >= 5 ? ['Warming up.','target'] : ['Short trip.','skull'];
     $('hero-title').className = 'hero-title';
     $('hero-title').innerHTML = `${ICONS[eT[1]]}<span>${eT[0]}</span>`;
     $('hero-sub').textContent = `Best Endless: ${stats.bestEndless} • Total ${fmtTimeSec(totalTimeSec)}`;
@@ -2046,7 +2046,7 @@ function finishGame(opts = {}) {
   if (state.mode === 'daily') {
     hl = betUsed > 0
       ? `${ICONS.lightning} <b>Bets:</b> ${betHit}/${betUsed} hit · net ${betBonus >= 0 ? '+' : ''}${betBonus} pts`
-      : `${ICONS.lightning} <b>0/3 bets placed</b> · Tip: Swipe right on an answer you know to bet +2 / -1!`;
+      : `${ICONS.lightning} <b>0/3 bets placed.</b> Playing it safe? Swipe right next time.`;
   }
   // Mastery (top categories, capped for scannability)
   if (perfectCats.length) {
@@ -2058,7 +2058,7 @@ function finishGame(opts = {}) {
     const [wc, wd] = missedCats[0];
     hl += (hl ? '<br>' : '') + `${ICONS.snowflake} <b>Blindspot:</b> ${wc} (${wd.correct}/${wd.total})`;
   }
-  if (!hl) hl = 'Clean run.';
+  if (!hl) hl = 'Nothing to brag about, nothing to hide.';
   $('highlights').innerHTML = hl;
 
   // Visual share grid (5x2) — wrong cells tappable; bet cells ringed + glyph
@@ -2090,8 +2090,8 @@ function finishGame(opts = {}) {
   const challengeUrl = getDuelUrl(totalPoints, totalTimeSec);
   const blindspot = missedCats.length ? missedCats[0][0] : null;
   if (state.mode === 'daily') {
-    const head = `KNOWIT Daily #${dailyNum} ⚡ ${totalPoints} pts (${correct}/${total})` + (stats.streak >= 2 ? ` 🔥${stats.streak}` : '');
-    // Copy Grid Only — clean emoji blocks, no duel link
+    const head = `KNOWIT #${dailyNum} · ${totalPoints} pts (${correct}/${total})` + (stats.streak >= 2 ? `  🔥${stats.streak}` : '');
+    // Copy Result — clean emoji blocks, no duel link
     state.shareClean = `${head}\n${row1}${row2 ? '\n' + row2 : ''}`;
     // Challenge payload — archetype + time, 2-row grid, blindspot, CTA + duel link
     let full = `${head}\n${dailyArch.name} (${fmtTimeSec(totalTimeSec)})\n\n${row1}${row2 ? '\n' + row2 : ''}`;
@@ -2113,11 +2113,11 @@ function finishGame(opts = {}) {
     $('duel-them-time').textContent = fmtTimeSec(d.time);
     $('duel-you-score').textContent = `${totalPoints} pts`;
     $('duel-you-time').textContent = fmtTimeSec(totalTimeSec);
-    let outcome = 'TIED', oIcon = null, oColor = 'var(--accent-warm)';
-    if (totalPoints > d.score) { outcome = 'VICTORY'; oIcon = 'trophy'; oColor = 'var(--correct)'; }
-    else if (totalPoints < d.score) { outcome = 'DEFEATED'; oIcon = 'skull'; oColor = 'var(--wrong)'; }
-    else if (totalTimeSec < d.time) { outcome = 'VICTORY'; oIcon = 'trophy'; oColor = 'var(--correct)'; }
-    else if (totalTimeSec > d.time) { outcome = 'DEFEATED'; oIcon = 'skull'; oColor = 'var(--wrong)'; }
+    let outcome = 'Dead heat.', oIcon = null, oColor = 'var(--accent-warm)';
+    if (totalPoints > d.score) { outcome = 'Outsmarted them.'; oIcon = 'trophy'; oColor = 'var(--correct)'; }
+    else if (totalPoints < d.score) { outcome = 'Outsmarted.'; oIcon = 'skull'; oColor = 'var(--wrong)'; }
+    else if (totalTimeSec < d.time) { outcome = 'Outsmarted them.'; oIcon = 'trophy'; oColor = 'var(--correct)'; }
+    else if (totalTimeSec > d.time) { outcome = 'Outsmarted.'; oIcon = 'skull'; oColor = 'var(--wrong)'; }
     $('duel-outcome').innerHTML = `${outcome}${oIcon ? ICONS[oIcon] : ''}`;
     $('duel-outcome').style.color = oColor;
   } else {
@@ -2170,14 +2170,13 @@ function fmtTimeSec(s) {
 }
 function sumPoints(answers){ return answers.reduce((s,a)=>s+(a.points||0),0); }
 function getArchetype(correct, total, totalTimeSec, betUsed, betHit) {
-  const fast = totalTimeSec < FAST_TIME_SEC;
-  if (correct < 5) return { name: 'THE EGO CHECK', icon: 'skull', sub: 'Back to basics' };
-  if (betUsed === 3 && betHit === 0) return { name: 'THE ADRENALINE JUNKIE', icon: 'dice', sub: 'Missed all 3 bets' };
-  if (betUsed === 3 && betHit === 3) return { name: 'THE SNIPER', icon: 'target', sub: '3/3 bets hit' };
-  if (correct >= 9 && fast) return { name: 'THE SYNTHESIZER', icon: 'bulb', sub: 'Fast and accurate' };
-  if (correct >= 7 && !fast) return { name: 'THE GRANDMASTER', icon: 'chess', sub: 'Slow & steady' };
-  if (correct >= 7) return { name: 'THE SNIPER', icon: 'target', sub: 'Sharp run' };
-  return { name: 'THE GRANDMASTER', icon: 'chess', sub: 'Steady progress' };
+  if (correct === total) return { name: 'Insufferable.', icon: 'trophy', sub: 'Nobody asked. Yes, we noticed.' };
+  if (betUsed === 3 && betHit === 3) return { name: 'Psychic.', icon: 'target', sub: '3 for 3 on bets. Suspicious.' };
+  if (betUsed === 3 && betHit === 0) return { name: 'Delusional.', icon: 'dice', sub: 'Missed all 3 bets. Respect the commitment.' };
+  if (correct >= 8) return { name: 'Smug.', icon: 'bulb', sub: 'Earned it. Barely hiding it.' };
+  if (correct >= 6) return { name: 'Smug-ish.', icon: 'chess', sub: 'Confidence slightly ahead of the facts.' };
+  if (correct >= 3) return { name: 'Humbled.', icon: 'skull', sub: 'A lot of feelings in a short quiz.' };
+  return { name: 'Stumped.', icon: 'skull', sub: 'Come back tomorrow. Quietly.' };
 }
 function fmtClock(s) {
   const m = Math.floor(s / 60);
@@ -2254,8 +2253,8 @@ $('bet-toggle').onclick = () => {
 
 $('btn-close').onclick = ()=>{
   const msg = state.mode === 'daily'
-    ? 'Leave the game? You can resume today, but the clock keeps running on the current question.'
-    : 'Quit current game? Progress will be lost.';
+    ? "Stepping away? You can resume today, but this question's clock keeps running."
+    : 'Leave Endless mode? Your current streak will be lost.';
   if (confirm(msg)) { stopQTimer(); showScreen('landing'); renderLanding(); }
 };
 function setBtnLabel(btn, txt) {
@@ -2288,15 +2287,15 @@ $('btn-challenge').onclick = ()=>{
     copyText(text, btn, 'Challenge a Friend');
   }
 };
-// Copy Grid Only — clean emoji blocks for Reddit/Discord/group chats
+// Copy Result — clean emoji blocks for Reddit/Discord/group chats
 $('btn-copy').onclick = ()=>{
   audio.click();
-  copyText(state.shareClean || $('share-text').textContent, $('btn-copy'), 'Copy Grid Only');
+  copyText(state.shareClean || $('share-text').textContent, $('btn-copy'), 'Copy Result');
 };
 // Inject inline SVG icons into action buttons (monochrome, matches core UI)
 $('btn-challenge').innerHTML = `${ICONS.swords}<span class="btn-label">Challenge a Friend</span>`;
-$('btn-copy').innerHTML = `${ICONS.copy}<span class="btn-label">Copy Grid Only</span>`;
-$('btn-endless-result').innerHTML = `${ICONS.heart}<span class="btn-label">Play Endless Mode</span>`;
+$('btn-copy').innerHTML = `${ICONS.copy}<span class="btn-label">Copy Result</span>`;
+$('btn-endless-result').innerHTML = `${ICONS.heart}<span class="btn-label">Play Endless</span>`;
 // Review modal: tap wrong grid cell → open; backdrop/close button → close
 $('share-visual').addEventListener('click', e => {
   const cell = e.target.closest('.share-cell.wrong');
@@ -2318,7 +2317,7 @@ if (duelP) {
   } else if (stats.completedDaily === getToday()) {
     // Daily already locked — don't let a link bypass it
     clearDuelParam();
-    toast("You already played today's set. Challenge accepted tomorrow!");
+    toast("You already played today's set. Challenge accepted tomorrow.");
   } else {
     // Small delay so landing renders first, then jump straight in
     setTimeout(()=>startDaily(), 400);
