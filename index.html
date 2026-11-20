@@ -43,19 +43,14 @@
   --accent-correct: #21C868;
   --accent-incorrect: #F22933;
   --accent-incorrect-text: #FF5C63;
-  /* BET ACCENT — single switch for everything bet-related (toggle, ring, bolt, pip).
-     To revert to the old amber, replace the 4 bet values below with:
-       #F59E0B | rgba(245, 158, 11, 0.14) | rgba(245, 158, 11, 0.4) | rgba(245, 158, 11, 0.7) */
-  --accent-bet: #F454B0;
-  --accent-bet-glow: rgba(244, 84, 176, 0.4);
-  --accent-bet-glow-strong: rgba(244, 84, 176, 0.7);
+  --accent-bet: #F59E0B;
   --accent-brand: #F454B0;
   --accent-indigo: #FF7BC8;
 
   /* Soft glow / background-wash tints */
   --accent-correct-tint: rgba(33, 200, 104, 0.14);
   --accent-incorrect-tint: rgba(242, 41, 51, 0.16);
-  --accent-bet-tint: rgba(244, 84, 176, 0.14);
+  --accent-bet-tint: rgba(245, 158, 11, 0.14);
   --accent-brand-tint: rgba(244, 84, 176, 0.14);
 
   /* Elevation */
@@ -73,10 +68,10 @@
   --text-muted: var(--text-secondary);
   --border: var(--border-subtle);
   --accent: var(--accent-brand);
-  --accent-warm: #F59E0B;
+  --accent-warm: var(--accent-bet);
   --correct: var(--accent-correct);
   --wrong: var(--accent-incorrect);
-  --warning: #F59E0B;
+  --warning: var(--accent-bet);
   --ice: var(--accent-brand);
   --aurora: linear-gradient(90deg, #F454B0, #21C868);
   --radius: 14px;
@@ -303,7 +298,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .option-btn.dimmed { opacity: 0.35; pointer-events: none; }
 .option-btn.timeout { border-color: var(--accent-bet); }
 .option-btn.timeout .option-body { box-shadow: inset 0 0 0 999px var(--accent-bet-tint); }
-.option-btn.bet { border-color: var(--accent-bet); box-shadow: 0 0 0 2px var(--accent-bet), 0 0 16px var(--accent-bet-glow); }
+.option-btn.bet { border-color: var(--accent-bet); box-shadow: 0 0 0 2px var(--accent-bet), 0 0 16px rgba(245,158,11,0.4); }
 .option-btn.nudge .option-body { animation: nudgeRight 0.9s ease; }
 @keyframes nudgeRight {
   0%, 100% { transform: translateX(0); }
@@ -516,7 +511,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 .bet-token-bolt { display: inline-flex; color: var(--accent-bet); }
 .bet-token-bolt svg { width: 12px; height: 12px; }
-.header-pip { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-bet); border: 1px solid var(--accent-bet); box-shadow: 0 0 6px var(--accent-bet-glow-strong); transition: background .2s, box-shadow .2s; }
+.header-pip { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-bet); border: 1px solid var(--accent-bet); box-shadow: 0 0 6px rgba(245,158,11,0.7); transition: background .2s, box-shadow .2s; }
 .header-pip.spent { background: transparent; border-color: var(--text-secondary); opacity: 0.4; box-shadow: none; animation: pipSpent .35s ease; }
 @keyframes pipSpent { 0% { transform: scale(1.6); opacity: 1; } 100% { transform: scale(1); opacity: 0.4; } }
 
