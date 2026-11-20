@@ -202,7 +202,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* ---- Completed-day hub (zero-scroll) ---- */
 .hub-head, .hub-cards { display: none; }
 #screen-landing.is-completed .landing-body {
-  justify-content: space-between; gap: 12px;
+  justify-content: center; gap: 16px;
   padding-bottom: max(12px, env(safe-area-inset-bottom));
 }
 #screen-landing.is-completed .landing-body::before,
@@ -239,10 +239,10 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .tc-cell.bet.ok::before { background: var(--correct); }
 .tc-cell.bet.miss { border-color: var(--wrong); }
 .tc-cell.bet.miss::before { background: var(--wrong); }
-.tc-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); }
+#next-set-line, .tc-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); white-space: nowrap; }
 .tc-actions { display: flex; gap: 8px; margin-top: 12px; }
 .tc-actions .btn-secondary { flex: 1 1 0; max-width: none; padding: 10px 12px; font-size: 14px; }
-#screen-landing.is-completed #landing-stats { font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); text-align: center; }
+#screen-landing.is-completed #landing-stats { display: none; }
 
 /* Question */
 .question-stage { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-start; min-height: 0; overflow-y: auto; padding-top: 8px; padding-bottom: 8px; }
@@ -1534,6 +1534,11 @@ function nextSetLine(now = new Date()) {
   const local = new Date(nextMs).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
   return `Next set in ${fmtCountdown(nextMs - now.getTime())} (${local})`;
 }
+// Hub card line: countdown plus the lifetime Daily numbers, one muted line
+function nextRunLine(now = new Date()) {
+  const nextMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1);
+  return `Next set in ${fmtCountdown(nextMs - now.getTime())} · ${stats.played} played · Best ${stats.maxStreak}d`;
+}
 
 // ---- Ghost Duel ----
 function parseDuelParam() {
@@ -1640,7 +1645,7 @@ function renderHub() {
 
   // trophy card
   $('trophy-eyebrow').textContent = `TODAY'S RUN · #${getDailyNum()}`;
-  $('next-set-line').textContent = nextSetLine();
+  $('next-set-line').textContent = nextRunLine();
   const savedRes = loadResult();
   const hasRes = !!(savedRes && savedRes.date === getToday());
   const scoreEl = $('trophy-score');
@@ -1677,8 +1682,9 @@ function renderHub() {
 function renderLandingStats() {
   const el = $('landing-stats');
   if (stats.completedDaily === getToday()) {
-    el.style.display = 'block';
-    el.textContent = `Played ${stats.played} · Best streak ${stats.maxStreak}`;
+    // lifetime numbers now live inside the Today's Run card
+    el.style.display = 'none';
+    el.textContent = '';
     return;
   }
   el.style.display = stats.played === 0 ? 'none' : 'flex';
@@ -2620,7 +2626,7 @@ document.addEventListener('click', ()=>audio.init(), {once:true});
 
 // ---- Countdown ticker: keeps the next-set line fresh and unlocks a new day ----
 function tick() {
-  if (stats.completedDaily === getToday()) $('next-set-line').textContent = nextSetLine();
+  if (stats.completedDaily === getToday()) $('next-set-line').textContent = nextRunLine();
   if ($('next-set-results').style.display === 'block') $('next-set-results').textContent = nextSetLine();
   if (state.screen === 'landing' && getToday() !== lastRenderedDay) renderLanding();
 }
