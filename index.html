@@ -24,7 +24,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lexend+Zetta:wght@800;900&family=Lexend:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lexend+Zetta:wght@700&family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
 <title>KNOWIT</title>
 <style>
 :root {
@@ -76,10 +76,10 @@
   --aurora: linear-gradient(90deg, #F454B0, #21C868);
   --radius: 14px;
   --radius-sm: 10px;
-  --font-sans: 'Lexend', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-display: 'Lexend Zetta', 'Lexend', sans-serif;
+  --font-sans: 'Lexend', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Lexend Zetta', sans-serif;
   /* labels/counters now use Lexend; the token name is kept so sizes stay untouched */
-  --font-mono: 'Lexend', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: var(--font-sans);
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -96,8 +96,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* Header */
 .game-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 0 12px; flex-shrink: 0; }
 .game-header .brand { display: flex; align-items: center; gap: 8px; }
-.game-header h1 { font-size: 20px; font-weight: 900; margin: 0; letter-spacing: -0.01em; font-family: 'Lexend', sans-serif; }
-.game-header .meta { font-size: 13px; color: var(--ink-faint); font-weight: 500; font-family: var(--font-mono); }
+.game-header h1 { margin: 0; }
+.game-header .meta { color: var(--ink-faint); }
 .header-actions { display: flex; gap: 8px; }
 .icon-btn {
   width: 36px; height: 36px; border-radius: var(--radius-sm); border: 1px solid var(--border);
@@ -153,7 +153,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 .landing-footer #landing-puzzle { margin: 0; }
 .landing-footer #btn-daily { width: 100%; max-width: 340px; }
-.landing-body h2 { font-family: var(--font-display); font-size: clamp(24px, 7vw, 30px); font-weight: 800; letter-spacing: 0.02em; line-height: 1.1; margin: 0; color: var(--text-primary); }
+.landing-body h2 { font-size: clamp(24px, 7vw, 30px); margin: 0; color: var(--text-primary); }
 .landing-body p { font-size: 15px; color: var(--ink-faint); max-width: 320px; margin: 0; line-height: 1.5; }
 .landing-streak-bar {
   display: flex; align-items: center; gap: 6px;
@@ -196,7 +196,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 .endless-teaser .et-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-brand); font-weight: 600; margin-bottom: 8px; }
 .endless-teaser .et-title { font-size: 17px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
-.endless-teaser .et-line { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
+.endless-teaser .et-line { color: var(--text-secondary); margin-bottom: 12px; }
 .endless-teaser .btn-primary { width: 100%; max-width: none; }
 
 /* ---- Completed-day hub (zero-scroll) ---- */
@@ -219,14 +219,14 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 #screen-landing.is-completed .hub-cards { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 340px; }
 #screen-landing.is-completed .landing-footer { display: none; }
 .hub-brand { display: flex; align-items: center; gap: 8px; }
-.hub-wordmark { font-family: var(--font-display); font-size: 16px; font-weight: 800; letter-spacing: 0.02em; color: var(--text-primary); }
+.hub-wordmark { font-size: 16px; color: var(--text-primary); }
 .streak-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(244, 84, 176, 0.35); background: var(--accent-brand-tint); color: var(--accent-brand); font-family: var(--font-mono); font-size: 12px; font-weight: 600; }
 .streak-pill .fire { display: inline-flex; }
 .streak-pill svg { width: 13px; height: 13px; }
 .trophy-card { width: 100%; max-width: 340px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius); padding: 16px; text-align: left; }
 .tc-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); font-weight: 600; margin-bottom: 8px; }
 .tc-score { font-size: 18px; font-weight: 700; color: var(--text-primary); }
-.tc-score b { font-size: 20px; font-weight: 800; }
+.tc-score b { font-size: 20px; font-weight: 700; }
 .tc-score .muted { color: var(--text-secondary); font-weight: 500; font-size: 14px; }
 .tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; margin: 10px 0; padding: 3px 2px; }
 .tc-cell { position: relative; height: 12px; border-radius: 3px; background: var(--bg-surface-subtle); }
@@ -252,8 +252,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   padding: 3px 8px; border-radius: 6px; background: var(--bg-surface-subtle); color: var(--text-secondary);
   border: 1px solid var(--border-subtle); margin-bottom: 12px;
 }
-.question-text { font-size: 20px; font-weight: 700; line-height: 1.35; margin: 0; }
-@media (max-height: 600px) { .question-text { font-size: 17px; line-height: 1.3; } .category-tag { margin-bottom: 6px; } }
+.question-text { margin: 0; }
+@media (max-height: 600px) { .category-tag { margin-bottom: 6px; } }
 
 /* Options — FIXED FOOTER, always fully visible */
 .options-grid {
@@ -290,7 +290,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   opacity: 0;
 }
 .option-btn .bet-reveal svg { width: 18px; height: 18px; }
-.option-btn .bet-reveal .br-label { font-family: var(--font-mono); font-size: 11px; font-weight: 800; letter-spacing: .1em; }
+.option-btn .bet-reveal .br-label { font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: .1em; }
 .option-btn .bet-reveal .br-sub { font-family: var(--font-mono); font-size: 9px; font-weight: 600; opacity: .85; }
 .option-btn.correct { border-color: var(--accent-correct); box-shadow: 0 0 0 1px var(--accent-correct); }
 .option-btn.correct .option-body { box-shadow: inset 0 0 0 999px rgba(16,185,129,0.18); }
@@ -370,9 +370,9 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
 /* Hero score */
 .results-hero { display: flex; flex-direction: column; align-items: center; }
-.hero-score { display: none; font-size: 64px; font-weight: 800; line-height: 1; letter-spacing: -0.02em; }
+.hero-score { display: none; }
 .hero-score .of { color: var(--ink-dim); font-size: 32px; font-weight: 700; }
-.hero-title { font-size: 19px; font-weight: 800; letter-spacing: 0.01em; margin-top: 6px; }
+.hero-title { margin-top: 6px; }
 .hero-sub { display: none; font-family: var(--font-mono); font-size: 12px; color: var(--ink-faint); margin-top: 4px; }
 .streak-badge {
   display: inline-flex; align-items: center; gap: 6px;
@@ -415,7 +415,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .sc-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center; }
 .sc-stats.three { grid-template-columns: repeat(3, 1fr); }
 .sc-stat b { display: block; font-family: var(--font-mono); font-size: 18px; font-weight: 600; line-height: 1.15; color: var(--text-primary); font-variant-numeric: tabular-nums; }
-.sc-stat-primary b { font-size: 24px; font-weight: 800; }
+.sc-stat-primary b { font-size: 24px; font-weight: 700; }
 .sc-stat span { display: block; font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.08em; color: var(--text-secondary); margin-top: 3px; }
 .scorecard .grid-hint { margin-top: 10px; text-align: center; }
 /* Actions + footer */
@@ -501,11 +501,11 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
   padding: 16px; max-width: 320px; width: 100%; text-align: center;
 }
-.duel-card .duel-outcome { font-size: 22px; font-weight: 800; margin-bottom: 12px; }
+.duel-card .duel-outcome { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
 .duel-card .duel-vs { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .duel-card .duel-side { flex: 1; }
 .duel-card .duel-side .d-name { font-size: 12px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
-.duel-card .duel-side .d-score { font-family: var(--font-mono); font-size: 24px; font-weight: 800; }
+.duel-card .duel-side .d-score { font-family: var(--font-mono); font-size: 24px; font-weight: 700; }
 .duel-card .duel-side .d-time { font-family: var(--font-mono); font-size: 13px; color: var(--ink-faint); }
 .duel-card .duel-divider { font-size: 18px; color: var(--ink-dim); font-weight: 700; }
 .duel-card .duel-you .d-score { color: var(--accent); }
@@ -558,7 +558,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .prog-seg.bet.right::before { background: var(--correct); }
 .prog-seg.bet.wrong { border-color: var(--wrong); }
 .prog-seg.bet.wrong::before { background: var(--wrong); }
-.prog-seg .glyph { position: relative; z-index: 1; color: var(--bg); font-weight: 800; font-size: 10px; line-height: 1; }
+.prog-seg .glyph { position: relative; z-index: 1; color: var(--bg); font-weight: 700; font-size: 10px; line-height: 1; }
 
 /* Hero aurora title */
 .hero-title.aurora {
@@ -584,95 +584,130 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
 
 /* ============================================================
-   TYPE SCALE — 4 Material-inspired tiers + brand wordmark.
-   Every screen inherits from these; no other font families.
+   TYPE SCALE — Lexend Zetta for the wordmark, Lexend for everything else.
    ============================================================ */
 
-/* Brand Wordmark Only */
 .type-brand {
-  font-family: var(--font-display); /* Lexend Zetta */
+  font-family: var(--font-display);
   font-weight: 700;
   letter-spacing: 0.04em;
+  line-height: 1.1;
   color: var(--text-primary);
 }
-
-/* 1. Title — Card headers, modal titles, section headers */
+.type-hero {
+  font-family: var(--font-sans);
+  font-size: clamp(36px, 10vw, 44px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
 .type-title {
   font-family: var(--font-sans);
   font-size: 18px;
   font-weight: 700;
   line-height: 1.25;
+  letter-spacing: -0.01em;
   color: var(--text-primary);
 }
-.type-hero {
+.type-question {
   font-family: var(--font-sans);
-  font-size: 36px;
-  font-weight: 700;
-  line-height: 1.05;
-  font-variant-numeric: tabular-nums;
+  font-size: clamp(17px, 4.6vw, 20px);
+  font-weight: 600;
+  line-height: 1.35;
+  text-wrap: balance;
   color: var(--text-primary);
 }
-
-/* 2. Subtitle — Questions, answer cards, interactive buttons */
 .type-subtitle {
   font-family: var(--font-sans);
   font-size: 15px;
   font-weight: 600;
   line-height: 1.35;
+  letter-spacing: 0.01em;
   color: var(--text-primary);
 }
-
-/* 3. Body — Secondary card descriptions, taglines, feedback notes */
 .type-body {
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 400;
   line-height: 1.45;
   color: var(--text-secondary);
 }
-
-/* 4. Caption — Eyebrows, HUD telemetry, pills, micro-labels */
-.type-caption {
+.type-eyebrow {
   font-family: var(--font-sans);
   font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.type-hud {
+  font-family: var(--font-sans);
+  font-size: 12px;
   font-weight: 500;
   line-height: 1.2;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.03em;
   font-variant-numeric: tabular-nums;
   color: var(--text-secondary);
 }
 
-/* ---- Adoption: each component opts into exactly one tier.
-        Only type metrics are set here; colours stay with their components. ---- */
-.landing-body h2, .hub-wordmark { font-family: var(--font-display); font-weight: 700; letter-spacing: 0.04em; }
+/* ---- Adoption: one tier per component. Metrics only — colours stay local. ---- */
 
+/* .type-brand */
+.landing-body h2, .hub-wordmark {
+  font-family: var(--font-display); font-weight: 700; letter-spacing: 0.04em; line-height: 1.1;
+}
+
+/* .type-hero */
+.hero-score {
+  font-family: var(--font-sans); font-size: clamp(36px, 10vw, 44px); font-weight: 700;
+  line-height: 1.05; letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
+}
+
+/* .type-title */
 .game-header h1, .tc-score, .et-title, .modal-card .mq, .hero-title {
-  font-family: var(--font-sans); font-size: 18px; font-weight: 700; line-height: 1.25; letter-spacing: 0.01em;
+  font-family: var(--font-sans); font-size: 18px; font-weight: 700; line-height: 1.25; letter-spacing: -0.01em;
+}
+.tc-score .muted { font-size: 18px; font-weight: 500; color: var(--text-secondary); }
+
+/* .type-question */
+.question-text {
+  font-family: var(--font-sans); font-size: clamp(17px, 4.6vw, 20px); font-weight: 600;
+  line-height: 1.35; letter-spacing: 0; text-wrap: balance;
 }
 
-.question-text, .option-btn, .btn-primary, .btn-secondary, .btn-emerald, .bet-toggle,
-.option-btn .bet-reveal .br-label, .feedback-strip .fb-result {
-  font-family: var(--font-sans); font-size: 15px; font-weight: 600; line-height: 1.35;
+/* .type-subtitle — answer cards, buttons, verdict line */
+.option-btn, .btn-primary, .btn-secondary, .btn-emerald, .tc-actions .btn-secondary,
+#btn-endless, .feedback-strip .fb-result {
+  font-family: var(--font-sans); font-size: 15px; font-weight: 600; line-height: 1.35; letter-spacing: 0.01em;
 }
-.btn-primary, .btn-secondary, .btn-emerald, .option-btn { font-weight: 600; }
+.option-btn { font-weight: 500; }
 
-.landing-body p.landing-tagline, .et-line, .feedback-strip .fb-insight, .hero-sub,
-.highlights, .modal-card .mdyk, .toast, .duel-card .d-time, #rm-picked, .muted-inline {
-  font-family: var(--font-sans); font-size: 13px; font-weight: 400; line-height: 1.45;
-}
-
-.game-header .meta, .category-tag, .tc-eyebrow, .endless-teaser .et-eyebrow,
-#next-set-line, .grid-hint, .results-footer, .sc-stat span, .stat-chip, .streak-pill,
-.endless-hud .streak, .modal-card .mlabel, .modal-card .mdyk-label, .q-timer-text,
-.duel-card .d-name, .landing-streak-bar, .daily-locked,
-.option-btn .bet-reveal .br-sub {
-  font-family: var(--font-sans); font-size: 11px; font-weight: 500; line-height: 1.2;
-  letter-spacing: 0.05em; font-variant-numeric: tabular-nums;
+/* .type-body — secondary copy, feedback notes, hints */
+#next-set-line, .et-line, .bet-toggle, .feedback-strip .fb-insight, .hero-sub, .highlights,
+.modal-card .mdyk, .toast, .duel-card .d-time, #rm-picked, .grid-hint {
+  font-family: var(--font-sans); font-size: 13.5px; font-weight: 400; line-height: 1.45; letter-spacing: 0;
 }
 
-/* Results telemetry keeps its numeric prominence inside the card */
-.sc-stat b { font-family: var(--font-sans); font-size: 18px; font-weight: 600; line-height: 1.15; letter-spacing: 0; }
-.sc-stat-primary b { font-size: 24px; font-weight: 800; }
+/* .type-eyebrow */
+.tc-eyebrow, .endless-teaser .et-eyebrow, .category-tag, .sc-stat span,
+.modal-card .mlabel, .modal-card .mdyk-label {
+  font-family: var(--font-sans); font-size: 11px; font-weight: 600; line-height: 1.2;
+  letter-spacing: 0.07em; text-transform: uppercase;
+}
+.endless-teaser .et-eyebrow { color: var(--accent-brand); }
+
+/* .type-hud */
+#header-meta, .game-header .meta, .endless-hud .streak, #landing-puzzle, .streak-pill,
+.stat-chip, #q-timer-text, .results-footer {
+  font-family: var(--font-sans); font-size: 12px; font-weight: 500; line-height: 1.2;
+  letter-spacing: 0.03em; font-variant-numeric: tabular-nums;
+}
+
+/* landing tagline: Lexend 15px body weight, secondary */
+.landing-body p.landing-tagline { font-family: var(--font-sans); font-size: 15px; font-weight: 400; line-height: 1.45; }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
