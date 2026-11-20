@@ -316,8 +316,19 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .endless-hud .lives { font-size: 20px; letter-spacing: 2px; display: flex; gap: 4px; }
 .endless-hud .life { transition: opacity .3s, filter .3s, transform .3s; }
 .endless-hud .life.lost { opacity: 0.25; filter: grayscale(1); transform: scale(0.85); }
-.endless-hud .streak { font-family: var(--font-mono); font-size: 16px; font-weight: 700; color: var(--text-primary); transition: all .3s; }
+.endless-hud .streak {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.85;
+  color: var(--text-primary);
+  transition: all .3s;
+}
 .endless-hud .streak.blazing {
+  font-weight: 600;
+  opacity: 1;
   color: #F59E0B; text-shadow: 0 0 10px rgba(245, 158, 11, 0.35);
   border: 1px solid rgba(245, 158, 11, 0.45); background: var(--accent-bet-tint);
   padding: 4px 10px; border-radius: 20px;
@@ -631,7 +642,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
         <div class="endless-teaser" id="endless-teaser" style="display:none;">
           <div class="et-eyebrow">KEEP GOING</div>
           <div class="et-title">Endless Mode · 3 lives</div>
-          <div class="et-line" id="gt-line">Set your first streak.</div>
+          <div class="et-line" id="gt-line">Set your first run.</div>
           <button class="btn-primary" id="btn-endless">Play Endless</button>
         </div>
       </div>
@@ -1607,8 +1618,8 @@ function renderLanding() {
   // Endless card: only after the daily is done
   $('endless-teaser').style.display = completedToday ? 'block' : 'none';
   $('gt-line').textContent = stats.bestEndless > 0
-    ? `Beat your best of ${stats.bestEndless} in a row.`
-    : 'Set your first streak.';
+    ? `Beat your best run of ${stats.bestEndless}.`
+    : 'Set your first run.';
 
   if (completedToday) renderHub();
 
@@ -1772,7 +1783,7 @@ function renderQuestion() {
   // Header meta: daily number + question progress (mono tokens)
   $('header-meta').textContent = state.mode === 'daily'
     ? `#${getDailyNum()} · Q${String(state.currentQ+1).padStart(2,'0')}/${String(state.questions.length).padStart(2,'0')}`
-    : `STRK: ${String(state.endlessStreak).padStart(2,'0')} · Q${String(state.currentQ+1).padStart(2,'0')}`;
+    : `ENDLESS · Q${String(state.currentQ+1).padStart(2,'0')}`;
   // Category tag sits ABOVE the question, not inline
   $('q-text').innerHTML = `<span class="category-tag">${q.category}</span><br>${escapeHtml(q.question)}`;
   const grid = $('options-grid');
@@ -1955,7 +1966,7 @@ function renderEndlessHUD() {
   $('endless-lives').innerHTML = hearts;
   const streakEl = $('endless-streak');
   const isBlazing = state.endlessStreak >= 5;
-  streakEl.textContent = `STRK: ${String(state.endlessStreak).padStart(2,'0')}`;
+  streakEl.textContent = `RUN: ${String(state.endlessStreak).padStart(2,'0')}`;
   streakEl.className = 'streak' + (isBlazing ? ' blazing' : '');
 }
 
@@ -2052,7 +2063,7 @@ function startEndless() {
   state.betsLeft = 0;
   state.armed = false;
   state.duel = null;
-  $('header-meta').textContent = `STRK: 00 · Q01`;
+  $('header-meta').textContent = `ENDLESS · Q01`;
   $('endless-hud').style.display = 'flex';
   $('duel-banner').style.display = 'none';
   showScreen('playing');
@@ -2216,6 +2227,7 @@ function finishGame(opts = {}) {
   const totalTimeSec = totalTimeMs / 1000;
   const avgMs = total > 0 ? Math.round(totalTimeMs / total) : 0;
   const today = getToday();
+  let wasBestRun = false; // endless only: did this run beat the stored best?
 
   // Stats (never on a replay of already-saved results)
   if (!replay) {
@@ -2228,6 +2240,7 @@ function finishGame(opts = {}) {
       stats.maxStreak = Math.max(stats.maxStreak, stats.streak);
       stats.completedDaily = today;
     } else {
+      wasBestRun = state.endlessStreak > stats.bestEndless && state.endlessStreak > 0;
       stats.bestEndless = Math.max(stats.bestEndless, state.endlessStreak);
     }
     saveStats();
@@ -2258,7 +2271,7 @@ function finishGame(opts = {}) {
     const eT = state.endlessStreak >= 20 ? ['Untouchable.','flame'] : state.endlessStreak >= 10 ? ['Show-off.','heart'] : state.endlessStreak >= 5 ? ['Warming up.','target'] : ['Short trip.','skull'];
     $('hero-title').className = 'hero-title';
     $('hero-title').innerHTML = `${ICONS[eT[1]]}<span>${eT[0]}</span>`;
-    $('hero-sub').textContent = `Best Endless: ${stats.bestEndless} • Total ${fmtTimeSec(totalTimeSec)}`;
+    $('hero-sub').textContent = (wasBestRun ? 'NEW BEST RUN' : `BEST RUN: ${stats.bestEndless}`) + ` • Total ${fmtTimeSec(totalTimeSec)}`;
   }
 
   // Streak badge (daily only — celebrate or nudge)
@@ -2322,7 +2335,7 @@ function finishGame(opts = {}) {
   // Endless has no points — the primary number is the run instead of a permanent 0.
   const endlessRun = state.mode !== 'daily';
   $('stat-pts').textContent = endlessRun ? state.endlessStreak : totalPoints;
-  $('stat-pts-label').textContent = endlessRun ? 'STREAK' : 'PTS';
+  $('stat-pts-label').textContent = endlessRun ? 'RUN' : 'PTS';
   $('stat-correct').textContent = `${correct}/${total}`;
   $('stat-time').textContent = fmtTimeSec(totalTimeSec);
   $('stat-bets').textContent = `${betHit}/${betUsed}`;
@@ -2338,8 +2351,8 @@ function finishGame(opts = {}) {
     state.shareClean = payload.shareClean;
     state.shareFull = payload.shareFull;
   } else {
-    state.shareClean = `KNOWIT Endless ⚡\nStreak: ${state.endlessStreak}\nCorrect: ${correct}/${total}\n${row1}${row2 ? '\n' + row2 : ''}`;
-    state.shareFull = `${state.shareClean}\n\nBeat my streak.\n${challengeUrl}`;
+    state.shareClean = `KNOWIT Endless ⚡\nRun: ${state.endlessStreak}\nCorrect: ${correct}/${total}\n${row1}${row2 ? '\n' + row2 : ''}`;
+    state.shareFull = `${state.shareClean}\n\nBeat my run.\n${challengeUrl}`;
   }
   $('share-text').textContent = state.shareFull;
 
