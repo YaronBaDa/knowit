@@ -582,6 +582,98 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .duel-outcome svg { width: 20px; height: 20px; vertical-align: -4px; margin-left: 5px; }
 .duel-banner .swords svg { width: 14px; height: 14px; vertical-align: -2px; }
 
+
+/* ============================================================
+   TYPE SCALE — 4 Material-inspired tiers + brand wordmark.
+   Every screen inherits from these; no other font families.
+   ============================================================ */
+
+/* Brand Wordmark Only */
+.type-brand {
+  font-family: var(--font-display); /* Lexend Zetta */
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-primary);
+}
+
+/* 1. Title — Card headers, modal titles, section headers */
+.type-title {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--text-primary);
+}
+.type-hero {
+  font-family: var(--font-sans);
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+/* 2. Subtitle — Questions, answer cards, interactive buttons */
+.type-subtitle {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text-primary);
+}
+
+/* 3. Body — Secondary card descriptions, taglines, feedback notes */
+.type-body {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+/* 4. Caption — Eyebrows, HUD telemetry, pills, micro-labels */
+.type-caption {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.05em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+}
+
+/* ---- Adoption: each component opts into exactly one tier.
+        Only type metrics are set here; colours stay with their components. ---- */
+.landing-body h2, .hub-wordmark { font-family: var(--font-display); font-weight: 700; letter-spacing: 0.04em; }
+
+.game-header h1, .tc-score, .et-title, .modal-card .mq, .hero-title {
+  font-family: var(--font-sans); font-size: 18px; font-weight: 700; line-height: 1.25; letter-spacing: 0.01em;
+}
+
+.question-text, .option-btn, .btn-primary, .btn-secondary, .btn-emerald, .bet-toggle,
+.option-btn .bet-reveal .br-label, .feedback-strip .fb-result {
+  font-family: var(--font-sans); font-size: 15px; font-weight: 600; line-height: 1.35;
+}
+.btn-primary, .btn-secondary, .btn-emerald, .option-btn { font-weight: 600; }
+
+.landing-body p.landing-tagline, .et-line, .feedback-strip .fb-insight, .hero-sub,
+.highlights, .modal-card .mdyk, .toast, .duel-card .d-time, #rm-picked, .muted-inline {
+  font-family: var(--font-sans); font-size: 13px; font-weight: 400; line-height: 1.45;
+}
+
+.game-header .meta, .category-tag, .tc-eyebrow, .endless-teaser .et-eyebrow,
+#next-set-line, .grid-hint, .results-footer, .sc-stat span, .stat-chip, .streak-pill,
+.endless-hud .streak, .modal-card .mlabel, .modal-card .mdyk-label, .q-timer-text,
+.duel-card .d-name, .landing-streak-bar, .daily-locked,
+.option-btn .bet-reveal .br-sub {
+  font-family: var(--font-sans); font-size: 11px; font-weight: 500; line-height: 1.2;
+  letter-spacing: 0.05em; font-variant-numeric: tabular-nums;
+}
+
+/* Results telemetry keeps its numeric prominence inside the card */
+.sc-stat b { font-family: var(--font-sans); font-size: 18px; font-weight: 600; line-height: 1.15; letter-spacing: 0; }
+.sc-stat-primary b { font-size: 24px; font-weight: 800; }
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
