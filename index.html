@@ -517,15 +517,17 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* Header bet pips */
 .header-status { display: flex; flex-direction: row; align-items: center; gap: 10px; }
 .header-pips {
-  display: flex; align-items: center; gap: 5px;
+  display: flex; align-items: center; gap: 3px;
   background: var(--bg-surface-subtle); border: 1px solid var(--border-subtle);
-  border-radius: 999px; padding: 3px 9px;
+  border-radius: 999px; padding: 3px 8px;
 }
 .bet-token-bolt { display: inline-flex; color: var(--accent-bet); }
 .bet-token-bolt svg { width: 12px; height: 12px; }
-.header-pip { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-bet); border: 1px solid var(--accent-bet); box-shadow: 0 0 6px rgba(245,158,11,0.7); transition: background .2s, box-shadow .2s; }
-.header-pip.spent { background: transparent; border-color: rgba(255, 255, 255, 0.22); opacity: 1; box-shadow: none; animation: pipSpent .35s ease; }
-@keyframes pipSpent { 0% { transform: scale(1.6); opacity: 1; } 100% { transform: scale(1); opacity: 0.4; } }
+/* three bolts: one per remaining bet */
+.header-pip { display: inline-flex; align-items: center; justify-content: center; width: 13px; height: 15px; color: var(--accent-bet); filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.55)); transition: color .2s, filter .2s, opacity .2s; }
+.header-pip svg { width: 13px; height: 13px; display: block; }
+.header-pip.spent { color: rgba(255, 255, 255, 0.22); opacity: 1; filter: none; animation: pipSpent .35s ease; }
+@keyframes pipSpent { 0% { transform: scale(1.5); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
 
 /* Swipe-to-bet day-1 tip */
 .swipe-tip {
@@ -674,8 +676,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
 /* .type-question */
 .question-text {
-  font-family: var(--font-sans); font-size: clamp(17px, 4.6vw, 20px); font-weight: 600;
-  line-height: 1.35; letter-spacing: 0; text-wrap: balance;
+  font-family: var(--font-sans); font-size: clamp(18px, 5.6vw, 24px); font-weight: 600;
+  line-height: 1.3; letter-spacing: 0; text-wrap: balance;
 }
 
 /* .type-subtitle — answer cards, buttons, verdict line */
@@ -704,6 +706,11 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .stat-chip, #q-timer-text, .results-footer {
   font-family: var(--font-sans); font-size: 12px; font-weight: 500; line-height: 1.2;
   letter-spacing: 0.03em; font-variant-numeric: tabular-nums;
+}
+
+/* Short viewports keep the question on screen without scrolling */
+@media (max-height: 600px) {
+  .question-text { font-size: 17.5px; line-height: 1.28; }
 }
 
 /* landing tagline: Lexend 15px body weight, secondary */
@@ -2046,8 +2053,8 @@ function attachSwipe(btn, idx) {
 function updateBetUI() {
   const pips = $('header-pips');
   const n = state.betsLeft;
-  pips.innerHTML = `<span class="bet-token-bolt">${ICONS.lightning}</span>` +
-    Array.from({length:3}, (_,i)=>`<span class="header-pip ${i < n ? '' : 'spent'}"></span>`).join('');
+  pips.innerHTML = Array.from({length:3}, (_,i)=>
+    `<span class="header-pip ${i < n ? '' : 'spent'}">${ICONS.lightning}</span>`).join('');
   pips.setAttribute('aria-label', `${n} ${n === 1 ? 'bet' : 'bets'} left`);
   // Visible bet toggle
   const tg = $('bet-toggle');
