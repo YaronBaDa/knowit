@@ -494,6 +494,22 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .bp-trigger-wrap { width: 100%; max-width: 340px; }
 .bp-trigger-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; }
 .bp-trigger-text { font-family: var(--font-sans); font-size: 12.5px; font-weight: 400; line-height: 1.35; color: var(--text-secondary); min-width: 0; }
+.bp-trigger-text.is-top { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Live Brainprint radar in the hub's open upper space */
+.home-radar-hero { display: none; }
+#screen-landing.is-completed .home-radar-hero {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  flex: 1 1 auto; min-height: 0; padding: 4px 0 8px; cursor: pointer;
+}
+#screen-landing.is-completed .home-radar-hero.is-empty { display: none; }
+.home-radar { width: clamp(168px, 46vw, 210px); }
+.home-radar svg { display: block; width: 100%; height: auto; max-height: 100%; overflow: visible; }
+.home-radar-hero:focus-visible { outline: 2px solid var(--accent-brand); outline-offset: 4px; border-radius: 14px; }
+@media (max-height: 700px) {
+  #screen-landing.is-completed .home-radar { width: clamp(128px, 40vw, 150px); }
+  #screen-landing.is-completed .home-radar-hero { padding: 0 0 4px; }
+}
 .bp-trigger-btn {
   flex-shrink: 0; display: inline-flex; align-items: center; gap: 3px; padding: 7px 11px; border-radius: 999px;
   background: var(--bg-surface-subtle); border: 1px solid rgba(255, 255, 255, 0.12); color: #F3F4F6;
@@ -874,6 +890,11 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
       <div class="daily-locked" id="daily-lock" style="display:none;">
         <b>Today's set complete.</b>
+      </div>
+
+      <!-- live Brainprint radar fills the open space above the cards -->
+      <div class="home-radar-hero" id="home-radar-hero" role="button" tabindex="0" aria-label="Open your Brainprint radar">
+        <div class="home-radar" id="home-radar"></div>
       </div>
 
       <!-- completed-day cards: one bottom-anchored stack -->
@@ -1860,8 +1881,12 @@ function splitRadarLabel(name) {
   const mid = Math.ceil(parts.length / 2);
   return [parts.slice(0, mid).join(' '), parts.slice(mid).join(' ')];
 }
-function brainprintSVG(d) {
-  const cx = 150, cy = 150, maxR = 86, gap = 15;
+function brainprintSVG(d, opts = {}) {
+  const size = opts.size || 300;
+  const cx = size / 2, cy = size / 2;
+  const maxR = opts.maxR || (size === 300 ? 86 : 56);
+  const gap = opts.gap || (size === 300 ? 15 : 12);
+  const showAccuracy = opts.showAccuracy !== false;
   const g = brainprintGeometry(d.rows, cx, cy, maxR, gap);
   const rings = [1, 2, 3].map(i => `<circle cx="${cx}" cy="${cy}" r="${(maxR * i / 3).toFixed(2)}" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>`).join('');
   const spokes = g.map(p => `<line x1="${cx}" y1="${cy}" x2="${(cx + p.cos * maxR).toFixed(2)}" y2="${(cy + p.sin * maxR).toFixed(2)}" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>`).join('');
@@ -1874,32 +1899,45 @@ function brainprintSVG(d) {
   }).join('');
   const labels = g.map(p => {
     const lines = splitRadarLabel(p.category);
-    const lineH = 11;
-    const blockH = lines.length * lineH + 13;
-    let y = p.ly - blockH / 2 + lineH;
     let out = `<g class="bp-axis">`;
-    lines.forEach(l => {
-      out += `<text x="${p.lx.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="10" font-weight="600" letter-spacing="0.6" fill="#B2A4AC">${escapeHtml(l)}</text>`;
-      y += lineH;
-    });
-    out += `<text x="${p.lx.toFixed(2)}" y="${(y + 1).toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="10" font-weight="600" letter-spacing="0.6" fill="#F3F4F6" style="font-variant-numeric: tabular-nums">${p.acc}%</text></g>`;
+    if (showAccuracy) {
+      const lineH = 11;
+      const blockH = lines.length * lineH + 13;
+      let y = p.ly - blockH / 2 + lineH;
+      lines.forEach(l => {
+        out += `<text x="${p.lx.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="10" font-weight="600" letter-spacing="0.6" fill="#B2A4AC">${escapeHtml(l)}</text>`;
+        y += lineH;
+      });
+      out += `<text x="${p.lx.toFixed(2)}" y="${(y + 1).toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="10" font-weight="600" letter-spacing="0.6" fill="#F3F4F6" style="font-variant-numeric: tabular-nums">${p.acc}%</text></g>`;
+    } else {
+      // Compact home radar: names only, no percentages — keeps the chart airy
+      const lineH = 11;
+      const blockH = lines.length * lineH;
+      let y = p.ly - blockH / 2 + lineH;
+      lines.forEach(l => {
+        out += `<text x="${p.lx.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="10" font-weight="600" letter-spacing="0.6" fill="#B2A4AC">${escapeHtml(l)}</text>`;
+        y += lineH;
+      });
+      out += `</g>`;
+    }
     return out;
   }).join('');
-  return `<svg viewBox="0 0 300 300" role="img" aria-label="Category accuracy radar">
+  return `<svg viewBox="0 0 ${size} ${size}" role="img" aria-label="Category accuracy radar">
     ${rings}${spokes}
     <polygon points="${poly}" fill="rgba(244, 84, 176, 0.22)" stroke="#F454B0" stroke-width="2" stroke-linejoin="round"/>
     ${nodes}
     ${labels}
   </svg>`;
 }
-// Keep every axis label inside the 300x300 viewBox (never clip at narrow widths)
-function fitBrainprintLabels(svg) {
+// Keep every axis label inside the viewBox (never clip at narrow widths)
+function fitBrainprintLabels(svg, size = 300) {
   if (!svg) return;
+  const hi = size - 1, limit = size - 8;
   const clamp = grp => {
     const box = grp.getBBox();
     let dx = 0;
     if (box.x < 1) dx = 1 - box.x;
-    else if (box.x + box.width > 299) dx = 299 - (box.x + box.width);
+    else if (box.x + box.width > hi) dx = hi - (box.x + box.width);
     if (dx) grp.setAttribute('transform', `translate(${dx.toFixed(2)}, 0)`);
     else grp.removeAttribute('transform');
   };
@@ -1907,9 +1945,9 @@ function fitBrainprintLabels(svg) {
     let box;
     try { box = grp.getBBox(); } catch (e) { return; }
     clamp(grp);
-    if (box.width > 292) {
+    if (box.width > limit) {
       // Very long single-word categories: shrink this label rather than let it clip
-      const scale = Math.max(0.68, 292 / box.width);
+      const scale = Math.max(0.68, limit / box.width);
       grp.querySelectorAll('text').forEach(t => {
         t.setAttribute('font-size', (parseFloat(t.getAttribute('font-size')) * scale).toFixed(2));
       });
@@ -1919,9 +1957,9 @@ function fitBrainprintLabels(svg) {
 }
 function renderBrainprintTriggers() {
   renderBrainprintTrigger($('bp-trigger-results'));
-  renderBrainprintTrigger($('bp-trigger-hub'));
+  renderBrainprintTrigger($('bp-trigger-hub'), { compact: true });
 }
-function renderBrainprintTrigger(host) {
+function renderBrainprintTrigger(host, opts = {}) {
   if (!host) return;
   const d = brainprintData();
   host.innerHTML = '';
@@ -1930,8 +1968,10 @@ function renderBrainprintTrigger(host) {
     const row = document.createElement('div');
     row.className = 'bp-trigger-row';
     const txt = document.createElement('div');
-    txt.className = 'bp-trigger-text';
-    txt.textContent = `Strongest: ${d.strongest.category} (${d.strongest.accuracy}%) · Blindspot: ${d.blindspot.category} (${d.blindspot.accuracy}%)`;
+    txt.className = 'bp-trigger-text' + (opts.compact ? ' is-top' : '');
+    txt.textContent = opts.compact
+      ? `Top: ${d.strongest.category} (${d.strongest.accuracy}%)`
+      : `Strongest: ${d.strongest.category} (${d.strongest.accuracy}%) · Blindspot: ${d.blindspot.category} (${d.blindspot.accuracy}%)`;
     const btn = document.createElement('button');
     btn.type = 'button'; btn.className = 'bp-trigger-btn'; btn.textContent = 'Brainprint ↗';
     btn.addEventListener('click', open);
@@ -2407,7 +2447,20 @@ function renderHub() {
     $('btn-view-results').style.display = 'none';
     $('btn-quick-share').style.display = 'none';
   }
-  renderBrainprintTrigger($('bp-trigger-hub'));
+
+  // Live radar hero: needs 3+ categories for a shape worth showing
+  const hero = $('home-radar-hero'), heroChart = $('home-radar');
+  const bpd = brainprintData();
+  if (bpd.played.length >= 3) {
+    heroChart.innerHTML = brainprintSVG(bpd, { size: 200, maxR: 56, gap: 12, showAccuracy: false });
+    fitBrainprintLabels(heroChart.firstElementChild, 200);
+    hero.classList.remove('is-empty');
+  } else {
+    heroChart.innerHTML = '';
+    hero.classList.add('is-empty');
+  }
+
+  renderBrainprintTrigger($('bp-trigger-hub'), { compact: true });
 }
 function renderLandingStats() {
   const el = $('landing-stats');
@@ -3398,6 +3451,17 @@ $('review-modal').addEventListener('click', e => { if (e.target === $('review-mo
 $('bp-close').onclick = () => { audio.click(); closeBrainprint(); };
 $('brainprint-modal').addEventListener('click', e => { if (e.target === $('brainprint-modal')) closeBrainprint(); });
 $('bp-share').addEventListener('click', () => { audio.click(); shareBrainprint(); });
+// Hub radar hero opens the full Brainprint
+{
+  const hero = $('home-radar-hero');
+  hero.addEventListener('click', () => {
+    if (hero.classList.contains('is-empty')) return;
+    audio.click(); openBrainprint();
+  });
+  hero.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); hero.click(); }
+  });
+}
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && $('brainprint-modal').style.display === 'flex') closeBrainprint();
 });
