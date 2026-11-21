@@ -252,18 +252,21 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .category-pill {
   display: inline-flex;
   align-items: center;
-  padding: 4px 11px;
+  justify-content: center;
+  height: 20px;
+  padding: 1px 9px 0 9px;
   border-radius: 999px;
   font-family: var(--font-sans);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: 0.07em;
+  line-height: 1;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+  width: fit-content;
+  vertical-align: middle;
   background: rgba(178, 164, 172, 0.14);
   color: #B2A4AC;
   border: 1px solid rgba(178, 164, 172, 0.28);
-  width: fit-content;
 }
 /* Gestalt proximity: the pill belongs to the question, so it sits 10px above it */
 .cat-row { display: flex; margin: 0 0 10px; }
@@ -496,7 +499,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .bp-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; flex-shrink: 0; }
 .bp-head-left { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
 .bp-wordmark { font-size: 15px; }
-.bp-eyebrow { font-family: var(--font-sans); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); }
+.bp-eyebrow { font-family: var(--font-sans); font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); }
 .bp-close {
   background: none; border: none; color: var(--text-secondary); font-family: var(--font-sans);
   font-size: 20px; line-height: 1; padding: 0 3px; cursor: pointer; flex-shrink: 0;
@@ -505,26 +508,25 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .bp-body { display: flex; flex-direction: column; gap: 9px; min-height: 0; overflow-y: auto; }
 .bp-radar { width: 100%; }
 .bp-radar svg { display: block; width: 100%; height: auto; }
-.bp-legend { display: flex; flex-wrap: wrap; gap: 3px 12px; justify-content: center; font-family: var(--font-sans); font-size: 10.5px; font-weight: 400; color: var(--text-secondary); }
+.bp-legend { display: flex; flex-wrap: wrap; gap: 3px 12px; justify-content: center; font-family: var(--font-sans); font-size: 12.5px; font-weight: 400; line-height: 1.3; color: var(--text-secondary); }
 .bp-legend .lg { display: inline-flex; align-items: center; gap: 5px; }
-.bp-swatch { width: 9px; height: 9px; border-radius: 2px; background: var(--accent-correct); }
+.bp-swatch { width: 9px; height: 9px; border-radius: 2px; background: var(--accent-brand); }
 .bp-dot-solid { width: 9px; height: 9px; border-radius: 999px; background: var(--accent-bet); }
 .bp-dot-hollow { width: 9px; height: 9px; border-radius: 999px; background: var(--bg-surface); border: 2px solid var(--accent-bet); }
 .bp-summary {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 9px 0;
   border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); text-align: center;
 }
-.bp-summary b { display: block; font-family: var(--font-sans); font-size: 16px; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; line-height: 1.2; }
-.bp-summary span { display: block; font-family: var(--font-sans); font-size: 9.5px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-secondary); margin-top: 2px; }
+.bp-summary b { display: block; font-family: var(--font-sans); font-size: 20px; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; line-height: 1.15; }
+.bp-summary span { display: block; font-family: var(--font-sans); font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); margin-top: 3px; }
 .bp-list { display: flex; flex-direction: column; gap: 7px; }
 .bp-list-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.bp-list-meta { font-family: var(--font-sans); font-size: 11.5px; font-weight: 600; color: var(--text-primary); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.bp-list-meta .muted { color: var(--text-secondary); font-weight: 500; }
-.bp-note { font-family: var(--font-sans); font-size: 11.5px; line-height: 1.4; color: var(--text-secondary); text-align: center; }
+.bp-list-meta { font-family: var(--font-sans); font-size: 12.5px; font-weight: 600; line-height: 1.3; color: var(--text-primary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bp-list-meta .muted { color: var(--text-secondary); font-weight: 400; }
+.bp-note { font-family: var(--font-sans); font-size: 12.5px; font-weight: 400; line-height: 1.3; color: var(--text-secondary); text-align: center; }
 .bp-share { width: 100%; max-width: none; flex-shrink: 0; }
 .bp-share:disabled { opacity: .75; }
 @media (max-height: 680px) {
-  .bp-radar { max-width: 232px; margin: 0 auto; }
   .bp-body { gap: 7px; }
   .bp-summary { padding: 6px 0; }
   .bp-list { gap: 6px; }
@@ -773,7 +775,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 
 /* .type-eyebrow */
-.tc-eyebrow, .endless-teaser .et-eyebrow, .category-pill, .sc-stat span,
+.tc-eyebrow, .endless-teaser .et-eyebrow, .sc-stat span,
 .modal-card .mlabel, .modal-card .mdyk-label {
   font-family: var(--font-sans); font-size: 11px; font-weight: 600; line-height: 1.2;
   letter-spacing: 0.07em; text-transform: uppercase;
@@ -1842,25 +1844,24 @@ function brainprintSVG(d) {
     const x = p.x.toFixed(2), y = p.y.toFixed(2);
     if (p.betsWon > p.betsLost) return `<circle cx="${x}" cy="${y}" r="9" fill="rgba(245,158,11,0.18)"/><circle cx="${x}" cy="${y}" r="5" fill="#F59E0B"/>`;
     if ((p.betsWon + p.betsLost) > 0) return `<circle cx="${x}" cy="${y}" r="5" fill="#1F181C" stroke="#F59E0B" stroke-width="2"/>`;
-    return `<circle cx="${x}" cy="${y}" r="3.5" fill="#21C868"/>`;
+    return `<circle cx="${x}" cy="${y}" r="3.5" fill="#F454B0"/>`;
   }).join('');
   const labels = g.map(p => {
     const lines = splitRadarLabel(p.category);
-    const lineH = 11.5;
+    const lineH = 11;
     const blockH = lines.length * lineH + 13;
     let y = p.ly - blockH / 2 + lineH;
     let out = `<g class="bp-axis">`;
     lines.forEach(l => {
-      out += `<text x="${p.lx.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="10.5" font-weight="600" letter-spacing="0.4" fill="#B2A4AC">${escapeHtml(l)}</text>`;
+      out += `<text x="${p.lx.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="10" font-weight="600" letter-spacing="0.6" fill="#B2A4AC">${escapeHtml(l)}</text>`;
       y += lineH;
     });
-    out += `<text x="${p.lx.toFixed(2)}" y="${(y + 1).toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="11" font-weight="700" fill="#F3F4F6" style="font-variant-numeric: tabular-nums">${p.acc}%</text></g>`;
+    out += `<text x="${p.lx.toFixed(2)}" y="${(y + 1).toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="10" font-weight="600" letter-spacing="0.6" fill="#F3F4F6" style="font-variant-numeric: tabular-nums">${p.acc}%</text></g>`;
     return out;
   }).join('');
   return `<svg viewBox="0 0 300 300" role="img" aria-label="Category accuracy radar">
-    <g opacity="0.05" color="#ffffff"><use href="#knowit-symbol" x="45" y="45" width="210" height="210"></use></g>
     ${rings}${spokes}
-    <polygon points="${poly}" fill="rgba(33, 200, 104, 0.22)" stroke="#21C868" stroke-width="2" stroke-linejoin="round"/>
+    <polygon points="${poly}" fill="rgba(244, 84, 176, 0.22)" stroke="#F454B0" stroke-width="2" stroke-linejoin="round"/>
     ${nodes}
     ${labels}
   </svg>`;
@@ -2001,18 +2002,6 @@ function drawTracked(ctx, text, x, y, size, spacing, weight, align, color, famil
 }
 function drawRadarCanvas(ctx, d, cx, cy, maxR, gap) {
   const g = brainprintGeometry(d.rows, cx, cy, maxR, gap);
-  const pathEl = document.querySelector('#knowit-symbol path');
-  if (pathEl) {
-    const brain = new Path2D(pathEl.getAttribute('d'));
-    const size = maxR * 2;
-    ctx.save();
-    ctx.globalAlpha = 0.05;
-    ctx.fillStyle = '#ffffff';
-    ctx.translate(cx - size / 2, cy - size / 2);
-    ctx.scale(size / 48, size / 48);
-    ctx.fill(brain);
-    ctx.restore();
-  }
   ctx.strokeStyle = 'rgba(255,255,255,0.1)';
   ctx.lineWidth = 2;
   [1, 2, 3].forEach(i => { ctx.beginPath(); ctx.arc(cx, cy, maxR * i / 3, 0, Math.PI * 2); ctx.stroke(); });
@@ -2023,8 +2012,8 @@ function drawRadarCanvas(ctx, d, cx, cy, maxR, gap) {
   ctx.beginPath();
   g.forEach((p, i) => { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
   ctx.closePath();
-  ctx.fillStyle = 'rgba(33, 200, 104, 0.22)'; ctx.fill();
-  ctx.strokeStyle = '#21C868'; ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.stroke();
+  ctx.fillStyle = 'rgba(244, 84, 176, 0.22)'; ctx.fill();
+  ctx.strokeStyle = '#F454B0'; ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.stroke();
   g.forEach(p => {
     if (p.betsWon > p.betsLost) {
       ctx.beginPath(); ctx.arc(p.x, p.y, 16, 0, Math.PI * 2); ctx.fillStyle = 'rgba(245,158,11,0.18)'; ctx.fill();
@@ -2033,7 +2022,7 @@ function drawRadarCanvas(ctx, d, cx, cy, maxR, gap) {
       ctx.beginPath(); ctx.arc(p.x, p.y, 9, 0, Math.PI * 2); ctx.fillStyle = '#1F181C'; ctx.fill();
       ctx.strokeStyle = '#F59E0B'; ctx.lineWidth = 3; ctx.stroke();
     } else {
-      ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, Math.PI * 2); ctx.fillStyle = '#21C868'; ctx.fill();
+      ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, Math.PI * 2); ctx.fillStyle = '#F454B0'; ctx.fill();
     }
   });
   g.forEach(p => {
@@ -2084,7 +2073,7 @@ function drawBrainprintCard(ctx, d) {
   drawTracked(ctx, 'STRONGEST', 48, 762, 11, 2.6, '600', 'left', '#B2A4AC', 'Lexend, sans-serif');
   ctx.textAlign = 'left';
   ctx.font = '700 25px Lexend, sans-serif';
-  ctx.fillStyle = '#21C868';
+  ctx.fillStyle = '#F454B0';
   ctx.fillText(d.strongest ? `${d.strongest.category} ${d.strongest.accuracy}%` : '—', 48, 794);
 
   drawTracked(ctx, 'BLINDSPOT', 392, 762, 11, 2.6, '600', 'left', '#B2A4AC', 'Lexend, sans-serif');
@@ -2494,21 +2483,23 @@ function getRandomQuestion() {
 }
 
 // ---- Category pill palette ----
-// Muted, dark-mode-safe tints. Deliberately avoids Hot Pink (#F454B0) and Bet Amber (#F59E0B);
-// every text colour clears 4.5:1 against --bg-canvas (#140F12).
+// Muted, dark-mode-safe tints. Never amber-ish, so category colour can't be confused with
+// bet indicators; every text colour clears 4.5:1 against --bg-canvas (#140F12).
 const CATEGORY_PALETTES = [
-  { key: 'sky',      color: '#7DD3FC', bg: 'rgba(56, 189, 248, 0.14)',  border: 'rgba(56, 189, 248, 0.28)' },  // Nature / Science / Space
-  { key: 'sand',     color: '#FCD34D', bg: 'rgba(251, 191, 36, 0.13)',  border: 'rgba(251, 191, 36, 0.26)' },  // History / Geography / Travel
-  { key: 'lavender', color: '#D8B4FE', bg: 'rgba(192, 132, 252, 0.14)', border: 'rgba(192, 132, 252, 0.28)' }, // Arts / Literature / Music
-  { key: 'rose',     color: '#FDA4AF', bg: 'rgba(251, 113, 133, 0.14)', border: 'rgba(251, 113, 133, 0.26)' }, // Pop Culture / Film & TV
-  { key: 'mint',     color: '#6EE7B7', bg: 'rgba(16, 185, 129, 0.14)',  border: 'rgba(16, 185, 129, 0.28)' },  // Sports / Food & Drink / General
+  { key: 'green',  color: '#6EE7B7', bg: 'rgba(16, 185, 129, 0.14)',  border: 'rgba(16, 185, 129, 0.30)' },  // Nature / Biology / Earth / Animals
+  { key: 'stone',  color: '#D6D3D1', bg: 'rgba(214, 211, 209, 0.12)', border: 'rgba(214, 211, 209, 0.26)' }, // History / Geography / Travel
+  { key: 'blue',   color: '#7DD3FC', bg: 'rgba(56, 189, 248, 0.14)',  border: 'rgba(56, 189, 248, 0.30)' },  // Science / Space / Tech / Math
+  { key: 'orange', color: '#FDBA74', bg: 'rgba(249, 115, 22, 0.15)',  border: 'rgba(249, 115, 22, 0.32)' },  // Sports / Games
+  { key: 'purple', color: '#D8B4FE', bg: 'rgba(192, 132, 252, 0.14)', border: 'rgba(192, 132, 252, 0.30)' }, // Literature / Arts / Music / Books
+  { key: 'red',    color: '#FDA4AF', bg: 'rgba(251, 113, 133, 0.14)', border: 'rgba(251, 113, 133, 0.30)' }, // Pop Culture / Film / TV
 ];
 const CATEGORY_KEYWORDS = {
-  sky:      ['nature', 'science', 'biology', 'space', 'astronomy', 'math', 'maths', 'technology', 'tech', 'physics', 'chemistry', 'environment'],
-  sand:     ['history', 'geography', 'travel', 'exploration', 'politics', 'war'],
-  lavender: ['art', 'arts', 'literature', 'book', 'books', 'poetry', 'music', 'language'],
-  rose:     ['pop', 'film', 'tv', 'television', 'entertainment', 'celebrity', 'cinema', 'gaming', 'media'],
-  mint:     ['sport', 'sports', 'food', 'drink', 'general', 'business', 'health', 'money', 'lifestyle'],
+  green:  ['nature', 'biology', 'earth', 'animals', 'animal', 'wildlife', 'environment'],
+  stone:  ['history', 'geography', 'travel', 'exploration', 'politics', 'war'],
+  blue:   ['science', 'space', 'astronomy', 'tech', 'technology', 'math', 'maths', 'physics', 'chemistry'],
+  orange: ['sport', 'sports', 'games', 'game', 'gaming', 'fitness'],
+  purple: ['literature', 'art', 'arts', 'music', 'book', 'books', 'poetry', 'language'],
+  red:    ['pop', 'film', 'tv', 'television', 'movies', 'movie', 'cinema', 'entertainment', 'celebrity', 'media'],
 };
 function normalizeCategory(name) {
   return String(name == null ? '' : name).toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').trim();
@@ -2530,7 +2521,7 @@ function applyCategoryPillStyle(el, categoryName) {
   const p = CATEGORY_PALETTES[categoryPaletteIndex(categoryName)];
   el.style.color = p.color;
   el.style.backgroundColor = p.bg;
-  el.style.borderColor = p.border;
+  el.style.border = `1px solid ${p.border}`;
   return el;
 }
 function makeCategoryPill(categoryName) {

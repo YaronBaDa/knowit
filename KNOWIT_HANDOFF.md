@@ -63,7 +63,7 @@ Scratch tooling (not in repo): `/tmp/knowit.js` (extracted inline JS for `node -
 | `--accent-incorrect-text` | `#FF5C63` | small red text only (AA on surface) |
 | `--accent-bet` | `#F59E0B` | **bets only** — bolts, toggle armed, option ring |
 
-**Colour budget rule:** max 1–2 pink elements per screen. Pink = brand + clock. Amber = money/bets. Never mix.
+**Colour budget rule:** max 1–2 pink elements per screen. Pink = brand + clock + the Brainprint accuracy polygon. Amber = money/bets only. Never mix.
 
 Bet accent switch: `--accent-bet`, `--accent-bet-tint`, `--accent-bet-glow`, `--accent-bet-glow-strong` sit together in `:root` with a comment listing the amber values — swapping those 4 reverts the colour.
 
@@ -88,13 +88,13 @@ A **wiring block** immediately after them assigns each component to one tier (se
 
 ### Category pill (`.category-pill`)
 
-Every category name renders inside a pill — gameplay, review modal, and the results Blindspot line. Layout: `inline-flex`, `4px 11px` padding, `999px`, 11/600, `0.07em`, uppercase.
+Every category name renders inside a pill — gameplay, review modal, and the Brainprint modal. Layout: `inline-flex`, **20px tall**, `padding: 1px 9px 0`, `999px`, 10/600, `line-height: 1`, `0.06em`, uppercase.
 
 - `.cat-row` (wrapper `#q-cat` / `#rm-cat`) sits directly above the text with **`margin-bottom: 10px`**, `#q-text` keeps `margin-top: 0`, so the pill reads as part of the question.
 - `.progress-strip` is `margin-bottom: 22px` so the 10 segments stay grouped with the HUD above.
 - Short-viewport override (`max-height: 600px`): strip 12px, pill 8px, stage `padding-bottom: 4px` — keeps the 505-question sweep at **0 clipped** on 320×568.
-- Colours come from `applyCategoryPillStyle(el, name)` (JS, not CSS): 5 muted palettes — sky `#7DD3FC`, sand `#FCD34D`, lavender `#D8B4FE`, rose `#FDA4AF`, mint `#6EE7B7` — each on a 13–14 % tint with a matching 26–28 % border. Text clears **10:1+** on `#140F12`; none use pink or bet amber.
-- Keyword map covers all 16 bank categories (Space/Math/Technology → sky, Business → mint); unknown names fall back to an FNV-1a hash across the 5 palettes, so a name always keeps its tint.
+- Colours come from `applyCategoryPillStyle(el, name)` (JS, not CSS): 6 muted palettes — green `#6EE7B7` (Nature/Biology/Earth/Animals), stone `#D6D3D1` (History/Geography/Travel), blue `#7DD3FC` (Science/Space/Tech/Math), orange `#FDBA74` (Sports/Games), purple `#D8B4FE` (Literature/Arts/Music/Books), red `#FDA4AF` (Pop Culture/Film/TV). **No palette is amber**, so a pill can never read as a bet. Unknown names hash (FNV-1a) across the 6 in declaration order.
+- Keyword map covers all bank categories; `Food & Drink` and `Business` are unmapped and therefore take the hash.
 
 ---
 
@@ -108,7 +108,7 @@ Every category name renders inside a pill — gameplay, review modal, and the re
 
 **Results**: header (`Today's Set` + `Daily #N`) → verdict `clamp(24–28)/700` + streak badge → scorecard (5×2 grid · divider · 4-col stat bar · tap hint) → Blindspot line (outside the card) → Brainprint bar → Challenge CTA + 44px copy icon → Play Endless → footer `Next set in … · Home`.
 
-**Brainprint** (`.bp-*`, `#brainprint-modal`): one compact bar on Results (below the scorecard) and inside the Today's Run card on the hub. Unlocked at ≥5 answers across ≥3 categories — otherwise a muted "Play 3+ categories to unlock" pill that still opens the modal in calibration mode. The modal is a 380px card: KNOWIT/Zetta + BRAINPRINT eyebrow, 300×300 SVG radar (brain watermark at 5% opacity, 3 rings + spokes at `rgba(255,255,255,.1)`, emerald accuracy polygon, amber bet nodes), legend, 3-column summary, all played categories as pills, pinned pink CTA. "Share Brainprint" renders a 720×900 canvas card (`knowit-brainprint.png`): `navigator.canShare({files})` → native share, else download + clipboard summary and the button reads "Saved & Copied ✓" for 2 s.
+**Brainprint** (`.bp-*`, `#brainprint-modal`): one compact bar on Results (below the scorecard) and inside the Today's Run card on the hub. Unlocked at ≥5 answers across ≥3 categories — otherwise a muted "Play 3+ categories to unlock" pill that still opens the modal in calibration mode. The modal is a 380px card: KNOWIT/Zetta + BRAINPRINT eyebrow, a plain 300×300 SVG spider web (3 rings + spokes at `rgba(255,255,255,.1)`, **no watermark**), a Hot Pink accuracy polygon (`#F454B0` / `rgba(244,84,176,.22)`), pink default dots with amber bet nodes, legend, 3-column summary at 20/700, every played category as a pill. Type is three tiers only: 20/700 figures, 12.5px rows + legend, 10/600/0.06em micro labels. "Share Brainprint" renders the same card at 720×900 on canvas (`knowit-brainprint.png`): `navigator.canShare({files})` → native share, else download + clipboard summary and the button reads "Saved & Copied ✓" for 2 s.
 
 **Review modal**: 18/700 question, 11/600 labels, 13.5/400 did-you-know.
 
