@@ -65,6 +65,27 @@ Scratch tooling (not in repo): `/tmp/knowit.js` (extracted inline JS for `node -
 
 **Colour budget rule:** max 1–2 pink elements per screen. Pink = brand + clock + the Brainprint accuracy polygon. Amber = money/bets only. Never mix.
 
+### Brand gradient system (Brainy Pink → Orchid)
+
+Six tokens in `:root` — never hardcode these hexes again:
+
+| token | value | used by |
+|---|---|---|
+| `--brand-grad` | `linear-gradient(135deg, #FF6EB4, #F454B0 50%, #A855F7)` | diagonal brand fills |
+| `--brand-grad-h` | same, `90deg` | timer progress fill |
+| `--brand-cta-grad` | `linear-gradient(135deg, #FF63B1, #E13C9D)` | every `.btn-primary` |
+| `--brand-pink` | `#F454B0` | flat brand accents, radar dots, hero heart |
+| `--brand-glow` | `#FF6EB4` | `KEEP GOING` eyebrow |
+| `--brand-orchid` | `#A855F7` | gradient terminus only |
+
+**SVG paint server:** a single `<linearGradient id="knowit-grad">` (12%/8% → 88%/92%, stops `#FF6EB4` / `#F454B0` / `#A855F7`) lives in a **zero-size SVG** (`width=0 height=0 position:absolute`) right before the `display:none` sprite. The brain `<path>` fills with `url(#knowit-grad)`; its K counter is a knockout, so it shows the dark surface (#140F12) — that *is* the "dark ink" K, no second path.
+
+⚠️ **Never move that gradient into the `display:none` sprite.** Chrome refuses to resolve paint servers inside a `display:none` subtree and silently paints nothing (`fill` → none). Cost me a blank logo once; the zero-size host is the fix.
+
+**Radar polygon** renders twice: a solid `#F454B0` underlay (real fallback) then the same polygon with `stroke="url(#knowit-grad)"`, `fill="rgba(244,84,176,.22)"`. The canvas share export builds an equivalent `createLinearGradient` from the polygon's own bbox (0% / 50% / 100%).
+
+**Assets:** `favicon.png` (64), `apple-touch-icon.png` (180), `favicon.ico` (16/24/32/48) are rendered from the same mark — 3 stops ≥64px, 2 stops ≤48px (a 3-stop ramp inside 11 px goes muddy).
+
 Bet accent switch: `--accent-bet`, `--accent-bet-tint`, `--accent-bet-glow`, `--accent-bet-glow-strong` sit together in `:root` with a comment listing the amber values — swapping those 4 reverts the colour.
 
 ### Type scale (8 classes, defined at the END of `<style>`)

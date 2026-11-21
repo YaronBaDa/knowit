@@ -48,6 +48,14 @@
   --accent-brand: #F454B0;
   --accent-indigo: #FF7BC8;
 
+  /* Brand gradient system — Brainy Pink → Orchid */
+  --brand-grad: linear-gradient(135deg, #FF6EB4 0%, #F454B0 50%, #A855F7 100%);
+  --brand-grad-h: linear-gradient(90deg, #FF6EB4 0%, #F454B0 50%, #A855F7 100%);
+  --brand-cta-grad: linear-gradient(135deg, #FF63B1 0%, #E13C9D 100%);
+  --brand-pink: #F454B0;
+  --brand-glow: #FF6EB4;
+  --brand-orchid: #A855F7;
+
   /* Soft glow / background-wash tints */
   --accent-correct-tint: rgba(33, 200, 104, 0.14);
   --accent-incorrect-tint: rgba(242, 41, 51, 0.16);
@@ -167,8 +175,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .landing-streak-bar .broken { opacity: 0.55; filter: grayscale(1); }
 .btn-primary {
   width: 100%; max-width: 280px; padding: 14px 20px; border-radius: var(--radius); border: none;
-  background: var(--accent); color: var(--on-brand); font-size: 16px; font-weight: 700; cursor: pointer;
-  box-shadow: var(--shadow); transition: transform .12s, filter .12s; font-family: var(--font-sans);
+  background: #F454B0; background-image: var(--brand-cta-grad); color: #140F12; font-size: 16px; font-weight: 700; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(244, 84, 176, 0.24); transition: transform .12s, filter .12s; font-family: var(--font-sans);
 }
 .btn-primary:hover { filter: brightness(1.06); }
 .btn-primary:active { transform: scale(0.97); }
@@ -197,7 +205,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   background: #1F181C; border: 1px solid rgba(244, 84, 176, 0.28); border-radius: 16px;
   padding: 14px 16px; max-width: 340px; width: 100%; text-align: left;
 }
-.endless-teaser .et-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-brand); font-weight: 600; margin-bottom: 8px; }
+.endless-teaser .et-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--brand-glow); font-weight: 600; margin-bottom: 8px; }
 .endless-teaser .et-title { color: var(--text-primary); margin-bottom: 4px; }
 .endless-teaser .et-line { color: var(--text-secondary); margin-bottom: 12px; }
 .endless-teaser .btn-primary { width: 100%; max-width: none; }
@@ -228,7 +236,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 #screen-landing.is-completed .landing-footer { display: none; }
 .hub-brand { display: flex; align-items: center; gap: 8px; }
 .hub-wordmark { font-size: 16px; color: var(--text-primary); }
-.streak-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(244, 84, 176, 0.35); background: var(--accent-brand-tint); color: var(--accent-brand); font-family: var(--font-mono); font-size: 12px; font-weight: 600; }
+.streak-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(244, 84, 176, 0.28); background: var(--accent-brand-tint); color: var(--brand-pink); font-family: var(--font-mono); font-size: 12px; font-weight: 600; }
 .streak-pill .fire { display: inline-flex; }
 .streak-pill svg { width: 13px; height: 13px; }
 .trophy-card { width: 100%; max-width: 340px; background: #1A1418; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 14px 16px; text-align: left; }
@@ -380,7 +388,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 @keyframes microshake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-1px)} 75%{transform:translateX(1px)} }
 
 /* ---- Tactile layer: timer escalation, hurt vignette, heart drama, pace pill ---- */
-.q-timer-fill { background: var(--accent-brand); }
+.q-timer-fill { background: var(--brand-grad-h); }
 .q-timer-fill.t-amber { background: #F59E0B; }
 .q-timer-fill.t-crimson { background: #F22933; }
 .q-timer-text.t-amber { color: #F59E0B; animation: pulse 1s ease-in-out infinite; }
@@ -784,6 +792,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* Inline SVG icons */
 .hero-title { display: flex; align-items: center; justify-content: center; gap: 7px; }
 .hero-title svg { width: 20px; height: 20px; color: var(--accent); flex-shrink: 0; }
+.hero-title svg.ic-heart { color: var(--brand-pink); }
 .hero-title.aurora svg { color: var(--ice); }
 .landing-streak-bar .fire { display: inline-flex; color: var(--accent-brand); }
 .landing-streak-bar .fire svg { width: 16px; height: 16px; }
@@ -912,7 +921,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   font-family: var(--font-sans); font-size: 11px; font-weight: 600; line-height: 1.2;
   letter-spacing: 0.07em; text-transform: uppercase;
 }
-.endless-teaser .et-eyebrow { color: var(--accent-brand); }
+.endless-teaser .et-eyebrow { color: var(--brand-glow); }
 
 /* .type-hud */
 #header-meta, .game-header .meta, .endless-hud .streak, #landing-puzzle, .streak-pill,
@@ -948,10 +957,10 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 </head>
 <body>
 <!-- knowit-symbol: brain mark (source: knowit-brain.svg) -->
-<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden"><defs><linearGradient id="brandAuroraGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22d3a5"/><stop offset=".36" stop-color="#38bdf8"/><stop offset=".7" stop-color="#818cf8"/><stop offset="1" stop-color="#c084fc"/></linearGradient></defs></svg>
+<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden"><defs><linearGradient id="knowit-grad" x1="12%" y1="8%" x2="88%" y2="92%"><stop offset="0%" stop-color="#FF6EB4"/><stop offset="50%" stop-color="#F454B0"/><stop offset="100%" stop-color="#A855F7"/></linearGradient></defs></svg>
 <svg style="display:none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
   <symbol id="knowit-symbol" viewBox="0 0 48 48">
-    <path fill="url(#brandAuroraGrad)" d="M30.5459 0C35.7569 0.000192135 40.1123 3.65456 41.1943 8.54004C43.9905 10.5152 45.8182 13.7704 45.8184 17.4541C45.8184 18.7214 45.5995 19.9378 45.2021 21.0693C46.9412 23.0019 47.9999 25.5588 48 28.3633C48 31.9318 46.2867 35.1005 43.6377 37.0908H43.6367C43.6367 43.1157 38.7524 47.9999 32.7275 48C29.1587 48 25.9903 46.2861 24 43.6367C22.0097 46.2861 18.8412 48 15.2725 48C9.43598 47.9998 4.67013 43.4162 4.37793 37.6523L4.36328 37.0908C1.71393 35.1005 0 31.9321 0 28.3633C8.92571e-05 25.5586 1.05951 23.0019 2.79883 21.0693C2.4014 19.9377 2.18164 18.7215 2.18164 17.4541C2.18179 13.7701 4.01005 10.5151 6.80664 8.54004C7.88876 3.65465 12.2431 0.000167611 17.4541 0C19.9099 0 22.1768 0.811214 24 2.18066C25.8232 0.811229 28.0901 0 30.5459 0ZM20.4297 8.36914C17.3998 8.36936 14.4771 9.54869 11.7695 11.2979L8.49902 13.4102L11.2168 18.8945C10.5936 22.5266 10.1555 25.1899 9.91211 26.8564C9.64071 28.7145 9.46875 30.3352 9.46875 31.5801C9.46881 33.4547 9.82362 35.8225 11.4854 37.6562L11.6504 37.832C13.3821 39.6147 15.6828 40.0663 17.5586 40.0664C19.9044 40.0664 22.0649 39.3141 23.8945 37.876C24.4454 38.3556 25.0675 38.7766 25.7666 39.1104C25.7743 39.1141 25.7823 39.1174 25.79 39.1211C25.7991 39.1254 25.8083 39.1295 25.8174 39.1338C27.2106 39.7978 28.6938 40.0361 30.1133 40.0361C31.4888 40.0361 32.808 39.7114 34.0166 39.2422L34.0176 39.2432C34.0318 39.2379 34.0453 39.23 34.0596 39.2246C34.0727 39.2194 34.0874 39.2161 34.1006 39.2109L34.0996 39.21C35.2832 38.7612 36.5412 38.1043 37.5674 37.0781L41.2158 33.4297L37.0107 30.4365C37.0074 30.434 36.9931 30.4227 36.9678 30.4004C36.9372 30.3735 36.8923 30.3324 36.8369 30.2744C36.7245 30.1566 36.5771 29.9828 36.3984 29.7373C36.0351 29.2381 35.6033 28.525 35.1162 27.5508C34.6199 26.5476 34.1366 25.4076 33.6689 24.125C34.2171 23.6904 34.7225 23.2548 35.1797 22.8164L35.1807 22.8154C37.0625 21.0099 38.7841 18.5592 38.7842 15.5127C38.7841 13.85 38.3116 11.842 36.6729 10.3164L36.6758 10.3154C36.6547 10.2952 36.6316 10.2767 36.6104 10.2568C36.5865 10.2352 36.5634 10.2119 36.5391 10.1904L36.5371 10.1914C34.9447 8.75041 32.9777 8.40043 31.4268 8.40039C30.2189 8.40044 29.0479 8.62027 27.9346 9.00195C26.9778 9.31198 26.0547 9.73536 25.168 10.2432C23.8727 8.93562 22.2326 8.43792 20.7549 8.37598L20.4297 8.36914ZM20.4297 12.7334C21.9976 12.7334 22.7821 13.6905 22.7822 15.6045C22.7821 16.0526 22.6603 16.9694 22.416 18.3535C22.192 19.7178 21.9374 21.1543 21.6523 22.6611C21.6374 22.7412 21.6221 22.8205 21.6074 22.8994L22.9355 21.9268C23.872 21.2346 24.6768 20.5219 25.3486 19.7891C26.0202 19.0564 26.5289 18.3334 26.875 17.6211C27.178 16.9974 27.3489 16.3963 27.3867 15.8193L27.3955 15.5742C27.3955 15.1059 27.3133 14.6264 27.1504 14.1377C27.9037 13.6898 28.638 13.3538 29.3506 13.1299C30.0629 12.8858 30.7551 12.7637 31.4268 12.7637L31.7891 12.7744C32.6062 12.8256 33.2286 13.0562 33.6562 13.4658C34.1653 13.9138 34.4199 14.5965 34.4199 15.5127C34.4198 16.8362 33.6669 18.2213 32.1602 19.667C31.2555 20.5344 30.0396 21.4527 28.5166 22.4258C29.3286 25.1551 30.2285 27.5143 31.2139 29.5029C32.3337 31.7425 33.4227 33.2397 34.4814 33.9932C34.0335 34.441 33.3714 34.8276 32.4961 35.1533C31.6206 35.4994 30.8259 35.6728 30.1133 35.6729C29.1565 35.6728 28.3418 35.5093 27.6699 35.1836C27.0185 34.8782 26.4377 34.3688 25.9287 33.6562C25.4402 32.9234 24.9722 31.9258 24.5244 30.6641L22.7607 25.6846L20.9209 26.6787C20.8546 27.0537 20.7915 27.404 20.7354 27.7305C20.5317 29.0335 20.4297 29.9609 20.4297 30.5107C20.4297 31.447 20.4922 32.2005 20.6143 32.7705C20.7568 33.3406 21.0015 33.8598 21.3477 34.3281C20.248 35.2445 18.984 35.7031 17.5586 35.7031C16.2557 35.703 15.3092 35.377 14.7188 34.7256C14.1283 34.074 13.8321 33.0256 13.832 31.5801C13.832 30.6638 13.9648 29.2993 14.2295 27.4873C14.4942 25.675 15.0044 22.5892 15.7578 18.2314L14.1377 14.9629C16.4384 13.4766 18.5361 12.7336 20.4297 12.7334Z"/>
+    <path fill="url(#knowit-grad)" d="M30.5459 0C35.7569 0.000192135 40.1123 3.65456 41.1943 8.54004C43.9905 10.5152 45.8182 13.7704 45.8184 17.4541C45.8184 18.7214 45.5995 19.9378 45.2021 21.0693C46.9412 23.0019 47.9999 25.5588 48 28.3633C48 31.9318 46.2867 35.1005 43.6377 37.0908H43.6367C43.6367 43.1157 38.7524 47.9999 32.7275 48C29.1587 48 25.9903 46.2861 24 43.6367C22.0097 46.2861 18.8412 48 15.2725 48C9.43598 47.9998 4.67013 43.4162 4.37793 37.6523L4.36328 37.0908C1.71393 35.1005 0 31.9321 0 28.3633C8.92571e-05 25.5586 1.05951 23.0019 2.79883 21.0693C2.4014 19.9377 2.18164 18.7215 2.18164 17.4541C2.18179 13.7701 4.01005 10.5151 6.80664 8.54004C7.88876 3.65465 12.2431 0.000167611 17.4541 0C19.9099 0 22.1768 0.811214 24 2.18066C25.8232 0.811229 28.0901 0 30.5459 0ZM20.4297 8.36914C17.3998 8.36936 14.4771 9.54869 11.7695 11.2979L8.49902 13.4102L11.2168 18.8945C10.5936 22.5266 10.1555 25.1899 9.91211 26.8564C9.64071 28.7145 9.46875 30.3352 9.46875 31.5801C9.46881 33.4547 9.82362 35.8225 11.4854 37.6562L11.6504 37.832C13.3821 39.6147 15.6828 40.0663 17.5586 40.0664C19.9044 40.0664 22.0649 39.3141 23.8945 37.876C24.4454 38.3556 25.0675 38.7766 25.7666 39.1104C25.7743 39.1141 25.7823 39.1174 25.79 39.1211C25.7991 39.1254 25.8083 39.1295 25.8174 39.1338C27.2106 39.7978 28.6938 40.0361 30.1133 40.0361C31.4888 40.0361 32.808 39.7114 34.0166 39.2422L34.0176 39.2432C34.0318 39.2379 34.0453 39.23 34.0596 39.2246C34.0727 39.2194 34.0874 39.2161 34.1006 39.2109L34.0996 39.21C35.2832 38.7612 36.5412 38.1043 37.5674 37.0781L41.2158 33.4297L37.0107 30.4365C37.0074 30.434 36.9931 30.4227 36.9678 30.4004C36.9372 30.3735 36.8923 30.3324 36.8369 30.2744C36.7245 30.1566 36.5771 29.9828 36.3984 29.7373C36.0351 29.2381 35.6033 28.525 35.1162 27.5508C34.6199 26.5476 34.1366 25.4076 33.6689 24.125C34.2171 23.6904 34.7225 23.2548 35.1797 22.8164L35.1807 22.8154C37.0625 21.0099 38.7841 18.5592 38.7842 15.5127C38.7841 13.85 38.3116 11.842 36.6729 10.3164L36.6758 10.3154C36.6547 10.2952 36.6316 10.2767 36.6104 10.2568C36.5865 10.2352 36.5634 10.2119 36.5391 10.1904L36.5371 10.1914C34.9447 8.75041 32.9777 8.40043 31.4268 8.40039C30.2189 8.40044 29.0479 8.62027 27.9346 9.00195C26.9778 9.31198 26.0547 9.73536 25.168 10.2432C23.8727 8.93562 22.2326 8.43792 20.7549 8.37598L20.4297 8.36914ZM20.4297 12.7334C21.9976 12.7334 22.7821 13.6905 22.7822 15.6045C22.7821 16.0526 22.6603 16.9694 22.416 18.3535C22.192 19.7178 21.9374 21.1543 21.6523 22.6611C21.6374 22.7412 21.6221 22.8205 21.6074 22.8994L22.9355 21.9268C23.872 21.2346 24.6768 20.5219 25.3486 19.7891C26.0202 19.0564 26.5289 18.3334 26.875 17.6211C27.178 16.9974 27.3489 16.3963 27.3867 15.8193L27.3955 15.5742C27.3955 15.1059 27.3133 14.6264 27.1504 14.1377C27.9037 13.6898 28.638 13.3538 29.3506 13.1299C30.0629 12.8858 30.7551 12.7637 31.4268 12.7637L31.7891 12.7744C32.6062 12.8256 33.2286 13.0562 33.6562 13.4658C34.1653 13.9138 34.4199 14.5965 34.4199 15.5127C34.4198 16.8362 33.6669 18.2213 32.1602 19.667C31.2555 20.5344 30.0396 21.4527 28.5166 22.4258C29.3286 25.1551 30.2285 27.5143 31.2139 29.5029C32.3337 31.7425 33.4227 33.2397 34.4814 33.9932C34.0335 34.441 33.3714 34.8276 32.4961 35.1533C31.6206 35.4994 30.8259 35.6728 30.1133 35.6729C29.1565 35.6728 28.3418 35.5093 27.6699 35.1836C27.0185 34.8782 26.4377 34.3688 25.9287 33.6562C25.4402 32.9234 24.9722 31.9258 24.5244 30.6641L22.7607 25.6846L20.9209 26.6787C20.8546 27.0537 20.7915 27.404 20.7354 27.7305C20.5317 29.0335 20.4297 29.9609 20.4297 30.5107C20.4297 31.447 20.4922 32.2005 20.6143 32.7705C20.7568 33.3406 21.0015 33.8598 21.3477 34.3281C20.248 35.2445 18.984 35.7031 17.5586 35.7031C16.2557 35.703 15.3092 35.377 14.7188 34.7256C14.1283 34.074 13.8321 33.0256 13.832 31.5801C13.832 30.6638 13.9648 29.2993 14.2295 27.4873C14.4942 25.675 15.0044 22.5892 15.7578 18.2314L14.1377 14.9629C16.4384 13.4766 18.5361 12.7336 20.4297 12.7334Z"/>
   </symbol>
 </svg>
 <canvas id="confetti-canvas"></canvas>
@@ -2069,7 +2078,8 @@ function brainprintSVG(d, opts = {}) {
   }).join('');
   return `<svg viewBox="0 0 ${size} ${size}" role="img" aria-label="Category accuracy radar">
     ${rings}${spokes}
-    <polygon points="${poly}" fill="rgba(244, 84, 176, 0.22)" stroke="#F454B0" stroke-width="2" stroke-linejoin="round"/>
+    <polygon points="${poly}" fill="none" stroke="#F454B0" stroke-width="2" stroke-linejoin="round"/>
+    <polygon points="${poly}" fill="rgba(244, 84, 176, 0.22)" stroke="url(#knowit-grad)" stroke-width="2" stroke-linejoin="round"/>
     ${nodes}
     ${labels}
   </svg>`;
@@ -2224,7 +2234,10 @@ function drawRadarCanvas(ctx, d, cx, cy, maxR, gap) {
   g.forEach((p, i) => { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
   ctx.closePath();
   ctx.fillStyle = 'rgba(244, 84, 176, 0.22)'; ctx.fill();
-  ctx.strokeStyle = '#F454B0'; ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.stroke();
+  const _xs = g.map(p => p.x), _ys = g.map(p => p.y);
+  const _sg = ctx.createLinearGradient(Math.min(..._xs), Math.min(..._ys), Math.max(..._xs), Math.max(..._ys));
+  _sg.addColorStop(0, '#FF6EB4'); _sg.addColorStop(0.5, '#F454B0'); _sg.addColorStop(1, '#A855F7');
+  ctx.strokeStyle = _sg; ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.stroke();
   g.forEach(p => {
     if (p.betsWon > p.betsLost) {
       ctx.beginPath(); ctx.arc(p.x, p.y, 16, 0, Math.PI * 2); ctx.fillStyle = 'rgba(245,158,11,0.18)'; ctx.fill();
@@ -2497,7 +2510,7 @@ const ICONS = {
   target: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
   chess: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.2"/><path d="M12 8.5c-1.6 0-2.7 1.1-2.7 2.6S10.4 13.5 12 13.5s2.7-1.1 2.7-2.4-1.1-2.6-2.7-2.6z"/><path d="M9 16h6l-1 3H10z"/><path d="M10.5 19h3"/></svg>',
   dice: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.2"/><circle cx="15.5" cy="8.5" r="1.2"/><circle cx="8.5" cy="15.5" r="1.2"/><circle cx="15.5" cy="15.5" r="1.2"/></svg>',
-  heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+  heart: '<svg class="ic-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
   snowflake: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9 4.9 19.1"/></svg>',
   copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
   speakerOn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 6a9 9 0 0 1 0 12"/></svg>',
