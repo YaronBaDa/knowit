@@ -128,9 +128,11 @@ Every category name renders inside a pill — gameplay, review modal, and the re
 
 ### localStorage (do not rename or extend)
 
-`knowit_stats_v3` — `played, streak, maxStreak, lastDate, completedDaily, totalCorrect, totalAnswered, bestEndless, betsUsed, betsHit`
+`knowit_stats_v3` — `played, streak, maxStreak, lastDate, completedDaily, totalCorrect, totalAnswered, bestEndless, betsUsed, betsHit, categories`
 `knowit_progress_v1` — mid-daily resume (validated against the current id list)
 `knowit_result_v1` — today's finished run (drives the hub card + "Review")
+
+`categories` is a silent lifetime map: `{ "<Category>": { answered, correct, betsWon, betsLost } }`. `recordCategoryStat(q, isCorrect, isBet, answerIndex)` writes one row per answer (Daily and Endless, timeouts included as a plain miss — no bet), guarded against double-submits and resumed dailies by an answer-index Set that resets per run. `getCategoryStats()` returns the read-only aggregate sorted by `answered` desc (`category, answered, correct, accuracy %, betsWon, betsLost`) for the future Brainprint screen. **No UI reads it yet — keep it invisible.**
 
 ---
 

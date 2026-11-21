@@ -1610,13 +1610,69 @@ function loadStats() {
       // New bet stats — default for existing saved data
       if (s.betsUsed === undefined) s.betsUsed = 0;
       if (s.betsHit === undefined) s.betsHit = 0;
+      // Per-category lifetime map — migrate older saves in place, never touch streak/played/bestEndless
+      const hadCategories = !!s.categories && typeof s.categories === 'object' && !Array.isArray(s.categories);
+      if (!hadCategories) {
+        s.categories = {};
+        // Persist the upgrade once so the schema is stable across tabs/sessions
+        try { localStorage.setItem('knowit_stats_v3', JSON.stringify(s)); } catch(e){}
+      }
       return s;
     }
   } catch(e){}
-  return { played:0, streak:0, maxStreak:0, totalCorrect:0, totalAnswered:0, bestEndless:0, lastDate:null, completedDaily:null, betsUsed:0, betsHit:0 };
+  return { played:0, streak:0, maxStreak:0, totalCorrect:0, totalAnswered:0, bestEndless:0, lastDate:null, completedDaily:null, betsUsed:0, betsHit:0, categories:{} };
 }
 function saveStats() {
   try { localStorage.setItem('knowit_stats_v3', JSON.stringify(stats)); } catch(e){}
+}
+
+// ---- Silent per-category tracking (lifetime; no UI reads it yet) ----
+// Guard: answer indexes already counted in this run. Reset per run, so a resumed
+// daily never re-counts the answers restored from knowit_progress_v1.
+let _catRecorded = new Set();
+function resetCategoryRunGuard() { _catRecorded = new Set(); }
+function categoryLabelOf(question) {
+  if (!question) return 'General';
+  const raw = (question.category !== undefined && question.category !== null) ? question.category
+            : (question.cat !== undefined && question.cat !== null) ? question.cat
+            : question.topic;
+  const label = raw === undefined || raw === null ? '' : String(raw).trim();
+  return label || 'General';
+}
+function recordCategoryStat(question, isCorrect, isBet, answerIndex) {
+  const cat = categoryLabelOf(question);
+  if (answerIndex !== undefined && answerIndex !== null) {
+    const key = String(answerIndex);
+    if (_catRecorded.has(key)) return false;   // already counted (double submit / resumed run)
+    _catRecorded.add(key);
+  }
+  if (!stats.categories || typeof stats.categories !== 'object' || Array.isArray(stats.categories)) stats.categories = {};
+  let row = stats.categories[cat];
+  if (!row || typeof row !== 'object' || Array.isArray(row)) row = stats.categories[cat] = { answered: 0, correct: 0, betsWon: 0, betsLost: 0 };
+  row.answered = Number(row.answered) || 0;
+  row.correct = Number(row.correct) || 0;
+  row.betsWon = Number(row.betsWon) || 0;
+  row.betsLost = Number(row.betsLost) || 0;
+  row.answered += 1;
+  if (isCorrect) row.correct += 1;
+  if (isBet) { if (isCorrect) row.betsWon += 1; else row.betsLost += 1; }
+  return true;
+}
+function getCategoryStats() {
+  const map = (stats && stats.categories && typeof stats.categories === 'object' && !Array.isArray(stats.categories)) ? stats.categories : {};
+  return Object.keys(map).map(category => {
+    const r = map[category] || {};
+    const answered = Number(r.answered) || 0;
+    const correct = Number(r.correct) || 0;
+    return {
+      category,
+      answered,
+      correct,
+      accuracy: answered > 0 ? Math.round((correct / answered) * 100) : 0,
+      betsWon: Number(r.betsWon) || 0,
+      betsLost: Number(r.betsLost) || 0,
+    };
+  }).sort((a, b) => b.answered - a.answered || a.category.localeCompare(b.category));
 }
 // ---- Progress / result persistence (two extra keys; stats object untouched) ----
 const PROGRESS_KEY = 'knowit_progress_v1';
@@ -2234,6 +2290,7 @@ function startDaily() {
   state.betsLeft = 3;
   state.armed = false;
   state.duel = parseDuelParam();
+  resetCategoryRunGuard();
   // Resume an interrupted daily for today's puzzle (same ids, same order)
   const saved = loadProgress();
   if (saved) {
@@ -2280,6 +2337,7 @@ function startEndless() {
   state.betsLeft = 0;
   state.armed = false;
   state.duel = null;
+  resetCategoryRunGuard();
   $('header-meta').textContent = `ENDLESS · Q01`;
   $('endless-hud').style.display = 'flex';
   $('duel-banner').style.display = 'none';
@@ -2294,6 +2352,8 @@ function handleTimeout() {
   const time = performance.now() - state.qStartTime;
   const wasArmed = state.armed && state.betsLeft > 0;
   state.answers.push({correct:false, time, category:q.category, q, picked:null, bet:false, points:0});
+  recordCategoryStat(q, false, false, state.answers.length - 1);
+  saveStats();
   saveProgress();
   state.waiting = true;
   stopQTimer();
@@ -2349,8 +2409,10 @@ function handleAnswer(idx) {
     state.betsLeft--;
     stats.betsUsed++;
     if (correct) stats.betsHit++;
-    saveStats();
   }
+  // Silent lifetime category tally — recorded once per answer, persisted immediately
+  recordCategoryStat(q, correct, bet, state.answers.length - 1);
+  saveStats();
   state.armed = false;
   saveProgress();
 
