@@ -102,7 +102,7 @@ Every category name renders inside a pill — gameplay, review modal, and the Br
 
 **Landing — pre-completion** (`#screen-landing:not(.is-completed)`): brain mark (clamp 96–116px) → `KNOWIT` → 2-line tagline (14/400 secondary). Pinned footer holds `#streak-bar` (plain 12/400 line, hidden at streak 0), `Daily #N` (12/400) and the pink CTA (15/600). Footer rhythm: 4px between meta lines, 8px above the CTA. `#landing-stats` is force-hidden.
 
-**Landing — post-completion hub** (`.is-completed`): header row (28px mark + Zetta wordmark + pink streak pill), `Today's Run` card (eyebrow → `18px/700` score line with muted `18/500` tail → 10-cell mini grid → `Next set in … · N played · Best Nd` → Review/Share), then the Endless card (pink `KEEP GOING` eyebrow → 18/700 title → 13.5/400 line → pink CTA).
+**Landing — post-completion hub** (`.is-completed`): header row (28px mark + Zetta wordmark + pink streak pill) at the top, then one bottom-anchored `.completed-stack` (gap 12, `margin-top: auto`, 18px safe padding) holding both cards. `Today's Run` is the recessed recap (`#1A1418`, 6 % white border, radius 16, 14/16 padding): eyebrow → `18px/700` score `{pts} pts ({correct}/10) · {tier}` with the parenthetical at 500/secondary → 10-cell mini grid → `13px/400` countdown `Next set in … · N played · Best Nd` → Brainprint row → Review/Share (14/600, 2 equal columns). `Endless Mode` is the elevated next move (`#1F181C`, pink 28 % border, radius 16, 14/16 padding): pink `KEEP GOING` eyebrow → 18/700 title → 13.5/400 line → full-width pink `Play Endless`.
 
 **Playing**: header (meta `Daily #N` / `ENDLESS · Q01`, three amber bet bolts, timer text) → timer bar → 10-segment progress strip → category pill (10px above the question) → question → answer dock (bordered top edge, 4 option cards) → bet line above the dock → feedback strip (absolute, floats over the bet line).
 
@@ -117,7 +117,7 @@ Every category name renders inside a pill — gameplay, review modal, and the Br
 `#app` and `.screen` are `100dvh` flex columns; each screen owns one bottom dock that carries `padding-bottom: max(18px, env(safe-area-inset-bottom))`:
 
 - **Landing (pre-completion)**: `.landing-body` flexes and centres; `.landing-footer` (`Daily #N`, streak line, pink `Play Today's Set`) is `margin-top: auto`.
-- **Hub (post-completion)**: `.hub-cards` is `flex: 1` and `.endless-teaser` takes `margin-top: auto`, so `Play Endless` sits at the bottom inside its own card.
+- **Hub (post-completion)**: `.completed-stack` wraps both cards with `margin-top: auto`, so the recap and the Endless card stay glued together and dock at the bottom; `Play Endless` ends ~33px from the bottom edge.
 - **Playing**: `.question-stage` flexes; `.mid-slot` (feedback + bet) and `.options-grid` form the bottom block (`margin-top: auto` on the slot, `18px` safe padding on the grid). No extra button under the answers.
 - **Results**: `.results-body` scrolls above a `.results-footer` dock that holds Challenge + Copy, Play Endless, then countdown · Home (`margin-top: auto`, gap 10).
 - **Modals**: `.modal-cta` / `.bp-cta` wrap the primary button and are `position: sticky; bottom: 0` on `#1F181C` with `padding-top: 12px`, so long review lists scroll behind them.

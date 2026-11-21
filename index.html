@@ -193,19 +193,19 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
 /* Endless teaser */
 .endless-teaser {
-  background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius);
-  padding: 16px; max-width: 340px; width: 100%; text-align: left;
+  background: #1F181C; border: 1px solid rgba(244, 84, 176, 0.28); border-radius: 16px;
+  padding: 14px 16px; max-width: 340px; width: 100%; text-align: left;
 }
 .endless-teaser .et-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-brand); font-weight: 600; margin-bottom: 8px; }
 .endless-teaser .et-title { color: var(--text-primary); margin-bottom: 4px; }
 .endless-teaser .et-line { color: var(--text-secondary); margin-bottom: 12px; }
 .endless-teaser .btn-primary { width: 100%; max-width: none; }
 
-/* ---- Completed-day hub (zero-scroll) ---- */
+/* ---- Completed-day hub: bottom-anchored 2-card stack ---- */
 .hub-head, .hub-cards { display: none; }
 #screen-landing.is-completed .landing-body {
   justify-content: flex-start; gap: 16px;
-  padding-bottom: max(18px, env(safe-area-inset-bottom));
+  padding-bottom: 0;
 }
 #screen-landing.is-completed .landing-body::before,
 #screen-landing.is-completed .landing-body::after { content: none; }
@@ -218,19 +218,24 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 #screen-landing.is-completed #streak-bar,
 #screen-landing.is-completed #btn-practice { display: none !important; }
 #screen-landing.is-completed .hub-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; max-width: 340px; flex-shrink: 0; }
-#screen-landing.is-completed .hub-cards { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 340px; flex: 1 1 auto; min-height: 0; }
-/* Endless card rides the bottom thumb zone without leaving its card */
-#screen-landing.is-completed .endless-teaser { margin-top: auto; }
+#screen-landing.is-completed .hub-cards { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 340px; flex-shrink: 0; }
+/* Both cards travel together and dock at the bottom thumb zone */
+#screen-landing.is-completed .completed-stack {
+  margin-top: auto;
+  padding-bottom: max(18px, env(safe-area-inset-bottom));
+}
 #screen-landing.is-completed .landing-footer { display: none; }
 .hub-brand { display: flex; align-items: center; gap: 8px; }
 .hub-wordmark { font-size: 16px; color: var(--text-primary); }
 .streak-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(244, 84, 176, 0.35); background: var(--accent-brand-tint); color: var(--accent-brand); font-family: var(--font-mono); font-size: 12px; font-weight: 600; }
 .streak-pill .fire { display: inline-flex; }
 .streak-pill svg { width: 13px; height: 13px; }
-.trophy-card { width: 100%; max-width: 340px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius); padding: 16px; text-align: left; }
+.trophy-card { width: 100%; max-width: 340px; background: #1A1418; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 14px 16px; text-align: left; }
 .tc-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); font-weight: 600; margin-bottom: 8px; }
-.tc-score { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+.tc-score { font-size: 18px; font-weight: 700; color: var(--text-primary); line-height: 1.3; }
 .tc-score b { font-size: 18px; font-weight: 700; }
+.tc-score .tc-paren { font-weight: 500; color: var(--text-secondary); }
+.tc-score .tc-sep { font-weight: 500; color: var(--text-secondary); }
 .tc-score .muted { color: var(--text-secondary); font-weight: 500; font-size: 14px; }
 .tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; margin: 10px 0; padding: 3px 2px; }
 .tc-cell { position: relative; height: 12px; border-radius: 3px; background: var(--bg-surface-subtle); }
@@ -244,6 +249,11 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .tc-cell.bet.miss { border-color: var(--wrong); }
 .tc-cell.bet.miss::before { background: var(--wrong); }
 #next-set-line, .tc-count { font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); white-space: nowrap; }
+/* Completed hub: countdown + lifetime line reads as body copy, never a mono counter */
+#screen-landing.is-completed .tc-count {
+  font-family: var(--font-sans); font-size: 13px; font-weight: 400; line-height: 1.35;
+  letter-spacing: 0; color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: normal;
+}
 .tc-actions { display: flex; gap: 8px; margin-top: 12px; }
 .tc-actions .btn-secondary { flex: 1 1 0; max-width: none; padding: 10px 12px; font-size: 14px; }
 #screen-landing.is-completed #landing-stats { display: none; }
@@ -866,18 +876,18 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
         <b>Today's set complete.</b>
       </div>
 
-      <!-- completed-day cards -->
-      <div class="hub-cards" id="hub-cards">
+      <!-- completed-day cards: one bottom-anchored stack -->
+      <div class="hub-cards completed-stack" id="hub-cards">
         <div class="trophy-card" id="trophy-card">
           <div class="tc-eyebrow" id="trophy-eyebrow">TODAY'S RUN</div>
           <div class="tc-score" id="trophy-score">Today's set complete.</div>
           <div class="tc-grid" id="trophy-grid"></div>
           <div class="tc-count" id="next-set-line"></div>
+          <div class="bp-trigger-wrap" id="bp-trigger-hub"></div>
           <div class="tc-actions">
             <button class="btn-secondary" id="btn-view-results" style="display:none;">Review</button>
             <button class="btn-secondary" id="btn-quick-share" style="display:none;">Share</button>
           </div>
-          <div class="bp-trigger-wrap" id="bp-trigger-hub"></div>
         </div>
 
         <div class="endless-teaser" id="endless-teaser" style="display:none;">
@@ -2379,7 +2389,7 @@ function renderHub() {
     const betUsed = answers.filter(a => a.bet).length;
     const betHit = answers.filter(a => a.bet && a.correct).length;
     const arch = getArchetype(correct, total, totalTimeSec, betUsed, betHit);
-    scoreEl.innerHTML = `<b>${totalPoints} pts</b> <span class="muted">(${correct}/${total}) · ${arch.name}</span>`;
+    scoreEl.innerHTML = `<b>${totalPoints} pts</b> <span class="tc-paren">(${correct}/${total})</span> <span class="tc-sep">·</span> ${escapeHtml(arch.name)}`;
     for (let i = 0; i < 10; i++) {
       const cell = document.createElement('div');
       cell.className = 'tc-cell';
