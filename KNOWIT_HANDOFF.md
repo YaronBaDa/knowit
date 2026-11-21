@@ -106,7 +106,9 @@ Every category name renders inside a pill — gameplay, review modal, and the re
 
 **Playing**: header (meta `Daily #N` / `ENDLESS · Q01`, three amber bet bolts, timer text) → timer bar → 10-segment progress strip → category pill (10px above the question) → question → answer dock (bordered top edge, 4 option cards) → bet line above the dock → feedback strip (absolute, floats over the bet line).
 
-**Results**: header (`Today's Set` + `Daily #N`) → verdict `clamp(24–28)/700` + streak badge → scorecard (5×2 grid · divider · 4-col stat bar · tap hint) → Blindspot line (outside the card) → Challenge CTA + 44px copy icon → Play Endless → footer `Next set in … · Home`.
+**Results**: header (`Today's Set` + `Daily #N`) → verdict `clamp(24–28)/700` + streak badge → scorecard (5×2 grid · divider · 4-col stat bar · tap hint) → Blindspot line (outside the card) → Brainprint bar → Challenge CTA + 44px copy icon → Play Endless → footer `Next set in … · Home`.
+
+**Brainprint** (`.bp-*`, `#brainprint-modal`): one compact bar on Results (below the scorecard) and inside the Today's Run card on the hub. Unlocked at ≥5 answers across ≥3 categories — otherwise a muted "Play 3+ categories to unlock" pill that still opens the modal in calibration mode. The modal is a 380px card: KNOWIT/Zetta + BRAINPRINT eyebrow, 300×300 SVG radar (brain watermark at 5% opacity, 3 rings + spokes at `rgba(255,255,255,.1)`, emerald accuracy polygon, amber bet nodes), legend, 3-column summary, all played categories as pills, pinned pink CTA. "Share Brainprint" renders a 720×900 canvas card (`knowit-brainprint.png`): `navigator.canShare({files})` → native share, else download + clipboard summary and the button reads "Saved & Copied ✓" for 2 s.
 
 **Review modal**: 18/700 question, 11/600 labels, 13.5/400 did-you-know.
 
@@ -132,7 +134,7 @@ Every category name renders inside a pill — gameplay, review modal, and the re
 `knowit_progress_v1` — mid-daily resume (validated against the current id list)
 `knowit_result_v1` — today's finished run (drives the hub card + "Review")
 
-`categories` is a silent lifetime map: `{ "<Category>": { answered, correct, betsWon, betsLost } }`. `recordCategoryStat(q, isCorrect, isBet, answerIndex)` writes one row per answer (Daily and Endless, timeouts included as a plain miss — no bet), guarded against double-submits and resumed dailies by an answer-index Set that resets per run. `getCategoryStats()` returns the read-only aggregate sorted by `answered` desc (`category, answered, correct, accuracy %, betsWon, betsLost`) for the future Brainprint screen. **No UI reads it yet — keep it invisible.**
+`categories` is a silent lifetime map: `{ "<Category>": { answered, correct, betsWon, betsLost } }`. `recordCategoryStat(q, isCorrect, isBet, answerIndex)` writes one row per answer (Daily and Endless, timeouts included as a plain miss — no bet), guarded against double-submits and resumed dailies by an answer-index Set that resets per run. `getCategoryStats()` returns the read-only aggregate sorted by `answered` desc (`category, answered, correct, accuracy %, betsWon, betsLost`); it feeds the Brainprint modal via `brainprintData()` (top 6 axes, padded at 0% from the bank).
 
 ---
 

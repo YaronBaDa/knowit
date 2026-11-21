@@ -469,6 +469,67 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .link-home:active { color: var(--ink); }
 .link-home:focus-visible { outline: 2px solid var(--accent-brand); outline-offset: 2px; }
 
+/* ---- Brainprint: trigger bar, modal, radar ---- */
+.bp-trigger-wrap { width: 100%; max-width: 340px; }
+.bp-trigger-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; }
+.bp-trigger-text { font-family: var(--font-sans); font-size: 12.5px; font-weight: 400; line-height: 1.35; color: var(--text-secondary); min-width: 0; }
+.bp-trigger-btn {
+  flex-shrink: 0; display: inline-flex; align-items: center; gap: 3px; padding: 7px 11px; border-radius: 999px;
+  background: var(--bg-surface-subtle); border: 1px solid rgba(255, 255, 255, 0.12); color: #F3F4F6;
+  font-family: var(--font-sans); font-size: 12px; font-weight: 600; letter-spacing: 0.01em; cursor: pointer;
+  transition: transform .08s ease, background .2s;
+}
+.bp-trigger-btn:active { transform: scale(0.97); }
+.bp-trigger-locked {
+  display: inline-flex; align-items: center; padding: 6px 11px; border-radius: 999px;
+  border: 1px dashed rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.03); color: var(--text-secondary);
+  font-family: var(--font-sans); font-size: 11.5px; font-weight: 500; cursor: pointer;
+}
+.trophy-card .bp-trigger-wrap { margin-top: 10px; }
+
+.bp-card {
+  position: relative; width: 100%; max-width: 380px; background: var(--bg-surface);
+  border: 1px solid var(--border-subtle); border-radius: 20px; padding: 16px 16px 14px;
+  display: flex; flex-direction: column; gap: 10px; box-shadow: var(--shadow);
+  max-height: calc(100dvh - 36px);
+}
+.bp-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; flex-shrink: 0; }
+.bp-head-left { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.bp-wordmark { font-size: 15px; }
+.bp-eyebrow { font-family: var(--font-sans); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); }
+.bp-close {
+  background: none; border: none; color: var(--text-secondary); font-family: var(--font-sans);
+  font-size: 20px; line-height: 1; padding: 0 3px; cursor: pointer; flex-shrink: 0;
+}
+.bp-close:active { color: var(--text-primary); }
+.bp-body { display: flex; flex-direction: column; gap: 9px; min-height: 0; overflow-y: auto; }
+.bp-radar { width: 100%; }
+.bp-radar svg { display: block; width: 100%; height: auto; }
+.bp-legend { display: flex; flex-wrap: wrap; gap: 3px 12px; justify-content: center; font-family: var(--font-sans); font-size: 10.5px; font-weight: 400; color: var(--text-secondary); }
+.bp-legend .lg { display: inline-flex; align-items: center; gap: 5px; }
+.bp-swatch { width: 9px; height: 9px; border-radius: 2px; background: var(--accent-correct); }
+.bp-dot-solid { width: 9px; height: 9px; border-radius: 999px; background: var(--accent-bet); }
+.bp-dot-hollow { width: 9px; height: 9px; border-radius: 999px; background: var(--bg-surface); border: 2px solid var(--accent-bet); }
+.bp-summary {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 9px 0;
+  border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); text-align: center;
+}
+.bp-summary b { display: block; font-family: var(--font-sans); font-size: 16px; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; line-height: 1.2; }
+.bp-summary span { display: block; font-family: var(--font-sans); font-size: 9.5px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-secondary); margin-top: 2px; }
+.bp-list { display: flex; flex-direction: column; gap: 7px; }
+.bp-list-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.bp-list-meta { font-family: var(--font-sans); font-size: 11.5px; font-weight: 600; color: var(--text-primary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bp-list-meta .muted { color: var(--text-secondary); font-weight: 500; }
+.bp-note { font-family: var(--font-sans); font-size: 11.5px; line-height: 1.4; color: var(--text-secondary); text-align: center; }
+.bp-share { width: 100%; max-width: none; flex-shrink: 0; }
+.bp-share:disabled { opacity: .75; }
+@media (max-height: 680px) {
+  .bp-radar { max-width: 232px; margin: 0 auto; }
+  .bp-body { gap: 7px; }
+  .bp-summary { padding: 6px 0; }
+  .bp-list { gap: 6px; }
+}
+
 /* Review modal */
 .modal-backdrop {
   position: fixed; inset: 0; background: rgba(20, 15, 18, 0.78); z-index: 300;
@@ -796,6 +857,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
             <button class="btn-secondary" id="btn-view-results" style="display:none;">Review</button>
             <button class="btn-secondary" id="btn-quick-share" style="display:none;">Share</button>
           </div>
+          <div class="bp-trigger-wrap" id="bp-trigger-hub"></div>
         </div>
 
         <div class="endless-teaser" id="endless-teaser" style="display:none;">
@@ -931,6 +993,9 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
       <!-- Blindspot sits below the card, outside it -->
       <div class="highlights" id="highlights"></div>
 
+      <!-- Brainprint trigger (single compact row) -->
+      <div class="bp-trigger-wrap" id="bp-trigger-results"></div>
+
       <!-- Share text: constructed but hidden -->
       <div class="share-text" id="share-text"></div>
 
@@ -962,6 +1027,34 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
       <div class="mrow"><span class="mlabel">Bet</span><span id="rm-bet"></span></div>
       <div class="mdyk"><div class="mdyk-label">Did you know?</div><span id="rm-dyk"></span></div>
       <button class="btn-secondary" id="rm-close" style="margin-top:14px;max-width:100%;">Close</button>
+    </div>
+  </div>
+  <!-- Brainprint modal (category radar + PNG share) -->
+  <div class="modal-backdrop" id="brainprint-modal" style="display:none;">
+    <div class="bp-card" role="dialog" aria-modal="true" aria-labelledby="bp-eyebrow">
+      <div class="bp-head">
+        <div class="bp-head-left">
+          <span class="bp-wordmark type-brand" aria-label="KNOWIT">KNOWIT</span>
+          <span class="bp-eyebrow" id="bp-eyebrow">Brainprint</span>
+        </div>
+        <button class="bp-close" id="bp-close" aria-label="Close Brainprint">✕</button>
+      </div>
+      <div class="bp-body">
+        <div class="bp-radar" id="bp-radar"></div>
+        <div class="bp-legend" aria-hidden="true">
+          <span class="lg"><i class="bp-swatch"></i>Accuracy</span>
+          <span class="lg"><i class="bp-dot-solid"></i>Winning Bet Zone</span>
+          <span class="lg"><i class="bp-dot-hollow"></i>Over-Bet</span>
+        </div>
+        <div class="bp-summary">
+          <div><b id="bp-total">0</b><span>Answered</span></div>
+          <div><b id="bp-accuracy">0%</b><span>Accuracy</span></div>
+          <div><b id="bp-bethit">—</b><span>Bet Hit Rate</span></div>
+        </div>
+        <div class="bp-list" id="bp-list"></div>
+        <div class="bp-note" id="bp-note" style="display:none;"></div>
+      </div>
+      <button class="btn-primary bp-share" id="bp-share">Share Brainprint</button>
     </div>
   </div>
 
@@ -1674,6 +1767,406 @@ function getCategoryStats() {
     };
   }).sort((a, b) => b.answered - a.answered || a.category.localeCompare(b.category));
 }
+// ---- Brainprint: lifetime category radar + PNG share card ----
+const BP_MIN_ANSWERED = 5;
+const BP_MIN_CATEGORIES = 3;
+const BP_MAX_AXES = 6;
+
+function brainprintData() {
+  const all = getCategoryStats();
+  const played = all.filter(r => r.answered > 0);
+  const totalAnswered = all.reduce((s, r) => s + r.answered, 0);
+  const totalCorrect = all.reduce((s, r) => s + r.correct, 0);
+  const betsWon = all.reduce((s, r) => s + r.betsWon, 0);
+  const betsLost = all.reduce((s, r) => s + r.betsLost, 0);
+  const betsTotal = betsWon + betsLost;
+
+  const rows = played.slice(0, BP_MAX_AXES).map(r => ({ ...r }));
+  if (rows.length < BP_MAX_AXES) {
+    const seen = new Set(all.map(r => r.category));
+    const bank = [];
+    QUESTIONS.forEach(q => { if (!seen.has(q.category) && bank.indexOf(q.category) === -1) bank.push(q.category); });
+    for (let i = 0; i < bank.length && rows.length < BP_MAX_AXES; i++) {
+      rows.push({ category: bank[i], answered: 0, correct: 0, accuracy: 0, betsWon: 0, betsLost: 0 });
+    }
+  }
+
+  const ranked = played.slice().sort((a, b) => (b.accuracy - a.accuracy) || (b.answered - a.answered));
+  return {
+    all, played, rows,
+    totalAnswered, totalCorrect, betsWon, betsLost, betsTotal,
+    overallAccuracy: totalAnswered ? Math.round(totalCorrect / totalAnswered * 100) : 0,
+    betHitRate: betsTotal ? Math.round(betsWon / betsTotal * 100) : null,
+    strongest: ranked[0] || null,
+    blindspot: ranked.length > 1 ? ranked[ranked.length - 1] : null,
+    unlocked: totalAnswered >= BP_MIN_ANSWERED && played.length >= BP_MIN_CATEGORIES,
+  };
+}
+function brainprintSummaryText(d) {
+  d = d || brainprintData();
+  const s = d.strongest ? `${d.strongest.category} ${d.strongest.accuracy}%` : '—';
+  const b = d.blindspot ? `${d.blindspot.category} ${d.blindspot.accuracy}%` : '—';
+  const bet = d.betsTotal ? `${d.betsWon}/${d.betsTotal} bets` : 'no bets yet';
+  return `My KNOWIT Brainprint\nStrongest: ${s} · Blindspot: ${b}\n${d.totalAnswered} answered · ${d.overallAccuracy}% accuracy · ${bet}`;
+}
+function brainprintGeometry(rows, cx, cy, maxR, labelGap) {
+  const N = rows.length || 1;
+  return rows.map((r, i) => {
+    const angle = (i * 2 * Math.PI / N) - Math.PI / 2;
+    const acc = Math.max(0, Math.min(100, Number(r.accuracy) || 0));
+    const radius = (acc / 100) * maxR;
+    const cos = Math.cos(angle), sin = Math.sin(angle);
+    return {
+      ...r, angle, acc, cos, sin,
+      x: cx + cos * radius,
+      y: cy + sin * radius,
+      lx: cx + cos * (maxR + labelGap),
+      ly: cy + sin * (maxR + labelGap),
+    };
+  });
+}
+function splitRadarLabel(name) {
+  const parts = String(name || '').toUpperCase().split(/\s+/).filter(Boolean);
+  if (parts.length <= 1) return parts.length ? parts : ['—'];
+  if (parts.length === 2) return parts;
+  const mid = Math.ceil(parts.length / 2);
+  return [parts.slice(0, mid).join(' '), parts.slice(mid).join(' ')];
+}
+function brainprintSVG(d) {
+  const cx = 150, cy = 150, maxR = 86, gap = 15;
+  const g = brainprintGeometry(d.rows, cx, cy, maxR, gap);
+  const rings = [1, 2, 3].map(i => `<circle cx="${cx}" cy="${cy}" r="${(maxR * i / 3).toFixed(2)}" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>`).join('');
+  const spokes = g.map(p => `<line x1="${cx}" y1="${cy}" x2="${(cx + p.cos * maxR).toFixed(2)}" y2="${(cy + p.sin * maxR).toFixed(2)}" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>`).join('');
+  const poly = g.map(p => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' ');
+  const nodes = g.map(p => {
+    const x = p.x.toFixed(2), y = p.y.toFixed(2);
+    if (p.betsWon > p.betsLost) return `<circle cx="${x}" cy="${y}" r="9" fill="rgba(245,158,11,0.18)"/><circle cx="${x}" cy="${y}" r="5" fill="#F59E0B"/>`;
+    if ((p.betsWon + p.betsLost) > 0) return `<circle cx="${x}" cy="${y}" r="5" fill="#1F181C" stroke="#F59E0B" stroke-width="2"/>`;
+    return `<circle cx="${x}" cy="${y}" r="3.5" fill="#21C868"/>`;
+  }).join('');
+  const labels = g.map(p => {
+    const lines = splitRadarLabel(p.category);
+    const lineH = 11.5;
+    const blockH = lines.length * lineH + 13;
+    let y = p.ly - blockH / 2 + lineH;
+    let out = `<g class="bp-axis">`;
+    lines.forEach(l => {
+      out += `<text x="${p.lx.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="10.5" font-weight="600" letter-spacing="0.4" fill="#B2A4AC">${escapeHtml(l)}</text>`;
+      y += lineH;
+    });
+    out += `<text x="${p.lx.toFixed(2)}" y="${(y + 1).toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="11" font-weight="700" fill="#F3F4F6" style="font-variant-numeric: tabular-nums">${p.acc}%</text></g>`;
+    return out;
+  }).join('');
+  return `<svg viewBox="0 0 300 300" role="img" aria-label="Category accuracy radar">
+    <g opacity="0.05" color="#ffffff"><use href="#knowit-symbol" x="45" y="45" width="210" height="210"></use></g>
+    ${rings}${spokes}
+    <polygon points="${poly}" fill="rgba(33, 200, 104, 0.22)" stroke="#21C868" stroke-width="2" stroke-linejoin="round"/>
+    ${nodes}
+    ${labels}
+  </svg>`;
+}
+// Keep every axis label inside the 300x300 viewBox (never clip at narrow widths)
+function fitBrainprintLabels(svg) {
+  if (!svg) return;
+  const clamp = grp => {
+    const box = grp.getBBox();
+    let dx = 0;
+    if (box.x < 1) dx = 1 - box.x;
+    else if (box.x + box.width > 299) dx = 299 - (box.x + box.width);
+    if (dx) grp.setAttribute('transform', `translate(${dx.toFixed(2)}, 0)`);
+    else grp.removeAttribute('transform');
+  };
+  svg.querySelectorAll('.bp-axis').forEach(grp => {
+    let box;
+    try { box = grp.getBBox(); } catch (e) { return; }
+    clamp(grp);
+    if (box.width > 292) {
+      // Very long single-word categories: shrink this label rather than let it clip
+      const scale = Math.max(0.68, 292 / box.width);
+      grp.querySelectorAll('text').forEach(t => {
+        t.setAttribute('font-size', (parseFloat(t.getAttribute('font-size')) * scale).toFixed(2));
+      });
+      try { clamp(grp); } catch (e) {}
+    }
+  });
+}
+function renderBrainprintTriggers() {
+  renderBrainprintTrigger($('bp-trigger-results'));
+  renderBrainprintTrigger($('bp-trigger-hub'));
+}
+function renderBrainprintTrigger(host) {
+  if (!host) return;
+  const d = brainprintData();
+  host.innerHTML = '';
+  const open = () => { audio.click(); openBrainprint(); };
+  if (d.unlocked && d.strongest && d.blindspot) {
+    const row = document.createElement('div');
+    row.className = 'bp-trigger-row';
+    const txt = document.createElement('div');
+    txt.className = 'bp-trigger-text';
+    txt.textContent = `Strongest: ${d.strongest.category} (${d.strongest.accuracy}%) · Blindspot: ${d.blindspot.category} (${d.blindspot.accuracy}%)`;
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'bp-trigger-btn'; btn.textContent = 'Brainprint ↗';
+    btn.addEventListener('click', open);
+    row.appendChild(txt); row.appendChild(btn);
+    host.appendChild(row);
+  } else {
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'bp-trigger-locked';
+    btn.textContent = 'Brainprint · Play 3+ categories to unlock';
+    btn.addEventListener('click', open);
+    host.appendChild(btn);
+  }
+}
+function renderBrainprint() {
+  const d = brainprintData();
+  const radar = $('bp-radar');
+  radar.innerHTML = brainprintSVG(d);
+  fitBrainprintLabels(radar.firstElementChild);
+
+  $('bp-total').textContent = d.totalAnswered;
+  $('bp-accuracy').textContent = d.totalAnswered ? `${d.overallAccuracy}%` : '—';
+  $('bp-bethit').textContent = d.betHitRate === null ? '—' : `${d.betHitRate}%`;
+
+  const list = $('bp-list');
+  list.innerHTML = '';
+  if (!d.played.length) {
+    const empty = document.createElement('div');
+    empty.className = 'bp-note';
+    empty.textContent = "No answers recorded yet. Play today's set to start your Brainprint.";
+    list.appendChild(empty);
+  } else {
+    d.played.forEach(r => {
+      const row = document.createElement('div');
+      row.className = 'bp-list-row';
+      row.appendChild(makeCategoryPill(r.category));
+      const meta = document.createElement('span');
+      meta.className = 'bp-list-meta';
+      const bets = r.betsWon + r.betsLost;
+      meta.innerHTML = `${r.accuracy}% <span class="muted">· ${r.betsWon}/${bets} bets</span>`;
+      row.appendChild(meta);
+      list.appendChild(row);
+    });
+  }
+
+  const note = $('bp-note');
+  if (d.unlocked) {
+    note.style.display = 'none';
+    note.textContent = '';
+  } else {
+    const needA = Math.max(0, BP_MIN_ANSWERED - d.totalAnswered);
+    const needC = Math.max(0, BP_MIN_CATEGORIES - d.played.length);
+    const bits = [];
+    if (needA) bits.push(`${needA} more answer${needA === 1 ? '' : 's'}`);
+    if (needC) bits.push(`${needC} more categor${needC === 1 ? 'y' : 'ies'}`);
+    note.textContent = `Calibration mode — ${bits.join(' and ')} to unlock your full Brainprint.`;
+    note.style.display = 'block';
+  }
+  return d;
+}
+function openBrainprint() {
+  renderBrainprint();
+  $('brainprint-modal').style.display = 'flex';
+}
+function closeBrainprint() { $('brainprint-modal').style.display = 'none'; }
+
+// ---- Brainprint PNG export (720x900 canvas card) ----
+async function ensureBrandFonts() {
+  if (!document.fonts || !document.fonts.load) return;
+  const loads = [
+    '700 40px "Lexend Zetta"', '600 17px Lexend', '700 19px Lexend', '700 24px Lexend',
+    '600 13px Lexend', '500 15px Lexend', '700 26px Lexend', '500 12px Lexend',
+  ].map(f => document.fonts.load(f).catch(() => {}));
+  try { await Promise.all(loads); } catch (e) {}
+  try { await document.fonts.ready; } catch (e) {}
+}
+function drawTracked(ctx, text, x, y, size, spacing, weight, align, color, family) {
+  ctx.font = `${weight} ${size}px ${family}`;
+  ctx.fillStyle = color;
+  ctx.textBaseline = 'alphabetic';
+  if ('letterSpacing' in ctx) {
+    const prev = ctx.letterSpacing;
+    ctx.letterSpacing = `${spacing}px`;
+    ctx.textAlign = align;
+    ctx.fillText(text, x, y);
+    ctx.letterSpacing = prev || '0px';
+    return;
+  }
+  const chars = [...text];
+  const widths = chars.map(c => ctx.measureText(c).width);
+  const total = widths.reduce((a, b) => a + b, 0) + spacing * (chars.length - 1);
+  let cx = align === 'right' ? x - total : align === 'center' ? x - total / 2 : x;
+  ctx.textAlign = 'left';
+  chars.forEach((c, i) => { ctx.fillText(c, cx, y); cx += widths[i] + spacing; });
+}
+function drawRadarCanvas(ctx, d, cx, cy, maxR, gap) {
+  const g = brainprintGeometry(d.rows, cx, cy, maxR, gap);
+  const pathEl = document.querySelector('#knowit-symbol path');
+  if (pathEl) {
+    const brain = new Path2D(pathEl.getAttribute('d'));
+    const size = maxR * 2;
+    ctx.save();
+    ctx.globalAlpha = 0.05;
+    ctx.fillStyle = '#ffffff';
+    ctx.translate(cx - size / 2, cy - size / 2);
+    ctx.scale(size / 48, size / 48);
+    ctx.fill(brain);
+    ctx.restore();
+  }
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth = 2;
+  [1, 2, 3].forEach(i => { ctx.beginPath(); ctx.arc(cx, cy, maxR * i / 3, 0, Math.PI * 2); ctx.stroke(); });
+  g.forEach(p => {
+    ctx.beginPath(); ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + p.cos * maxR, cy + p.sin * maxR); ctx.stroke();
+  });
+  ctx.beginPath();
+  g.forEach((p, i) => { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(33, 200, 104, 0.22)'; ctx.fill();
+  ctx.strokeStyle = '#21C868'; ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.stroke();
+  g.forEach(p => {
+    if (p.betsWon > p.betsLost) {
+      ctx.beginPath(); ctx.arc(p.x, p.y, 16, 0, Math.PI * 2); ctx.fillStyle = 'rgba(245,158,11,0.18)'; ctx.fill();
+      ctx.beginPath(); ctx.arc(p.x, p.y, 9, 0, Math.PI * 2); ctx.fillStyle = '#F59E0B'; ctx.fill();
+    } else if ((p.betsWon + p.betsLost) > 0) {
+      ctx.beginPath(); ctx.arc(p.x, p.y, 9, 0, Math.PI * 2); ctx.fillStyle = '#1F181C'; ctx.fill();
+      ctx.strokeStyle = '#F59E0B'; ctx.lineWidth = 3; ctx.stroke();
+    } else {
+      ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, Math.PI * 2); ctx.fillStyle = '#21C868'; ctx.fill();
+    }
+  });
+  g.forEach(p => {
+    const lines = splitRadarLabel(p.category);
+    ctx.font = '600 17px Lexend, sans-serif';
+    const maxW = Math.max(...lines.map(l => ctx.measureText(l).width), ctx.measureText(`${p.acc}%`).width);
+    const lx = Math.min(700 - maxW / 2, Math.max(20 + maxW / 2, p.lx));
+    const lineH = 22;
+    const blockH = lines.length * lineH + 26;
+    let y = p.ly - blockH / 2 + lineH;
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#B2A4AC';
+    lines.forEach(l => { ctx.fillText(l, lx, y); y += lineH; });
+    ctx.font = '700 19px Lexend, sans-serif';
+    ctx.fillStyle = '#F3F4F6';
+    ctx.fillText(`${p.acc}%`, lx, y + 2);
+  });
+}
+function drawBrainprintCard(ctx, d) {
+  const W = 720, H = 900;
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = '#140F12';
+  ctx.fillRect(0, 0, W, H);
+  const glow = ctx.createRadialGradient(360, 400, 60, 360, 400, 520);
+  glow.addColorStop(0, 'rgba(244, 84, 176, 0.07)');
+  glow.addColorStop(1, 'rgba(20, 15, 18, 0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, W, H);
+
+  drawTracked(ctx, 'KNOWIT', 48, 76, 40, 3.4, '700', 'left', '#F3F4F6', '"Lexend Zetta", Lexend, sans-serif');
+  drawTracked(ctx, 'BRAINPRINT', 50, 104, 13, 3, '600', 'left', '#B2A4AC', 'Lexend, sans-serif');
+  drawTracked(ctx, 'LIFETIME CATEGORY MAP', 50, 126, 11, 2.4, '500', 'left', 'rgba(178, 164, 172, 0.75)', 'Lexend, sans-serif');
+
+  ctx.textAlign = 'right';
+  ctx.font = '700 28px Lexend, sans-serif';
+  ctx.fillStyle = '#F3F4F6';
+  ctx.fillText(`${d.overallAccuracy}%`, 672, 78);
+  ctx.font = '600 12px Lexend, sans-serif';
+  ctx.fillStyle = '#B2A4AC';
+  ctx.fillText(`${d.totalAnswered} ANSWERED`, 672, 100);
+
+  drawRadarCanvas(ctx, d, 360, 442, 168, 34);
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(48, 728); ctx.lineTo(672, 728); ctx.stroke();
+
+  drawTracked(ctx, 'STRONGEST', 48, 762, 11, 2.6, '600', 'left', '#B2A4AC', 'Lexend, sans-serif');
+  ctx.textAlign = 'left';
+  ctx.font = '700 25px Lexend, sans-serif';
+  ctx.fillStyle = '#21C868';
+  ctx.fillText(d.strongest ? `${d.strongest.category} ${d.strongest.accuracy}%` : '—', 48, 794);
+
+  drawTracked(ctx, 'BLINDSPOT', 392, 762, 11, 2.6, '600', 'left', '#B2A4AC', 'Lexend, sans-serif');
+  ctx.textAlign = 'left';
+  ctx.font = '700 25px Lexend, sans-serif';
+  ctx.fillStyle = '#F3F4F6';
+  ctx.fillText(d.blindspot ? `${d.blindspot.category} ${d.blindspot.accuracy}%` : '—', 392, 794);
+
+  const betLine = d.betsTotal ? `${d.betsWon}/${d.betsTotal} bets won` : 'no bets yet';
+  ctx.font = '500 15px Lexend, sans-serif';
+  ctx.fillStyle = 'rgba(178, 164, 172, 0.92)';
+  ctx.fillText(`${d.totalAnswered} answered · ${d.overallAccuracy}% accuracy · ${betLine}`, 48, 850);
+  ctx.font = '500 12px Lexend, sans-serif';
+  ctx.fillStyle = 'rgba(178, 164, 172, 0.6)';
+  ctx.fillText('KNOWIT · Daily trivia', 48, 876);
+  ctx.textAlign = 'right';
+  ctx.fillText('yaronbada.github.io/synapse-trivia', 672, 876);
+}
+async function brainprintBlob(d) {
+  await ensureBrandFonts();
+  const canvas = document.createElement('canvas');
+  canvas.width = 720; canvas.height = 900;
+  const ctx = canvas.getContext('2d');
+  drawBrainprintCard(ctx, d || brainprintData());
+  return await new Promise(resolve => canvas.toBlob(b => resolve(b), 'image/png'));
+}
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => { try { URL.revokeObjectURL(url); } catch (e) {} }, 4000);
+}
+async function copyPlainText(text) {
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) { await navigator.clipboard.writeText(text); return true; }
+  } catch (e) {}
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    const ok = document.execCommand('copy');
+    ta.remove();
+    return ok;
+  } catch (e) { return false; }
+}
+function flashShareLabel(btn, txt, restore, ms) {
+  setBtnLabel(btn, txt);
+  setTimeout(() => setBtnLabel(btn, restore), ms || 2000);
+}
+async function shareBrainprint() {
+  const btn = $('bp-share');
+  if (btn.disabled) return;
+  const restore = 'Share Brainprint';
+  btn.disabled = true;
+  try {
+    const d = brainprintData();
+    const blob = await brainprintBlob(d);
+    if (!blob) throw new Error('no blob');
+    const file = new File([blob], 'knowit-brainprint.png', { type: 'image/png' });
+    const text = brainprintSummaryText(d);
+    const canShareFiles = !!(navigator.canShare && navigator.share && navigator.canShare({ files: [file] }));
+    if (canShareFiles) {
+      try {
+        await navigator.share({ title: 'My KNOWIT Brainprint', text, files: [file] });
+        flashShareLabel(btn, 'Shared ✓', restore, 1800);
+        btn.disabled = false;
+        return;
+      } catch (err) {
+        if (err && err.name === 'AbortError') { btn.disabled = false; return; }
+      }
+    }
+    downloadBlob(blob, 'knowit-brainprint.png');
+    const copied = await copyPlainText(text);
+    flashShareLabel(btn, copied ? 'Saved & Copied ✓' : 'Saved ✓', restore, 2000);
+  } catch (e) {
+    toast('Could not build the Brainprint image.');
+  }
+  btn.disabled = false;
+}
+
 // ---- Progress / result persistence (two extra keys; stats object untouched) ----
 const PROGRESS_KEY = 'knowit_progress_v1';
 const RESULT_KEY = 'knowit_result_v1';
@@ -1899,6 +2392,7 @@ function renderHub() {
     $('btn-view-results').style.display = 'none';
     $('btn-quick-share').style.display = 'none';
   }
+  renderBrainprintTrigger($('bp-trigger-hub'));
 }
 function renderLandingStats() {
   const el = $('landing-stats');
@@ -2676,6 +3170,9 @@ function finishGame(opts = {}) {
     footer.classList.add('no-count');
   }
 
+  // Brainprint insight bar (results + hub), driven by lifetime stats.categories
+  renderBrainprintTriggers();
+
   // Confetti for perfect daily
   if (!replay && state.mode === 'daily' && correct === total) launchConfetti();
 }
@@ -2879,6 +3376,14 @@ $('share-visual').addEventListener('click', e => {
 });
 $('rm-close').onclick = closeReview;
 $('review-modal').addEventListener('click', e => { if (e.target === $('review-modal')) closeReview(); });
+
+// Brainprint modal wiring
+$('bp-close').onclick = () => { audio.click(); closeBrainprint(); };
+$('brainprint-modal').addEventListener('click', e => { if (e.target === $('brainprint-modal')) closeBrainprint(); });
+$('bp-share').addEventListener('click', () => { audio.click(); shareBrainprint(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && $('brainprint-modal').style.display === 'flex') closeBrainprint();
+});
 $('btn-home').onclick = ()=>{ audio.click(); showScreen('landing'); renderLanding(); };
 
 // ---- Init ----
