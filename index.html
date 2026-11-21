@@ -427,6 +427,18 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius);
   padding: 16px;
 }
+/* Results: mode eyebrow under the brand header, 6px above the hero */
+.results-eyebrow {
+  font-family: var(--font-sans); font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--text-secondary); text-align: center;
+  margin: 0 0 -4px; /* -4 cancels the results-body flex gap so the hero sits 6px below */
+  flex-shrink: 0;
+}
+/* Brand stays Zetta even though it is an h1 inside .game-header */
+#screen-results .hub-wordmark {
+  font-family: var(--font-display); font-size: 16px; font-weight: 700;
+  letter-spacing: 0.04em; color: var(--text-primary);
+}
 .share-visual {
   display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
   background: none; border: none; border-radius: 0; padding: 0; max-width: none; width: 100%;
@@ -436,6 +448,9 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .share-cell.wrong { background: transparent; border: 2px solid var(--wrong); cursor: pointer; transition: transform .12s; }
 .share-cell.wrong:active { transform: scale(0.92); }
 .share-cell.empty { background: var(--surface-3); }
+/* Endless: a lost heart replaces the hollow miss square */
+.share-cell.heart { background: #140F12; border: 1.5px solid #F22933; box-shadow: inset 0 0 0 0.5px #F22933; cursor: pointer; }
+.share-cell.heart svg { width: 56%; height: 56%; color: #F22933; display: block; }
 /* Bet marker: bolt in the corner (no glyphs, no extra ring) */
 .share-cell .bet-bolt { position: absolute; top: 2px; right: 2px; width: 11px; height: 11px; display: block; z-index: 2; }
 .share-cell .bet-bolt svg { width: 100%; height: 100%; display: block; }
@@ -993,15 +1008,16 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   <!-- RESULTS -->
   <div id="screen-results" class="screen">
     <div class="game-header">
-      <div class="brand">
+      <div class="hub-brand">
         <span class="logo-mark-sm" aria-hidden="true">
           <svg viewBox="0 0 48 48" preserveAspectRatio="xMidYMid meet"><use href="#knowit-symbol"></use></svg>
         </span>
-        <h1 id="result-title">Today's Set</h1>
+        <h1 class="hub-wordmark" id="result-title">KNOWIT</h1>
       </div>
       <div class="meta" id="result-meta"></div>
     </div>
     <div class="results-body">
+      <div class="results-eyebrow" id="result-eyebrow">TODAY'S SET</div>
       <!-- Hero score -->
       <div class="results-hero">
         <div class="hero-score" id="hero-score">9<span class="of">/10</span></div>
@@ -2801,10 +2817,12 @@ function showSwipeTip() {
 function renderEndlessHUD() {
   const hearts = Array.from({length:GAUNTLET_LIVES},(_,i)=>`<span class="life ${i<state.endlessLives?'':'lost'}">${ICONS.heart}</span>`).join('');
   $('endless-lives').innerHTML = hearts;
+  // RUN = total questions lasted this run, guarded so a 0-correct run reads 0
+  const correctSoFar = state.answers.filter(a => a.correct).length;
+  const run = correctSoFar > 0 ? state.answers.length : 0;
   const streakEl = $('endless-streak');
-  const isBlazing = state.endlessStreak >= 5;
-  streakEl.textContent = `RUN: ${String(state.endlessStreak).padStart(2,'0')}`;
-  streakEl.className = 'streak' + (isBlazing ? ' blazing' : '');
+  streakEl.textContent = `RUN: ${String(run).padStart(2,'0')}`;
+  streakEl.className = 'streak' + (run >= 5 ? ' blazing' : '');
 }
 
 // ---- Per-question timer ----
@@ -3070,6 +3088,8 @@ function finishGame(opts = {}) {
   const totalTimeSec = totalTimeMs / 1000;
   const avgMs = total > 0 ? Math.round(totalTimeMs / total) : 0;
   const today = getToday();
+  // Endless RUN = total questions lasted across the 3 hearts; a 0-correct run reads 0
+  const run = state.mode === 'endless' ? (correct > 0 ? total : 0) : 0;
   let wasBestRun = false; // endless only: did this run beat the stored best?
 
   // Stats (never on a replay of already-saved results)
@@ -3083,8 +3103,8 @@ function finishGame(opts = {}) {
       stats.maxStreak = Math.max(stats.maxStreak, stats.streak);
       stats.completedDaily = today;
     } else {
-      wasBestRun = state.endlessStreak > stats.bestEndless && state.endlessStreak > 0;
-      stats.bestEndless = Math.max(stats.bestEndless, state.endlessStreak);
+      wasBestRun = run > stats.bestEndless && run > 0;
+      stats.bestEndless = Math.max(stats.bestEndless, run);
     }
     saveStats();
     // Finished daily: persist the result, drop the in-progress copy
@@ -3095,8 +3115,12 @@ function finishGame(opts = {}) {
   showScreen('results');
   // A duel run is consumed on results — drop the URL param so a refresh can't replay it
   if (!replay) clearDuelParam();
-  $('result-title').textContent = state.mode === 'daily' ? "Today's Set" : 'Endless Mode';
-  $('result-meta').textContent = state.mode === 'daily' ? `Daily #${getDailyNum()}` : 'Endless Mode';
+  // Brand header stays KNOWIT; the mode lives in the eyebrow under it
+  $('result-title').textContent = 'KNOWIT';
+  $('result-eyebrow').textContent = state.mode === 'daily' ? "TODAY'S SET" : 'ENDLESS MODE';
+  const metaEl = $('result-meta');
+  metaEl.textContent = state.mode === 'daily' ? `Daily #${getDailyNum()}` : '';
+  metaEl.style.display = state.mode === 'daily' ? '' : 'none';
 
   const betUsed = state.answers.filter(a=>a.bet).length;
   const betHit = state.answers.filter(a=>a.bet && a.correct).length;
@@ -3110,8 +3134,8 @@ function finishGame(opts = {}) {
     $('hero-title').innerHTML = `${ICONS[dailyArch.icon]}<span>${dailyArch.name}</span>`;
     $('hero-sub').textContent = `${correct}/${total} correct • Total ${fmtTimeSec(totalTimeSec)} • ${dailyArch.sub}`;
   } else {
-    $('hero-score').innerHTML = `${state.endlessStreak}`;
-    const eT = state.endlessStreak >= 20 ? ['Untouchable.','flame'] : state.endlessStreak >= 10 ? ['Show-off.','heart'] : state.endlessStreak >= 5 ? ['Warming up.','target'] : ['Short trip.','skull'];
+    $('hero-score').innerHTML = `${run}`;
+    const eT = run >= 20 ? ['Untouchable.','flame'] : run >= 10 ? ['Show-off.','heart'] : run >= 5 ? ['Warming up.','target'] : ['Short trip.','skull'];
     $('hero-title').className = 'hero-title';
     $('hero-title').innerHTML = `${ICONS[eT[1]]}<span>${eT[0]}</span>`;
     $('hero-sub').textContent = (wasBestRun ? 'NEW BEST RUN' : `BEST RUN: ${stats.bestEndless}`) + ` • Total ${fmtTimeSec(totalTimeSec)}`;
@@ -3153,17 +3177,25 @@ function finishGame(opts = {}) {
     hlEl.style.display = 'none';
   }
 
-  // Scorecard grid (5x2): correct = solid, miss = hollow outline, bet = corner bolt
+  // Scorecard grid: Daily = 5x2 (correct solid, miss hollow, bet bolt).
+  // Endless = one square per question lasted, 5 per row, hearts for lost lives.
   const visualEl = $('share-visual');
   visualEl.innerHTML = '';
+  const endlessRun = state.mode !== 'daily';
+  const cellCount = endlessRun ? Math.max(state.answers.length, 1) : 10;
   let hasMiss = false;
-  for (let i=0; i<10; i++) {
+  for (let i = 0; i < cellCount; i++) {
     const cell = document.createElement('div');
     cell.className = 'share-cell';
     if (i < state.answers.length) {
       const a = state.answers[i];
       if (a.correct) cell.classList.add('correct');
-      else { cell.classList.add('wrong'); cell.dataset.idx = i; hasMiss = true; }
+      else {
+        cell.classList.add('wrong');
+        if (endlessRun) { cell.classList.add('heart'); cell.innerHTML = ICONS.heart; }
+        cell.dataset.idx = i;
+        hasMiss = true;
+      }
       if (a.bet) {
         cell.classList.add('bet');
         const bolt = document.createElement('span');
@@ -3175,12 +3207,12 @@ function finishGame(opts = {}) {
     } else cell.classList.add('empty');
     visualEl.appendChild(cell);
   }
+  $('grid-hint').textContent = endlessRun ? 'Tap a heart to see what got you.' : 'Tap a miss to see what got you.';
   $('grid-hint').style.display = hasMiss ? 'block' : 'none';
 
   // Stat bar: points / correct / time / bets (placed, never a hard-coded cap)
   // Endless has no points — the primary number is the run instead of a permanent 0.
-  const endlessRun = state.mode !== 'daily';
-  $('stat-pts').textContent = endlessRun ? state.endlessStreak : totalPoints;
+  $('stat-pts').textContent = endlessRun ? run : totalPoints;
   $('stat-pts-label').textContent = endlessRun ? 'RUN' : 'PTS';
   $('stat-correct').textContent = `${correct}/${total}`;
   $('stat-time').textContent = fmtTimeSec(totalTimeSec);
@@ -3188,16 +3220,18 @@ function finishGame(opts = {}) {
   $('sc-bets').style.display = betUsed > 0 ? '' : 'none';
   $('sc-stats').classList.toggle('three', betUsed === 0);
 
-  // Share texts — grid rows split 2x5; blindspot folded into the challenge payload
+  // Share texts — daily rows split 2x5; endless squares in rows of 5
   const dailyNum = getDailyNum();
-  const { row1, row2 } = shareRows(state.answers);
   const challengeUrl = getDuelUrl(totalPoints, totalTimeSec);
   if (state.mode === 'daily') {
     const payload = buildDailySharePayload(state.answers, dailyNum, stats.streak);
     state.shareClean = payload.shareClean;
     state.shareFull = payload.shareFull;
   } else {
-    state.shareClean = `KNOWIT Endless ⚡\nRun: ${state.endlessStreak}\nCorrect: ${correct}/${total}\n${row1}${row2 ? '\n' + row2 : ''}`;
+    const squares = state.answers.map(a => (a.correct ? '🟩' : '💔'));
+    const rows = [];
+    for (let i = 0; i < squares.length; i += 5) rows.push(squares.slice(i, i + 5).join(''));
+    state.shareClean = `KNOWIT Endless · ${run} run (${correct}/${total})\n${rows.join('\n')}`;
     state.shareFull = `${state.shareClean}\n\nBeat my run.\n${challengeUrl}`;
   }
   $('share-text').textContent = state.shareFull;

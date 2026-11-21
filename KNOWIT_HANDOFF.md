@@ -106,7 +106,7 @@ Every category name renders inside a pill — gameplay, review modal, and the Br
 
 **Playing**: header (meta `Daily #N` / `ENDLESS · Q01`, three amber bet bolts, timer text) → timer bar → 10-segment progress strip → category pill (10px above the question) → question → answer dock (bordered top edge, 4 option cards) → bet line above the dock → feedback strip (absolute, floats over the bet line).
 
-**Results**: header (`Today's Set` + `Daily #N`) → verdict `clamp(24–28)/700` + streak badge → scorecard (5×2 grid · divider · 4-col stat bar · tap hint) → Blindspot line (outside the card) → Brainprint bar → Challenge CTA + 44px copy icon → Play Endless → footer `Next set in … · Home`.
+**Results**: brand header (pink mark + KNOWIT in Zetta) with `Daily #N` on the right in Daily (hidden in Endless) → centred mode eyebrow `TODAY'S SET` / `ENDLESS MODE` 6px above the hero → verdict `clamp(24–28)/700` + streak badge → scorecard (grid · divider · 4-col stat bar · tap hint) → Blindspot line (outside the card) → Brainprint bar → dock (Challenge + 44px copy, Play Endless, countdown · Home). Endless renders **one square per question lasted**, 5 per row, with lost hearts as `#140F12` tiles ringed in `#F22933`; RUN is total questions lasted (0 if the run had no correct answers) and feeds `bestEndless`.
 
 **Brainprint** (`.bp-*`, `#brainprint-modal`): one compact bar on Results (below the scorecard) and inside the Today's Run card on the hub. Unlocked at ≥5 answers across ≥3 categories — otherwise a muted "Play 3+ categories to unlock" pill that still opens the modal in calibration mode. The modal is a 380px card: KNOWIT/Zetta + BRAINPRINT eyebrow, a plain 300×300 SVG spider web (3 rings + spokes at `rgba(255,255,255,.1)`, **no watermark**), a Hot Pink accuracy polygon (`#F454B0` / `rgba(244,84,176,.22)`), pink default dots with amber bet nodes, legend, 3-column summary at 20/700, every played category as a pill. Type is three tiers only: 20/700 figures, 12.5px rows + legend, 10/600/0.06em micro labels. "Share Brainprint" renders the same card at 720×900 on canvas (`knowit-brainprint.png`): `navigator.canShare({files})` → native share, else download + clipboard summary and the button reads "Saved & Copied ✓" for 2 s.
 
@@ -134,7 +134,7 @@ Every category name renders inside a pill — gameplay, review modal, and the Br
 | **Timer** | 20 s per question; `FAST_TIME_SEC = 55` aggregate; pct-based warn/danger classes |
 | **Bets** | 3/day; +2 correct, −1 wrong, refunded on timeout; swipe 96px reveals / 56px commits; bolts go hollow as they're spent |
 | **Streak** | participation, not score: `streakAfterCompletion` + `dayDiff`; `effectiveStreak` returns 0 after a missed day |
-| **Endless** | 3 lives, random without repeats (`state.endlessUsed`), `RUN` counter, best stored as `bestEndless` |
+| **Endless** | 3 lives, random without repeats (`state.endlessUsed`); `RUN` = total questions lasted (0 if the run had zero correct answers), compared/stored as `bestEndless`; results grid renders one square per question with heart tiles for lost lives |
 | **Feedback pacing** | `FEEDBACK_MS_CORRECT = 1800`, `FEEDBACK_MS_WRONG = 3200` |
 | **Duels** | `?d=<puzzle>&vs=<score>_<time>`; wrong-day or already-played links are cleared with a toast |
 
