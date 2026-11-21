@@ -110,7 +110,17 @@ Every category name renders inside a pill — gameplay, review modal, and the Br
 
 **Brainprint** (`.bp-*`, `#brainprint-modal`): one compact bar on Results (below the scorecard) and inside the Today's Run card on the hub. Unlocked at ≥5 answers across ≥3 categories — otherwise a muted "Play 3+ categories to unlock" pill that still opens the modal in calibration mode. The modal is a 380px card: KNOWIT/Zetta + BRAINPRINT eyebrow, a plain 300×300 SVG spider web (3 rings + spokes at `rgba(255,255,255,.1)`, **no watermark**), a Hot Pink accuracy polygon (`#F454B0` / `rgba(244,84,176,.22)`), pink default dots with amber bet nodes, legend, 3-column summary at 20/700, every played category as a pill. Type is three tiers only: 20/700 figures, 12.5px rows + legend, 10/600/0.06em micro labels. "Share Brainprint" renders the same card at 720×900 on canvas (`knowit-brainprint.png`): `navigator.canShare({files})` → native share, else download + clipboard summary and the button reads "Saved & Copied ✓" for 2 s.
 
-**Review modal**: 18/700 question, 11/600 labels, 13.5/400 did-you-know.
+**Review modal**: 18/700 question, 11/600 labels, 13.5/400 did-you-know, sticky primary action.
+
+### Bottom thumb zone (all screens)
+
+`#app` and `.screen` are `100dvh` flex columns; each screen owns one bottom dock that carries `padding-bottom: max(18px, env(safe-area-inset-bottom))`:
+
+- **Landing (pre-completion)**: `.landing-body` flexes and centres; `.landing-footer` (`Daily #N`, streak line, pink `Play Today's Set`) is `margin-top: auto`.
+- **Hub (post-completion)**: `.hub-cards` is `flex: 1` and `.endless-teaser` takes `margin-top: auto`, so `Play Endless` sits at the bottom inside its own card.
+- **Playing**: `.question-stage` flexes; `.mid-slot` (feedback + bet) and `.options-grid` form the bottom block (`margin-top: auto` on the slot, `18px` safe padding on the grid). No extra button under the answers.
+- **Results**: `.results-body` scrolls above a `.results-footer` dock that holds Challenge + Copy, Play Endless, then countdown · Home (`margin-top: auto`, gap 10).
+- **Modals**: `.modal-cta` / `.bp-cta` wrap the primary button and are `position: sticky; bottom: 0` on `#1F181C` with `padding-top: 12px`, so long review lists scroll behind them.
 
 ---
 
