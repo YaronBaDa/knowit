@@ -249,12 +249,26 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* Question */
 .question-stage { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-start; min-height: 0; overflow-y: auto; padding-top: 8px; padding-bottom: 8px; }
 .question-tracker { display: none; }
-.category-tag {
-  display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em;
-  padding: 0; border: 0; background: none; color: var(--text-secondary); margin-bottom: 6px;
+.category-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 11px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  background: rgba(178, 164, 172, 0.14);
+  color: #B2A4AC;
+  border: 1px solid rgba(178, 164, 172, 0.28);
+  width: fit-content;
 }
+/* Gestalt proximity: the pill belongs to the question, so it sits 10px above it */
+.cat-row { display: flex; margin: 0 0 10px; }
+.cat-row:empty { display: none; }
 .question-text { margin: 0; }
-@media (max-height: 600px) { .category-tag { margin-bottom: 6px; } }
 
 /* Options — FIXED FOOTER, always fully visible */
 .options-grid {
@@ -388,6 +402,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* Highlights (replaces pill cloud) */
 .highlights { font-size: 12px; color: var(--ink-faint); line-height: 1.6; max-width: 320px; }
 .highlights b { color: var(--ink); font-weight: 700; }
+.highlights .category-pill { vertical-align: middle; margin: 0 2px; }
 
 /* Visual share grid */
 /* Scorecard: the grid, stat bar and hint share one card */
@@ -544,8 +559,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .bet-toggle.armed { background: var(--accent-bet); color: var(--bg-canvas); font-weight: 600; padding: 0 12px; }
 .bet-toggle.armed svg { color: var(--bg-canvas); }
 
-/* Progress strip (daily only) */
-.progress-strip { display: flex; gap: 5px; margin-bottom: 8px; padding: 2px 0; flex-shrink: 0; }
+/* Progress strip (daily only) — 22px below keeps it grouped with the HUD above, clear of the pill/question */
+.progress-strip { display: flex; gap: 5px; margin-bottom: 22px; padding: 2px 0; flex-shrink: 0; }
 .prog-seg {
   flex: 1; min-width: 0; height: 14px; border-radius: 4px; border: 1px solid transparent; background: var(--surface-3);
   display: flex; align-items: center; justify-content: center; position: relative;
@@ -697,7 +712,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 
 /* .type-eyebrow */
-.tc-eyebrow, .endless-teaser .et-eyebrow, .category-tag, .sc-stat span,
+.tc-eyebrow, .endless-teaser .et-eyebrow, .category-pill, .sc-stat span,
 .modal-card .mlabel, .modal-card .mdyk-label {
   font-family: var(--font-sans); font-size: 11px; font-weight: 600; line-height: 1.2;
   letter-spacing: 0.07em; text-transform: uppercase;
@@ -714,6 +729,10 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* Short viewports keep the question on screen without scrolling */
 @media (max-height: 600px) {
   .question-text { font-size: 17.5px; line-height: 1.28; }
+  /* Extra-short phones: keep the pill tight to the question but reclaim clearance for the 505-question sweep */
+  .progress-strip { margin-bottom: 12px; }
+  .cat-row { margin-bottom: 8px; }
+  .question-stage { padding-bottom: 4px; }
 }
 
 /* landing tagline: Lexend 15px body weight, secondary */
@@ -839,6 +858,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
     <div class="question-stage">
       <div class="question-tracker" id="q-tracker">Question 1 / 10</div>
+      <div class="cat-row" id="q-cat"></div>
       <div class="question-text" id="q-text">Loading...</div>
     </div>
 
@@ -935,6 +955,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   <!-- Review modal -->
   <div class="modal-backdrop" id="review-modal" style="display:none;">
     <div class="modal-card">
+      <div class="cat-row" id="rm-cat"></div>
       <div class="mq" id="rm-question"></div>
       <div class="mrow"><span class="mlabel">You picked</span><span id="rm-picked" style="color:var(--accent-incorrect-text)"></span></div>
       <div class="mrow"><span class="mlabel">Correct</span><span id="rm-correct" style="color:var(--correct)"></span></div>
@@ -1922,6 +1943,53 @@ function getRandomQuestion() {
   return { ...q, options: opts, correctIndex: opts.indexOf(q.options[q.correctIndex]) };
 }
 
+// ---- Category pill palette ----
+// Muted, dark-mode-safe tints. Deliberately avoids Hot Pink (#F454B0) and Bet Amber (#F59E0B);
+// every text colour clears 4.5:1 against --bg-canvas (#140F12).
+const CATEGORY_PALETTES = [
+  { key: 'sky',      color: '#7DD3FC', bg: 'rgba(56, 189, 248, 0.14)',  border: 'rgba(56, 189, 248, 0.28)' },  // Nature / Science / Space
+  { key: 'sand',     color: '#FCD34D', bg: 'rgba(251, 191, 36, 0.13)',  border: 'rgba(251, 191, 36, 0.26)' },  // History / Geography / Travel
+  { key: 'lavender', color: '#D8B4FE', bg: 'rgba(192, 132, 252, 0.14)', border: 'rgba(192, 132, 252, 0.28)' }, // Arts / Literature / Music
+  { key: 'rose',     color: '#FDA4AF', bg: 'rgba(251, 113, 133, 0.14)', border: 'rgba(251, 113, 133, 0.26)' }, // Pop Culture / Film & TV
+  { key: 'mint',     color: '#6EE7B7', bg: 'rgba(16, 185, 129, 0.14)',  border: 'rgba(16, 185, 129, 0.28)' },  // Sports / Food & Drink / General
+];
+const CATEGORY_KEYWORDS = {
+  sky:      ['nature', 'science', 'biology', 'space', 'astronomy', 'math', 'maths', 'technology', 'tech', 'physics', 'chemistry', 'environment'],
+  sand:     ['history', 'geography', 'travel', 'exploration', 'politics', 'war'],
+  lavender: ['art', 'arts', 'literature', 'book', 'books', 'poetry', 'music', 'language'],
+  rose:     ['pop', 'film', 'tv', 'television', 'entertainment', 'celebrity', 'cinema', 'gaming', 'media'],
+  mint:     ['sport', 'sports', 'food', 'drink', 'general', 'business', 'health', 'money', 'lifestyle'],
+};
+function normalizeCategory(name) {
+  return String(name == null ? '' : name).toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').trim();
+}
+function categoryPaletteIndex(name) {
+  const norm = normalizeCategory(name);
+  const padded = ' ' + norm + ' ';
+  for (let i = 0; i < CATEGORY_PALETTES.length; i++) {
+    const words = CATEGORY_KEYWORDS[CATEGORY_PALETTES[i].key] || [];
+    if (words.some(w => padded.includes(' ' + w + ' '))) return i;
+  }
+  // Unknown category: deterministic FNV-1a hash, so the same name always gets the same tint
+  let h = 2166136261;
+  for (let i = 0; i < norm.length; i++) { h ^= norm.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return Math.abs(h) % CATEGORY_PALETTES.length;
+}
+function applyCategoryPillStyle(el, categoryName) {
+  if (!el) return el;
+  const p = CATEGORY_PALETTES[categoryPaletteIndex(categoryName)];
+  el.style.color = p.color;
+  el.style.backgroundColor = p.bg;
+  el.style.borderColor = p.border;
+  return el;
+}
+function makeCategoryPill(categoryName) {
+  const el = document.createElement('span');
+  el.className = 'category-pill';
+  el.textContent = categoryName == null ? '' : String(categoryName);
+  return applyCategoryPillStyle(el, categoryName);
+}
+
 // ---- Rendering ----
 function renderQuestion() {
   const q = state.questions[state.currentQ];
@@ -1930,8 +1998,11 @@ function renderQuestion() {
   $('header-meta').textContent = state.mode === 'daily'
     ? `Daily #${getDailyNum()}`
     : `ENDLESS · Q${String(state.currentQ+1).padStart(2,'0')}`;
-  // Category tag sits ABOVE the question, not inline
-  $('q-text').innerHTML = `<span class="category-tag">${q.category}</span><br>${escapeHtml(q.question)}`;
+  // Category pill sits ABOVE the question, tight to it (Gestalt proximity)
+  const catSlot = $('q-cat');
+  catSlot.innerHTML = '';
+  catSlot.appendChild(makeCategoryPill(q.category));
+  $('q-text').textContent = q.question;
   const grid = $('options-grid');
   grid.innerHTML = '';
   q.options.forEach((opt,idx)=>{
@@ -2446,7 +2517,10 @@ function finishGame(opts = {}) {
   const hlEl = $('highlights');
   if (missedCats.length) {
     const [wc, wd] = missedCats[0];
-    hlEl.innerHTML = `${ICONS.snowflake} <b>Blindspot:</b> ${wc} (${wd.correct}/${wd.total})`;
+    hlEl.innerHTML = `${ICONS.snowflake} <b>Blindspot:</b> <span class="category-pill" id="blindspot-pill"></span> (${wd.correct}/${wd.total})`;
+    const bp = $('blindspot-pill');
+    bp.textContent = wc;
+    applyCategoryPillStyle(bp, wc);
     hlEl.style.display = 'block';
   } else {
     hlEl.innerHTML = '';
@@ -2559,6 +2633,9 @@ function viewTodaysResults() {
 function openReview(i) {
   const a = state.answers[i];
   if (!a || !a.q) return;
+  const rmCat = $('rm-cat');
+  rmCat.innerHTML = '';
+  rmCat.appendChild(makeCategoryPill(a.category || a.q.category));
   $('rm-question').textContent = a.q.question;
   $('rm-picked').textContent = a.picked === null ? 'No answer (time ran out)' : a.q.options[a.picked];
   $('rm-correct').textContent = a.q.options[a.q.correctIndex];
