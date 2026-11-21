@@ -83,8 +83,18 @@ A **wiring block** immediately after them assigns each component to one tier (se
 ### Surface rules
 
 - One card primitive: `--bg-surface`, 1px `--border-subtle`, `border-radius: var(--radius)` (14), **16px padding**.
-- Prefer **plain elements over pills**: bet bolts, the bet line, the category tag and the streak line all sit bare on the canvas (no bg/border/padding). Don't reintroduce chip-style containers without a reason.
+- Prefer **plain elements over pills**: bet bolts, the bet line and the streak line all sit bare on the canvas (no bg/border/padding). Don't reintroduce chip-style containers without a reason. The **category name is the one exception** — always a `.category-pill`.
 - Radii: cards 14, buttons 14, key badges 8, pip strip 999.
+
+### Category pill (`.category-pill`)
+
+Every category name renders inside a pill — gameplay, review modal, and the results Blindspot line. Layout: `inline-flex`, `4px 11px` padding, `999px`, 11/600, `0.07em`, uppercase.
+
+- `.cat-row` (wrapper `#q-cat` / `#rm-cat`) sits directly above the text with **`margin-bottom: 10px`**, `#q-text` keeps `margin-top: 0`, so the pill reads as part of the question.
+- `.progress-strip` is `margin-bottom: 22px` so the 10 segments stay grouped with the HUD above.
+- Short-viewport override (`max-height: 600px`): strip 12px, pill 8px, stage `padding-bottom: 4px` — keeps the 505-question sweep at **0 clipped** on 320×568.
+- Colours come from `applyCategoryPillStyle(el, name)` (JS, not CSS): 5 muted palettes — sky `#7DD3FC`, sand `#FCD34D`, lavender `#D8B4FE`, rose `#FDA4AF`, mint `#6EE7B7` — each on a 13–14 % tint with a matching 26–28 % border. Text clears **10:1+** on `#140F12`; none use pink or bet amber.
+- Keyword map covers all 16 bank categories (Space/Math/Technology → sky, Business → mint); unknown names fall back to an FNV-1a hash across the 5 palettes, so a name always keeps its tint.
 
 ---
 
@@ -94,7 +104,7 @@ A **wiring block** immediately after them assigns each component to one tier (se
 
 **Landing — post-completion hub** (`.is-completed`): header row (28px mark + Zetta wordmark + pink streak pill), `Today's Run` card (eyebrow → `18px/700` score line with muted `18/500` tail → 10-cell mini grid → `Next set in … · N played · Best Nd` → Review/Share), then the Endless card (pink `KEEP GOING` eyebrow → 18/700 title → 13.5/400 line → pink CTA).
 
-**Playing**: header (meta `Daily #N` / `ENDLESS · Q01`, three amber bet bolts, timer text) → timer bar → 10-segment progress strip → category eyebrow → question → answer dock (bordered top edge, 4 option cards) → bet line above the dock → feedback strip (absolute, floats over the bet line).
+**Playing**: header (meta `Daily #N` / `ENDLESS · Q01`, three amber bet bolts, timer text) → timer bar → 10-segment progress strip → category pill (10px above the question) → question → answer dock (bordered top edge, 4 option cards) → bet line above the dock → feedback strip (absolute, floats over the bet line).
 
 **Results**: header (`Today's Set` + `Daily #N`) → verdict `clamp(24–28)/700` + streak badge → scorecard (5×2 grid · divider · 4-col stat bar · tap hint) → Blindspot line (outside the card) → Challenge CTA + 44px copy icon → Play Endless → footer `Next set in … · Home`.
 
