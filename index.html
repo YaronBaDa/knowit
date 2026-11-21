@@ -101,7 +101,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .header-actions { display: flex; gap: 8px; }
 .icon-btn {
   width: 36px; height: 36px; border-radius: var(--radius-sm); border: 1px solid var(--border);
-  background: var(--surface); color: var(--ink); font-size: 16px; cursor: pointer;
+  background: var(--surface); color: var(--ink); font-family: var(--font-sans); font-size: 15px; font-weight: 600; cursor: pointer;
   display: flex; align-items: center; justify-content: center; transition: transform .12s;
 }
 .icon-btn:active { transform: scale(0.92); }
@@ -196,7 +196,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   padding: 16px; max-width: 340px; width: 100%; text-align: left;
 }
 .endless-teaser .et-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-brand); font-weight: 600; margin-bottom: 8px; }
-.endless-teaser .et-title { font-size: 17px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+.endless-teaser .et-title { color: var(--text-primary); margin-bottom: 4px; }
 .endless-teaser .et-line { color: var(--text-secondary); margin-bottom: 12px; }
 .endless-teaser .btn-primary { width: 100%; max-width: none; }
 
@@ -227,7 +227,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .trophy-card { width: 100%; max-width: 340px; background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius); padding: 16px; text-align: left; }
 .tc-eyebrow { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); font-weight: 600; margin-bottom: 8px; }
 .tc-score { font-size: 18px; font-weight: 700; color: var(--text-primary); }
-.tc-score b { font-size: 20px; font-weight: 700; }
+.tc-score b { font-size: 18px; font-weight: 700; }
 .tc-score .muted { color: var(--text-secondary); font-weight: 500; font-size: 14px; }
 .tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 6px; margin: 10px 0; padding: 3px 2px; }
 .tc-cell { position: relative; height: 12px; border-radius: 3px; background: var(--bg-surface-subtle); }
@@ -250,9 +250,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .question-stage { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-start; min-height: 0; overflow-y: auto; padding-top: 8px; padding-bottom: 8px; }
 .question-tracker { display: none; }
 .category-tag {
-  display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
-  padding: 3px 8px; border-radius: 6px; background: var(--bg-surface-subtle); color: var(--text-secondary);
-  border: 1px solid var(--border-subtle); margin-bottom: 12px;
+  display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em;
+  padding: 0; border: 0; background: none; color: var(--text-secondary); margin-bottom: 6px;
 }
 .question-text { margin: 0; }
 @media (max-height: 600px) { .category-tag { margin-bottom: 6px; } }
@@ -282,7 +281,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .option-btn.swiping:active { transform: none; }
 .option-btn .key-hint {
   width: 28px; height: 28px; border-radius: 8px; background: var(--bg-surface); border: 1px solid var(--border-subtle);
-  display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--ink-faint); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; letter-spacing: 0.03em; color: var(--ink-faint); flex-shrink: 0;
   font-family: var(--font-mono);
 }
 .option-btn .bet-reveal {
@@ -292,8 +291,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   opacity: 0;
 }
 .option-btn .bet-reveal svg { width: 18px; height: 18px; }
-.option-btn .bet-reveal .br-label { font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: .1em; }
-.option-btn .bet-reveal .br-sub { font-family: var(--font-mono); font-size: 9px; font-weight: 600; opacity: .85; }
+.option-btn .bet-reveal .br-label { font-family: var(--font-sans); font-size: 11px; font-weight: 600; letter-spacing: 0.07em; }
+.option-btn .bet-reveal .br-sub { font-family: var(--font-sans); font-size: 10px; font-weight: 600; opacity: .85; }
 .option-btn.correct { border-color: var(--accent-correct); box-shadow: 0 0 0 1px var(--accent-correct); }
 .option-btn.correct .option-body { box-shadow: inset 0 0 0 999px rgba(16,185,129,0.18); }
 .option-btn.wrong { border-color: var(--accent-incorrect); box-shadow: 0 0 0 1px var(--accent-incorrect); animation: shake 0.4s ease-in-out; }
@@ -378,7 +377,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .hero-sub { display: none; font-family: var(--font-mono); font-size: 12px; color: var(--ink-faint); margin-top: 4px; }
 .streak-badge {
   display: inline-flex; align-items: center; gap: 6px;
-  font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--ink);
+  font-family: var(--font-sans); font-size: 12px; font-weight: 500; letter-spacing: 0.03em; color: var(--ink);
   background: var(--accent-brand-tint); border: 1px solid rgba(244, 84, 176, 0.35);
   padding: 4px 12px; border-radius: 999px; margin-top: 10px;
 }
@@ -395,7 +394,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .scorecard {
   width: 100%; max-width: 340px; box-sizing: border-box;
   background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius);
-  padding: 14px 14px 12px;
+  padding: 16px;
 }
 .share-visual {
   display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
@@ -448,7 +447,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .btn-emerald svg, .btn-secondary svg { width: 16px; height: 16px; flex-shrink: 0; }
 .btn-primary svg { width: 16px; height: 16px; flex-shrink: 0; }
 .link-home {
-  background: none; border: none; color: var(--ink-dim); font-size: 13px; font-weight: 600;
+  background: none; border: none; color: var(--ink-dim); font-family: var(--font-sans); font-size: 13.5px; font-weight: 400; letter-spacing: 0;
   cursor: pointer; padding: 8px; font-family: var(--font-sans);
   text-decoration: underline; text-underline-offset: 3px;
 }
@@ -503,13 +502,13 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
   padding: 16px; max-width: 320px; width: 100%; text-align: center;
 }
-.duel-card .duel-outcome { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+.duel-card .duel-outcome { font-family: var(--font-sans); font-size: 18px; font-weight: 700; line-height: 1.25; letter-spacing: -0.01em; margin-bottom: 12px; }
 .duel-card .duel-vs { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .duel-card .duel-side { flex: 1; }
-.duel-card .duel-side .d-name { font-size: 12px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.duel-card .duel-side .d-name { font-family: var(--font-sans); font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
 .duel-card .duel-side .d-score { font-family: var(--font-mono); font-size: 24px; font-weight: 700; }
-.duel-card .duel-side .d-time { font-family: var(--font-mono); font-size: 13px; color: var(--ink-faint); }
-.duel-card .duel-divider { font-size: 18px; color: var(--ink-dim); font-weight: 700; }
+.duel-card .duel-side .d-time { font-family: var(--font-sans); font-size: 13.5px; font-weight: 400; letter-spacing: 0; color: var(--text-secondary); }
+.duel-card .duel-divider { font-family: var(--font-sans); font-size: 11px; color: var(--ink-dim); font-weight: 600; letter-spacing: 0.07em; }
 .duel-card .duel-you .d-score { color: var(--accent); }
 .duel-card .duel-them .d-score { color: var(--ink-faint); }
 
@@ -561,7 +560,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .prog-seg.bet.right::before { background: var(--correct); }
 .prog-seg.bet.wrong { border-color: var(--wrong); }
 .prog-seg.bet.wrong::before { background: var(--wrong); }
-.prog-seg .glyph { position: relative; z-index: 1; color: var(--bg); font-weight: 700; font-size: 10px; line-height: 1; }
+.prog-seg .glyph { position: relative; z-index: 1; color: var(--bg); font-weight: 600; font-size: 11px; letter-spacing: 0; line-height: 1; }
 
 /* Hero aurora title */
 .hero-title.aurora {
@@ -670,10 +669,13 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 
 /* .type-title */
-.game-header h1, .tc-score, .et-title, .modal-card .mq, .hero-title {
+.game-header h1, .tc-score, .et-title, .modal-card .mq {
   font-family: var(--font-sans); font-size: 18px; font-weight: 700; line-height: 1.25; letter-spacing: -0.01em;
 }
 .tc-score .muted { font-size: 18px; font-weight: 500; color: var(--text-secondary); }
+
+/* Results verdict: the emotional headline of the screen */
+#hero-title { font-family: var(--font-sans); font-size: clamp(24px, 6.6vw, 28px); font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; color: var(--text-primary); }
 
 /* .type-question */
 .question-text {
@@ -1926,7 +1928,7 @@ function renderQuestion() {
   if (!q) return;
   // Header meta: daily number + question progress (mono tokens)
   $('header-meta').textContent = state.mode === 'daily'
-    ? `#${getDailyNum()} · Q${String(state.currentQ+1).padStart(2,'0')}/${String(state.questions.length).padStart(2,'0')}`
+    ? `Daily #${getDailyNum()}`
     : `ENDLESS · Q${String(state.currentQ+1).padStart(2,'0')}`;
   // Category tag sits ABOVE the question, not inline
   $('q-text').innerHTML = `<span class="category-tag">${q.category}</span><br>${escapeHtml(q.question)}`;
