@@ -112,6 +112,14 @@ Every category name renders inside a pill — gameplay, review modal, and the Br
 
 **Review modal**: 18/700 question, 11/600 labels, 13.5/400 did-you-know, sticky primary action.
 
+### Tactile layer (sound + motion)
+
+- **Audio**: one Web Audio synth in `AudioEngine` — no files. Cues: UI tick (`click`), option tap 820→300 Hz/25 ms (`tap`), bet arm 180→340 Hz/140 ms (`armBet`), correct chime 523+784 Hz pitched up a semitone per consecutive Endless correct (`correct(step)`), miss / lost heart 145→55 Hz thud (`thud`). Master gain 0.9; `setMuted` ramps it to 0 in 15 ms so a toggle silences instantly. Context unlocks on the first `pointerdown`. Header speaker button (`#btn-mute`) flips `knowit_muted`.
+- **Timer**: pink → `#F59E0B` at ≤3.0 s → `#F22933` at ≤1.5 s (bar and readout share `t-amber` / `t-crimson`). Endless limits: 12 s Q1–Q5, 10 s Q6–Q10, 8 s Q11+, with a `PACE UP · Ns` pill at Q6 and Q11.
+- **Heart loss** (Endless): 320 ms crimson inset vignette, 260 ms `shake-x` on the question stage, `-1 ♥` badge, heart pops before draining, `navigator.vibrate([35,30,35])`. At one life the remaining heart runs a 1.2 s `heartbeat`.
+- **Bet suspense**: a bet tap holds the card in `bet-locked` amber for 180 ms before the reveal; unchosen cards fade to `opacity .42` over 180 ms.
+- **Roasts**: Endless results override the tier — `Speedrun.` when RUN is 0, `Unhinged.` + "Survived N questions on your last heart." when N ≥ 8 (needs `state.lastHeartFrom`, reset per run).
+
 ### Bottom thumb zone (all screens)
 
 `#app` and `.screen` are `100dvh` flex columns; each screen owns one bottom dock that carries `padding-bottom: max(18px, env(safe-area-inset-bottom))`:
@@ -143,6 +151,7 @@ Every category name renders inside a pill — gameplay, review modal, and the Br
 `knowit_stats_v3` — `played, streak, maxStreak, lastDate, completedDaily, totalCorrect, totalAnswered, bestEndless, betsUsed, betsHit, categories`
 `knowit_progress_v1` — mid-daily resume (validated against the current id list)
 `knowit_result_v1` — today's finished run (drives the hub card + "Review")
+`knowit_muted` — `'1'`/`'0'` sound preference for the header speaker toggle (default unmuted)
 
 `categories` is a silent lifetime map: `{ "<Category>": { answered, correct, betsWon, betsLost } }`. `recordCategoryStat(q, isCorrect, isBet, answerIndex)` writes one row per answer (Daily and Endless, timeouts included as a plain miss — no bet), guarded against double-submits and resumed dailies by an answer-index Set that resets per run. `getCategoryStats()` returns the read-only aggregate sorted by `answered` desc (`category, answered, correct, accuracy %, betsWon, betsLost`); it feeds the Brainprint modal via `brainprintData()` (top 6 axes, padded at 0% from the bank).
 
