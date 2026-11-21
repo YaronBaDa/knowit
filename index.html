@@ -147,21 +147,22 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 4px;
   padding: 12px 0 max(20px, env(safe-area-inset-bottom));
   background: var(--bg-canvas);
 }
 .landing-footer #landing-puzzle { margin: 0; }
-.landing-footer #btn-daily { width: 100%; max-width: 340px; }
+.landing-footer #streak-bar { margin: 0; }
+.landing-footer #btn-daily { width: 100%; max-width: 340px; margin-top: 4px; } /* + 4px footer gap = 8px above the CTA */
 .landing-body h2 { font-size: clamp(24px, 7vw, 30px); margin: 0; color: var(--text-primary); }
 .landing-body p { font-size: 15px; color: var(--ink-faint); max-width: 320px; margin: 0; line-height: 1.5; }
 .landing-streak-bar {
-  display: flex; align-items: center; gap: 6px;
-  background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
-  padding: 6px 14px; font-size: 14px; font-weight: 700; color: var(--ink); font-family: var(--font-mono);
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  background: none; border: 0; border-radius: 0; padding: 0;
+  font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 1.35; color: var(--text-secondary);
 }
-.landing-streak-bar .fire { font-size: 16px; }
-.landing-streak-bar .broken { opacity: 0.4; filter: grayscale(1); }
+.landing-streak-bar .fire { font-size: 12px; }
+.landing-streak-bar .broken { opacity: 0.55; filter: grayscale(1); }
 .btn-primary {
   width: 100%; max-width: 280px; padding: 14px 20px; border-radius: var(--radius); border: none;
   background: var(--accent); color: var(--on-brand); font-size: 16px; font-weight: 700; cursor: pointer;
@@ -243,6 +244,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .tc-actions { display: flex; gap: 8px; margin-top: 12px; }
 .tc-actions .btn-secondary { flex: 1 1 0; max-width: none; padding: 10px 12px; font-size: 14px; }
 #screen-landing.is-completed #landing-stats { display: none; }
+#screen-landing:not(.is-completed) #landing-stats { display: none !important; }
 
 /* Question */
 .question-stage { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-start; min-height: 0; overflow-y: auto; padding-top: 8px; padding-bottom: 8px; }
@@ -713,7 +715,14 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 
 /* landing tagline: Lexend 15px body weight, secondary */
-.landing-body p.landing-tagline { font-family: var(--font-sans); font-size: 15px; font-weight: 400; line-height: 1.45; }
+#screen-landing:not(.is-completed) .landing-body p.landing-tagline {
+  font-family: var(--font-sans); font-size: 14px; font-weight: 400; line-height: 1.45; color: var(--text-secondary);
+}
+#screen-landing:not(.is-completed) #streak-bar,
+#screen-landing:not(.is-completed) #landing-puzzle {
+  font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 1.35;
+  letter-spacing: 0; color: var(--text-secondary);
+}
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
@@ -750,10 +759,6 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
       <h2>KNOWIT</h2>
       <p class="landing-tagline">10 daily trivia questions.<br>Same set for everyone.</p>
 
-      <div class="landing-streak-bar" id="streak-bar" style="display:none;">
-        <span class="fire" id="streak-fire"></span>
-        <span id="streak-text"></span>
-      </div>
 
       <div class="daily-locked" id="daily-lock" style="display:none;">
         <b>Today's set complete.</b>
@@ -787,6 +792,10 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
     <!-- thumb-zone footer: Daily #N + primary CTA -->
     <div class="landing-footer" id="landing-footer">
+      <div class="landing-streak-bar" id="streak-bar" style="display:none;">
+        <span class="fire" id="streak-fire"></span>
+        <span id="streak-text"></span>
+      </div>
       <div class="grid-hint" id="landing-puzzle"></div>
       <button class="btn-primary" id="btn-daily">Play Today's Set</button>
     </div>
@@ -1834,15 +1843,11 @@ function renderStreakBar() {
     bar.style.display = 'flex';
     $('streak-text').textContent = stats.completedDaily === getToday()
       ? `${eff}-day streak`
-      : `${eff}-day streak · play today to keep it`;
+      : `${eff}-day streak · Play today to keep it`;
     fire.innerHTML = ICONS.flame;
     fire.classList.remove('broken');
-  } else if (stats.maxStreak > 0) {
-    bar.style.display = 'flex';
-    $('streak-text').textContent = `Streak reset · start a new one`;
-    fire.innerHTML = ICONS.flame;
-    fire.classList.add('broken');
   } else {
+    // no live streak: the line stays out of the way entirely
     bar.style.display = 'none';
   }
 }
