@@ -10,8 +10,8 @@
 
 | | |
 |---|---|
-| **Live URL** | `https://yaronbada.github.io/synapse-trivia/` |
-| **Repo** | `github.com/YaronBaDa/synapse-trivia` (branch `main`) |
+| **Live URL** | `https://yaronbada.github.io/knowit/` |
+| **Repo** | `github.com/YaronBaDa/knowit` (branch `main`) |
 | **Main file** | `index.html` — 2,778 lines / ~248 KB, the entire app |
 | **Stack** | Vanilla HTML/CSS/JS. No framework, no build, no bundler |
 | **External deps** | Google Fonts only — **Lexend Zetta 700** + **Lexend 400/500/600/700**. Nothing else loads |
@@ -33,7 +33,7 @@ Modes: **Daily** (hero, deterministic, 20 s/question, 3 bets), **Endless** (rand
 ## Files
 
 ```
-/root/synapse-trivia/
+/root/knowit/
 ├── index.html            # entire app: markup + inline <style> + inline <script>
 ├── knowit-brain.svg      # source of the brand mark (inlined as <symbol id="knowit-symbol">)
 ├── favicon.png           # 64×64, brain on #140F12 tile in #F454B0
@@ -151,7 +151,7 @@ Every category name renders inside a pill — gameplay, review modal, and the Br
 ## How to verify a change
 
 ```bash
-cd /root/synapse-trivia
+cd /root/knowit
 python3 -c "import re;s=open('index.html').read();open('/tmp/knowit.js','w').write(re.search(r'<script>(.*?)</script>',s,re.S).group(1))"
 node --check /tmp/knowit.js
 python3 -m http.server 8799 --bind 127.0.0.1 &   # background:true in the tool
@@ -165,7 +165,7 @@ Then drive it with Playwright (`/tmp/pw/node_modules/playwright`). Minimum bar f
 4. **Colour budget** — count visible elements whose text/bg/border/shadow contains `rgb(244, 84, 176)`; daily and endless gameplay must be 1–2.
 5. **Syntax** — `node --check` on the extracted script every time.
 
-Live check after push: wait ~75 s, then `curl "https://yaronbada.github.io/synapse-trivia/?nocache=$(date +%s%N)"` and grep for the new token. `raw.githubusercontent.com` and the Pages CDN cache independently; the GitHub Contents API is the only truthful source immediately after a push.
+Live check after push: wait ~75 s, then `curl "https://yaronbada.github.io/knowit/?nocache=$(date +%s%N)"` and grep for the new token. `raw.githubusercontent.com` and the Pages CDN cache independently; the GitHub Contents API is the only truthful source immediately after a push.
 
 **Gotcha:** `getComputedStyle` returns mid-transition values. Anything with `transition: … .2s` needs ~350 ms before you read colours, or you'll "find" bugs that aren't there (this cost an hour on the bet ring).
 

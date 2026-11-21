@@ -1,6 +1,6 @@
 # KNOWIT — Game State
 
-Single-file trivia game. Repo: `YaronBaDa/synapse-trivia`. Live: `yaronbada.github.io/synapse-trivia/`. Branch: `main`.
+Single-file trivia game. Repo: `YaronBaDa/knowit`. Live: `yaronbada.github.io/knowit/`. Branch: `main`.
 
 ## Tech Stack & Architecture
 - **`index.html`** — entire app. Zero framework, zero build, no deps beyond Google Fonts (Lexend, JetBrains Mono, Bellefair). ~1640 lines, ~187KB.
