@@ -821,6 +821,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 .swipe-tip svg { width: 16px; height: 16px; color: var(--accent-bet); flex-shrink: 0; }
+.swipe-tip-copy { display: block; text-align: left; line-height: 16px; }
 
 /* Visible bet toggle (replaces the hidden-gesture-only affordance) */
 .bet-toggle { flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 36px; margin-bottom: 8px; padding: 0; border-radius: var(--radius-sm); border: 0; background: none; color: var(--text-secondary); font-family: var(--font-sans); font-size: 12px; font-weight: 400; cursor: pointer; touch-action: manipulation; }
@@ -1135,6 +1136,12 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
     <!-- Swipe-to-bet day-1 tip (daily only) -->
     <div class="swipe-tip" id="swipe-tip" style="display:none;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span>Swipe right on an answer to bet (+2 / −2)</span></div>
+
+    <!-- First-run bet explainer: replaces the swipe tip for a brand-new player -->
+    <div class="swipe-tip" id="bet-intro" style="display:none;">
+      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M13 2 3 14h7l-1 8 10-12h-7z" fill="currentColor"/></svg>
+      <span class="swipe-tip-copy">You have 3 bets per day.<br>Tap the bolt, then answer: right = +2, wrong = −2.</span>
+    </div>
 
     <div class="mid-slot" id="mid-slot">
       <button type="button" class="bet-toggle" id="bet-toggle" aria-pressed="false" style="display:none;"></button>
@@ -1983,6 +1990,8 @@ let state = {
   startTime: 0,
   qStartTime: 0,
   waiting: false,
+  advanceTimer: null, // pending feedback auto-advance (skippable)
+  feedbackAt: 0,      // when the current feedback appeared
   muted: loadMuted(), // persisted in localStorage as knowit_muted
   timerId: null,
   endlessLives: GAUNTLET_LIVES,
@@ -3068,15 +3077,22 @@ function renderQuestion() {
     renderProgressStrip();
     let seenTip = false;
     try { seenTip = !!localStorage.getItem('knowit_seen_swipe_tip'); } catch(e){}
-    if (state.currentQ === 0 && !seenTip) {
-      showSwipeTip();
-    } else {
+    if (betIntroShouldShow()) {
       $('swipe-tip').style.display = 'none';
+      $('bet-intro').style.display = 'flex';
+    } else {
+      $('bet-intro').style.display = 'none';
+      if (state.currentQ === 0 && !seenTip) {
+        showSwipeTip();
+      } else {
+        $('swipe-tip').style.display = 'none';
+      }
     }
   } else {
     $('header-pips').style.display = 'none';
     $('progress-strip').style.display = 'none';
     $('swipe-tip').style.display = 'none';
+    $('bet-intro').style.display = 'none';
     $('bet-toggle').style.display = 'none';
   }
 
@@ -3384,6 +3400,45 @@ function startEndless() {
   renderEndlessHUD();
 }
 
+// First-run bet explainer (additive key: knowit_seen_bet_intro)
+function betIntroShouldShow() {
+  if (state.mode !== 'daily' || state.currentQ !== 0 || state.answers.length > 0) return false;
+  if (stats.played > 0) return false;
+  try { return !localStorage.getItem('knowit_seen_bet_intro'); } catch(e) { return false; }
+}
+function dismissBetIntro() {
+  const el = $('bet-intro');
+  if (!el || el.style.display === 'none') return;
+  el.style.display = 'none';
+  try { localStorage.setItem('knowit_seen_bet_intro', '1'); } catch(e){}
+}
+
+// Single code path for leaving the post-answer feedback (timer or skip)
+function advanceAfterFeedback() {
+  if (!state.waiting) return;
+  state.waiting = false;
+  if (state.advanceTimer) { clearTimeout(state.advanceTimer); state.advanceTimer = null; }
+  const fb = $('feedback-strip');
+  fb.classList.remove('show');
+  if (state.mode === 'endless' && state.endlessLives <= 0) { finishGame(); return; }
+  state.currentQ++;
+  if (state.mode === 'daily' && state.currentQ >= state.questions.length) { finishGame(); return; }
+  if (state.mode === 'endless' && state.currentQ >= state.questions.length) {
+    for (let i=0; i<5; i++) state.questions.push(getRandomQuestion());
+  }
+  renderQuestion();
+  if (state.mode === 'endless') renderEndlessHUD();
+}
+function maybeSkipFeedback() {
+  if (!state.waiting || !state.advanceTimer) return;
+  if (performance.now() - state.feedbackAt < 700) return;   // let the verdict land first
+  advanceAfterFeedback();
+}
+document.addEventListener('pointerdown', maybeSkipFeedback, true);
+document.addEventListener('keydown', e => {
+  if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowRight') maybeSkipFeedback();
+});
+
 function handleTimeout() {
   if (state.waiting) return;
   const q = state.questions[state.currentQ];
@@ -3397,6 +3452,7 @@ function handleTimeout() {
   saveStats();
   saveProgress();
   state.waiting = true;
+  if (state.mode === 'daily') dismissBetIntro();
   stopQTimer();
   state.armed = false;
 
@@ -3421,20 +3477,8 @@ function handleTimeout() {
     renderEndlessHUD();
   }
 
-  setTimeout(()=>{
-    fb.classList.remove('show');
-    if (state.mode === 'endless' && state.endlessLives <= 0) { finishGame(); return; }
-    state.currentQ++;
-    if (state.mode === 'daily' && state.currentQ >= state.questions.length) { finishGame(); }
-    else {
-      if (state.mode === 'endless' && state.currentQ >= state.questions.length) {
-        for (let i=0; i<5; i++) state.questions.push(getRandomQuestion());
-      }
-      state.waiting = false;
-      renderQuestion();
-      if (state.mode === 'endless') renderEndlessHUD();
-    }
-  }, FEEDBACK_MS_WRONG);
+  state.feedbackAt = performance.now();
+  state.advanceTimer = setTimeout(advanceAfterFeedback, FEEDBACK_MS_WRONG);
 }
 
 function handleAnswer(idx) {
@@ -3501,6 +3545,7 @@ function handleAnswer(idx) {
 
     if (state.mode === 'daily') {
       updateBetUI();
+      dismissBetIntro();
       renderProgressStrip();
     }
     if (state.mode === 'endless') {
@@ -3515,20 +3560,8 @@ function handleAnswer(idx) {
       renderEndlessHUD();
     }
 
-    setTimeout(()=>{
-      fb.classList.remove('show');
-      if (state.mode === 'endless' && state.endlessLives <= 0) { finishGame(); return; }
-      state.currentQ++;
-      if (state.mode === 'daily' && state.currentQ >= state.questions.length) { finishGame(); }
-      else {
-        if (state.mode === 'endless' && state.currentQ >= state.questions.length) {
-          for (let i=0; i<5; i++) state.questions.push(getRandomQuestion());
-        }
-        state.waiting = false;
-        renderQuestion();
-        if (state.mode === 'endless') renderEndlessHUD();
-      }
-    }, correct ? FEEDBACK_MS_CORRECT : FEEDBACK_MS_WRONG);
+    state.feedbackAt = performance.now();
+    state.advanceTimer = setTimeout(advanceAfterFeedback, correct ? FEEDBACK_MS_CORRECT : FEEDBACK_MS_WRONG);
   };
 
   if (bet) setTimeout(commit, 180);
