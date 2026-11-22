@@ -688,6 +688,9 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 .bp-close:active { color: var(--text-primary); }
 .bp-body { display: flex; flex-direction: column; gap: 8px; min-height: 0; overflow-y: auto; }
+.bp-type-block { display: flex; flex-direction: column; gap: 4px; text-align: center; flex-shrink: 0; }
+.bp-type { font-family: var(--font-display); font-size: 20px; font-weight: 700; line-height: 24px; letter-spacing: 0.02em; color: var(--text-primary); }
+.bp-type-line { font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 16px; color: var(--text-secondary); }
 .bp-radar { width: 100%; }
 .bp-radar svg { display: block; width: 100%; height: auto; }
 .bp-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; justify-content: center; font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 1.3; color: var(--text-secondary); }
@@ -1269,6 +1272,10 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
         <button class="bp-close" id="bp-close" aria-label="Close Brainprint">✕</button>
       </div>
       <div class="bp-body">
+        <div class="bp-type-block">
+          <div class="bp-type" id="bp-type">The Wanderer</div>
+          <div class="bp-type-line" id="bp-type-line"></div>
+        </div>
         <div class="bp-radar" id="bp-radar"></div>
         <div class="bp-legend" aria-hidden="true">
           <span class="lg"><i class="bp-swatch"></i>Accuracy</span>
@@ -2149,8 +2156,9 @@ function getCategoryStats() {
   });
 }
 // ---- Brainprint: lifetime category radar + PNG share card ----
-const BP_MIN_ANSWERED = 5;
-const BP_MIN_CATEGORIES = 3;
+const BP_MIN_PER_CAT = 5;      // answers in a category before it plots or ranks
+const BP_MIN_ANSWERED = 30;    // total answers before the Brainprint unlocks
+const BP_MIN_CATEGORIES = 3;   // categories at BP_MIN_PER_CAT before it unlocks
 
 function brainprintData() {
   const all = getCategoryStats();
@@ -2164,33 +2172,98 @@ function brainprintData() {
   // Radar axes are fixed: the same 6 umbrellas, same order, 0% until answered.
   const rows = all.map(r => ({ ...r }));
 
-  const ranked = played.slice().sort((a, b) => (b.accuracy - a.accuracy) || (b.answered - a.answered));
+  // Only categories with enough answers can rank or plot (2 answers = 0/50/100% noise)
+  const eligible = rows.filter(r => r.answered >= BP_MIN_PER_CAT);
+  const ranked = eligible.slice().sort((a, b) => (b.accuracy - a.accuracy) || (b.answered - a.answered));
   return {
-    all, played, rows,
+    all, played, rows, eligible,
     totalAnswered, totalCorrect, betsWon, betsLost, betsTotal,
     overallAccuracy: totalAnswered ? Math.round(totalCorrect / totalAnswered * 100) : 0,
     betHitRate: betsTotal ? Math.round(betsWon / betsTotal * 100) : null,
     strongest: ranked[0] || null,
     blindspot: ranked.length > 1 ? ranked[ranked.length - 1] : null,
-    unlocked: totalAnswered >= BP_MIN_ANSWERED && played.length >= BP_MIN_CATEGORIES,
+    unlocked: totalAnswered >= BP_MIN_ANSWERED && eligible.length >= BP_MIN_CATEGORIES,
   };
 }
+// Shareable identity — only categories with enough answers rank
+const BP_CAT = {
+  science: UMBRELLA_CATEGORIES[0],   // Science & Nature
+  geography: UMBRELLA_CATEGORIES[1], // Geography
+  history: UMBRELLA_CATEGORIES[2],   // History
+  sports: UMBRELLA_CATEGORIES[3],    // Sports & Leisure
+  pop: UMBRELLA_CATEGORIES[4],       // Pop Culture
+  arts: UMBRELLA_CATEGORIES[5],      // Arts & Lit
+};
+function brainprintType(d) {
+  d = d || brainprintData();
+  const ranked = (d.rows || []).filter(r => r.answered >= BP_MIN_PER_CAT)
+    .slice().sort((a, b) => (b.accuracy - a.accuracy) || (b.answered - a.answered));
+  const top = ranked[0] || null;
+  const second = ranked[1] || null;
+  const accs = ranked.map(r => r.accuracy);
+  const spread = accs.length ? Math.max(...accs) - Math.min(...accs) : 0;
+  const restAvg = ranked.length > 1 ? ranked.slice(1).reduce((s, r) => s + r.accuracy, 0) / (ranked.length - 1) : 0;
+  // Top two by accuracy (ties broken by more answered), in either order
+  const topTwoAre = (a, b) => !!top && !!second
+    && [top.category, second.category].indexOf(a) !== -1
+    && [top.category, second.category].indexOf(b) !== -1;
+
+  if (d.betsTotal >= 9 && d.betHitRate !== null && d.betHitRate < 40) {
+    return { name: 'The Gambler', line: 'Bets big. Occasionally right.' };
+  }
+  if (ranked.length >= 5 && spread <= 20) {
+    return { name: 'The Polymath', line: 'Good at everything. Unbearable at parties.' };
+  }
+  if (top && top.accuracy >= 80 && top.accuracy - restAvg >= 25) {
+    return { name: 'The Specialist', line: 'One subject. Fully committed.' };
+  }
+  if (topTwoAre(BP_CAT.pop, BP_CAT.sports)) {
+    return { name: 'Pop-Culture Goblin', line: 'Knows the cast, the score and the box office.' };
+  }
+  if (topTwoAre(BP_CAT.history, BP_CAT.arts)) {
+    return { name: 'Armchair Scholar', line: 'Cardigan energy. Strong opinions about footnotes.' };
+  }
+  if (topTwoAre(BP_CAT.science, BP_CAT.geography)) {
+    return { name: 'The Lab Rat', line: 'Trusts data. Doubts everything else.' };
+  }
+  return { name: 'The Wanderer', line: 'Still finding a lane.' };
+}
+// Console-only helper: __debugBrainprint([{category:'History',answered:10,correct:8,accuracy:80,betsWon:1,betsLost:1}, ...])
+window.__debugBrainprint = (rows) => {
+  const r = (rows || []).map(x => ({ ...x }));
+  const sum = k => r.reduce((a, x) => a + (Number(x[k]) || 0), 0);
+  const betsTotal = sum('betsWon') + sum('betsLost');
+  const totalAnswered = sum('answered');
+  const d = {
+    rows: r,
+    played: r.filter(x => (x.answered || 0) > 0),
+    betsTotal,
+    betHitRate: betsTotal ? Math.round(sum('betsWon') / betsTotal * 100) : null,
+    totalAnswered,
+    overallAccuracy: totalAnswered ? Math.round(sum('correct') / totalAnswered * 100) : 0,
+  };
+  const t = brainprintType(d);
+  console.log(t.name + ' — ' + t.line);
+  return t;
+};
 function brainprintSummaryText(d) {
   d = d || brainprintData();
   const s = d.strongest ? `${d.strongest.category} ${d.strongest.accuracy}%` : '—';
   const b = d.blindspot ? `${d.blindspot.category} ${d.blindspot.accuracy}%` : '—';
   const bet = d.betsTotal ? `${d.betsWon}/${d.betsTotal} bets` : 'no bets yet';
-  return `My KNOWIT Brainprint\nStrongest: ${s} · Blindspot: ${b}\n${d.totalAnswered} answered · ${d.overallAccuracy}% accuracy · ${bet}\n${SITE_URL}?s=b`;
+  const t = brainprintType(d);
+  return `My KNOWIT Brainprint: ${t.name}\n${t.line}\nStrongest: ${s} · Blindspot: ${b}\n${d.totalAnswered} answered · ${d.overallAccuracy}% accuracy · ${bet}\n${SITE_URL}?s=b`;
 }
 function brainprintGeometry(rows, cx, cy, maxR, labelGap) {
   const N = rows.length || 1;
   return rows.map((r, i) => {
     const angle = (i * 2 * Math.PI / N) - Math.PI / 2;
     const acc = Math.max(0, Math.min(100, Number(r.accuracy) || 0));
-    const radius = (acc / 100) * maxR;
+    const active = (Number(r.answered) || 0) >= BP_MIN_PER_CAT;
+    const radius = active ? (acc / 100) * maxR : 0;
     const cos = Math.cos(angle), sin = Math.sin(angle);
     return {
-      ...r, angle, acc, cos, sin,
+      ...r, angle, acc, cos, sin, active,
       x: cx + cos * radius,
       y: cy + sin * radius,
       lx: cx + cos * (maxR + labelGap),
@@ -2219,6 +2292,7 @@ function brainprintSVG(d, opts = {}) {
   const spokes = g.map(p => `<line x1="${cx}" y1="${cy}" x2="${(cx + p.cos * maxR).toFixed(2)}" y2="${(cy + p.sin * maxR).toFixed(2)}" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>`).join('');
   const poly = g.map(p => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' ');
   const nodes = g.map(p => {
+    if (!p.active) return '';
     const x = p.x.toFixed(2), y = p.y.toFixed(2);
     if (p.betsWon > p.betsLost) return `<circle cx="${x}" cy="${y}" r="9" fill="rgba(245,158,11,0.18)"/><circle cx="${x}" cy="${y}" r="5" fill="#F59E0B"/>`;
     if ((p.betsWon + p.betsLost) > 0) return `<circle cx="${x}" cy="${y}" r="5" fill="#1F181C" stroke="#F59E0B" stroke-width="2"/>`;
@@ -2226,23 +2300,24 @@ function brainprintSVG(d, opts = {}) {
   }).join('');
   const labels = g.map(p => {
     const lines = splitRadarLabel(p.category);
+    const dim = p.active ? '' : ' fill-opacity="0.4"';
     let out = `<g class="bp-axis">`;
     if (showAccuracy) {
       const lineH = lh;
       const blockH = lines.length * lineH + 13;
       let y = p.ly - blockH / 2 + lineH;
       lines.forEach(l => {
-        out += `<text x="${p.lx.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="${fs}" font-weight="600" letter-spacing="0.4" fill="#B2A4AC">${escapeHtml(l)}</text>`;
+        out += `<text x="${p.lx.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="${fs}" font-weight="600" letter-spacing="0.4" fill="#B2A4AC"${dim}>${escapeHtml(l)}</text>`;
         y += lineH;
       });
-      out += `<text x="${p.lx.toFixed(2)}" y="${(y + 1).toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="${fs}" font-weight="600" letter-spacing="0.4" fill="#F3F4F6" style="font-variant-numeric: tabular-nums">${p.acc}%</text></g>`;
+      out += `<text x="${p.lx.toFixed(2)}" y="${(y + 1).toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="${fs}" font-weight="600" letter-spacing="0.4" fill="#F3F4F6" style="font-variant-numeric: tabular-nums"${dim}>${p.acc}%</text></g>`;
     } else {
       // Compact home radar: names only, no percentages — keeps the chart airy
       const lineH = lh;
       const blockH = lines.length * lineH;
       let y = p.ly - blockH / 2 + lineH;
       lines.forEach(l => {
-        out += `<text x="${p.lx.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="${fs}" font-weight="600" letter-spacing="0.4" fill="#B2A4AC">${escapeHtml(l)}</text>`;
+        out += `<text x="${p.lx.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="${fs}" font-weight="600" letter-spacing="0.4" fill="#B2A4AC"${dim}>${escapeHtml(l)}</text>`;
         y += lineH;
       });
       out += `</g>`;
@@ -2294,7 +2369,7 @@ function renderBrainprintTrigger(host, opts = {}) {
   const d = brainprintData();
   host.innerHTML = '';
   const open = () => { audio.click(); openBrainprint(); };
-  if (d.totalAnswered > 0) {
+  if (d.unlocked) {
     // Career takeaway only — "Blindspot" belongs to the run, not the lifetime strip.
     const bestAll = d.played.slice().sort((a, b) => (b.accuracy - a.accuracy) || (b.answered - a.answered))[0];
     if (opts.compact) {
@@ -2322,7 +2397,8 @@ function renderBrainprintTrigger(host, opts = {}) {
   } else {
     const btn = document.createElement('button');
     btn.type = 'button'; btn.className = 'bp-trigger-locked';
-    btn.textContent = 'Brainprint · Play 3+ categories to unlock';
+    // Short single-line progress: the category detail lives in the modal note
+    btn.textContent = `Brainprint · ${d.totalAnswered} of ${BP_MIN_ANSWERED} answers`;
     btn.addEventListener('click', open);
     host.appendChild(btn);
   }
@@ -2332,6 +2408,10 @@ function renderBrainprint() {
   const radar = $('bp-radar');
   radar.innerHTML = brainprintSVG(d, { vw: 340, vh: 300, maxR: 84, gap: 16 });
   fitBrainprintLabels(radar.firstElementChild, 340, 300);
+
+  const type = brainprintType(d);
+  $('bp-type').textContent = type.name;
+  $('bp-type-line').textContent = type.line;
 
   $('bp-total').textContent = d.totalAnswered;
   $('bp-accuracy').textContent = d.totalAnswered ? `${d.overallAccuracy}%` : '—';
@@ -2363,12 +2443,13 @@ function renderBrainprint() {
     note.style.display = 'none';
     note.textContent = '';
   } else {
+    const readyCats = d.rows.filter(r => r.answered >= BP_MIN_PER_CAT).length;
     const needA = Math.max(0, BP_MIN_ANSWERED - d.totalAnswered);
-    const needC = Math.max(0, BP_MIN_CATEGORIES - d.played.length);
+    const needC = Math.max(0, BP_MIN_CATEGORIES - readyCats);
     const bits = [];
     if (needA) bits.push(`${needA} more answer${needA === 1 ? '' : 's'}`);
     if (needC) bits.push(`${needC} more categor${needC === 1 ? 'y' : 'ies'}`);
-    note.textContent = `Calibration mode — ${bits.join(' and ')} to unlock your full Brainprint.`;
+    note.textContent = `Calibration mode — ${d.totalAnswered} of ${BP_MIN_ANSWERED} answers · ${readyCats} of ${BP_MIN_CATEGORIES} categories. ${bits.join(' and ')} to go.`;
     note.style.display = 'block';
   }
   return d;
@@ -2427,6 +2508,7 @@ function drawRadarCanvas(ctx, d, cx, cy, maxR, gap) {
   _sg.addColorStop(0, '#FF6EB4'); _sg.addColorStop(0.5, '#F454B0'); _sg.addColorStop(1, '#A855F7');
   ctx.strokeStyle = _sg; ctx.lineWidth = 4; ctx.lineJoin = 'round'; ctx.stroke();
   g.forEach(p => {
+    if (!p.active) return;
     if (p.betsWon > p.betsLost) {
       ctx.beginPath(); ctx.arc(p.x, p.y, 16, 0, Math.PI * 2); ctx.fillStyle = 'rgba(245,158,11,0.18)'; ctx.fill();
       ctx.beginPath(); ctx.arc(p.x, p.y, 9, 0, Math.PI * 2); ctx.fillStyle = '#F59E0B'; ctx.fill();
@@ -2446,10 +2528,10 @@ function drawRadarCanvas(ctx, d, cx, cy, maxR, gap) {
     const blockH = lines.length * lineH + 26;
     let y = p.ly - blockH / 2 + lineH;
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#B2A4AC';
+    ctx.fillStyle = p.active ? '#B2A4AC' : 'rgba(178,164,172,0.4)';
     lines.forEach(l => { ctx.fillText(l, lx, y); y += lineH; });
     ctx.font = '700 19px Lexend, sans-serif';
-    ctx.fillStyle = '#F3F4F6';
+    ctx.fillStyle = p.active ? '#F3F4F6' : 'rgba(243,244,246,0.4)';
     ctx.fillText(`${p.acc}%`, lx, y + 2);
   });
 }
@@ -2476,7 +2558,23 @@ function drawBrainprintCard(ctx, d) {
   ctx.fillStyle = '#B2A4AC';
   ctx.fillText(`${d.totalAnswered} ANSWERED`, 672, 100);
 
-  drawRadarCanvas(ctx, d, 360, 442, 168, 34);
+  // Identity headline (shrinks rather than overflow the 720px card)
+  const bpType = brainprintType(d);
+  let typeSize = 38;
+  const typeFont = s => `700 ${s}px "Lexend Zetta", Lexend, sans-serif`;
+  ctx.font = typeFont(typeSize);
+  while (ctx.measureText(bpType.name).width > 624 && typeSize > 20) {
+    typeSize -= 2;
+    ctx.font = typeFont(typeSize);
+  }
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#F3F4F6';
+  ctx.fillText(bpType.name, 48, 184);
+  ctx.font = '500 15px Lexend, sans-serif';
+  ctx.fillStyle = 'rgba(178, 164, 172, 0.92)';
+  ctx.fillText(bpType.line, 48, 210);
+
+  drawRadarCanvas(ctx, d, 360, 452, 162, 32);
 
   ctx.strokeStyle = 'rgba(255,255,255,0.1)';
   ctx.lineWidth = 1;
