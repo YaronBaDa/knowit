@@ -602,7 +602,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* ---- Brainprint: trigger bar, modal, radar ---- */
 .bp-trigger-wrap { width: 100%; max-width: 340px; }
 .bp-trigger-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; }
-.bp-trigger-text { font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 1.35; color: var(--text-secondary); min-width: 0; }
+.bp-trigger-text { font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 16px; color: var(--text-secondary); min-width: 0; }
 .bp-trigger-text.is-top { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* Live Brainprint radar in the hub's open upper space */
@@ -620,7 +620,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   #screen-landing.is-completed .home-radar-hero { padding: 0 0 4px; }
 }
 .bp-trigger-btn {
-  flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px; padding: 8px 12px; border-radius: 9999px;
+  flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px; height: 40px; padding: 0 16px; border-radius: 9999px;
   background: var(--bg-surface-subtle); border: 1px solid rgba(255, 255, 255, 0.12); color: #F3F4F6;
   font-family: var(--font-sans); font-size: 12px; font-weight: 600; letter-spacing: 0.01em; cursor: pointer;
   transition: transform .08s ease, background .2s;
@@ -2197,14 +2197,17 @@ function renderBrainprintTrigger(host, opts = {}) {
   const d = brainprintData();
   host.innerHTML = '';
   const open = () => { audio.click(); openBrainprint(); };
-  if (d.unlocked && d.strongest && d.blindspot) {
+  if (d.totalAnswered > 0) {
     const row = document.createElement('div');
     row.className = 'bp-trigger-row';
     const txt = document.createElement('div');
     txt.className = 'bp-trigger-text' + (opts.compact ? ' is-top' : '');
+    // Career takeaway only — "Blindspot" belongs to the run, not the lifetime strip.
+    const bestAll = d.played.slice().sort((a, b) => (b.accuracy - a.accuracy) || (b.answered - a.answered))[0];
     txt.textContent = opts.compact
       ? `Top: ${d.strongest.category} (${d.strongest.accuracy}%)`
-      : `Strongest: ${d.strongest.category} (${d.strongest.accuracy}%) · Blindspot: ${d.blindspot.category} (${d.blindspot.accuracy}%)`;
+      : (bestAll ? `All-time best: ${bestAll.category} (${bestAll.accuracy}%)`
+                 : `Career accuracy: ${d.overallAccuracy}%`);
     const btn = document.createElement('button');
     btn.type = 'button'; btn.className = 'bp-trigger-btn'; btn.textContent = 'Brainprint ↗';
     btn.addEventListener('click', open);
@@ -3467,8 +3470,11 @@ function finishGame(opts = {}) {
     applyCategoryPillStyle(bp, wc);
     hlEl.style.display = 'block';
   } else {
-    hlEl.innerHTML = '';
-    hlEl.style.display = 'none';
+    const missedTotal = state.answers.filter(a => !a.correct).length;
+    hlEl.innerHTML = missedTotal === 0
+      ? `${ICONS.flame} <b>Clean sweep.</b> Nothing missed this run.`
+      : `${ICONS.snowflake} <b>No blindspot.</b> Misses were spread across subjects.`;
+    hlEl.style.display = 'block';
   }
 
   // Scorecard grid: Daily = 5x2 (correct solid, miss hollow, bet bolt).
