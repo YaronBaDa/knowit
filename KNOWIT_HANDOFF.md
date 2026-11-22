@@ -169,7 +169,7 @@ The modal is a 380px card: KNOWIT/Zetta + BRAINPRINT eyebrow, a plain 300×300 S
 | area | rule |
 |---|---|
 | **Day boundary** | UTC everywhere. `LAUNCH_UTC = Date.UTC(2026,10,18)` → puzzle #1 = 2026-11-18. `getToday()`, `getDailyNum()` |
-| **Daily set** | `getDailyQuestions(dayNum)`: tier ramp E,E,E,M,M,M,M,H,H,H; `CAT_CAP = 2`; `NO_SAME_DAY` pairs; `HOLD_IDS` (p11, p23, p32, sp13, g36) never scheduled; queues refill with their own seed so no repeats |
+| **Daily set** | `getDailySetIds(dayNum)` picks the 10 ids with the tier ramp E,E,E,M,M,M,M,H,H,H; `CAT_CAP = 2`; `NO_SAME_DAY` pairs; `HOLD_IDS` (p11, p23, p32, sp13, g36) never scheduled; queues refill with their own seed so no repeats. **From #8 (`TIER_SHUFFLE_FROM`)** `orderedDailyIds()` reorders those same 10 ids with `seededShuffle(ids, dayNum*9973+17+attempt)` — first question must be easy/medium, never three hards in a row, 50 attempts then the raw order. The pick itself never changes, so a day's question set is fixed; only its order (and therefore answer slots) moves. #1–#7 are untouched. |
 | **Answer side** | slot placement uses a second seed (`dayIndex*7919 + pos*104729`) — deterministic per day, never a rotation |
 | **Timer** | 20 s per question; `FAST_TIME_SEC = 55` aggregate; pct-based warn/danger classes |
 | **Share tags** | one `SITE_URL` const drives every outbound link. `shareClean` (copy icon) ends with `?s=c`; challenge / native share links carry `&s=g` (hub quick-share uses `&s=h`); Brainprint text and PNG footer use `?s=b`. `getChannelParam()` reads `?s=` into the session-only `ENTRY_SOURCE` (never persisted); `clearDuelParam()` strips `vs`, `d` and `s` once a run is consumed. |

@@ -1934,6 +1934,7 @@ const STATE_VERSION = 3;
 const Q_PER_DAY = 10;
 // Daily set shape: a deliberate difficulty ramp (3 easy / 4 medium / 3 hard per set)
 const SET_TIERS = ['easy','easy','easy','medium','medium','medium','medium','hard','hard','hard'];
+const TIER_SHUFFLE_FROM = 8;   // puzzles #8+ get their 10 picks reordered; #1-#7 stay exactly as published
 const CAT_CAP = 2;
 // Canonical public URL — will change when we get a custom domain
 const SITE_URL = 'https://yaronbada.github.io/knowit/';
@@ -2913,9 +2914,31 @@ function buildNextDay() {
   _sched.push(picked);
 }
 function getDailySetIds(dayNum) { while (_sched.length < dayNum) buildNextDay(); return _sched[dayNum - 1]; }
+// Reorder the ten ALREADY-PICKED ids (never the pick itself, so the same questions appear on a given day).
+// Keeps hard questions off Q1 and never three in a row, so bets can't be farmed on Q1-Q3.
+function orderedDailyIds(dayNum) {
+  const ids = getDailySetIds(dayNum).slice();
+  if (dayNum < TIER_SHUFFLE_FROM) return ids;
+  const byId = new Map(QUESTIONS.map(q => [q.id, q]));
+  const valid = order => {
+    const first = byId.get(order[0]);
+    if (!first || (first.difficulty !== 'easy' && first.difficulty !== 'medium')) return false;
+    let run = 0;
+    for (let i = 0; i < order.length; i++) {
+      const q = byId.get(order[i]);
+      if (q && q.difficulty === 'hard') { if (++run > 2) return false; } else run = 0;
+    }
+    return true;
+  };
+  for (let attempt = 0; attempt < 50; attempt++) {
+    const cand = seededShuffle(ids, dayNum * 9973 + 17 + attempt);
+    if (valid(cand)) return cand;
+  }
+  return ids;   // no valid shuffle found — fall back to the unshuffled order
+}
 function getDailyQuestions(dayNum = getDailyNum()) {
   const idToQ = new Map(QUESTIONS.map(q => [q.id, q]));
-  return getDailySetIds(dayNum).map((id, pos) => {
+  return orderedDailyIds(dayNum).map((id, pos) => {
     const rng = mulberry32(dayNum * 1000 + pos);
     const slot = Math.floor(mulberry32(dayNum * 7919 + pos * 104729)() * 4);
     return shuffleIntoSlot(idToQ.get(id), rng, slot);
@@ -4049,6 +4072,14 @@ function tick() {
   if ($('next-set-results').style.display === 'block') $('next-set-results').textContent = nextSetLine();
   if (state.screen === 'landing' && getToday() !== lastRenderedDay) renderLanding();
 }
+// Console-only dev helper: __debugDay(8) → [{pos, id, difficulty}] in the FINAL play order
+window.__debugDay = (n = getDailyNum()) => {
+  const byId = new Map(QUESTIONS.map(q => [q.id, q]));
+  const rows = orderedDailyIds(n).map((id, i) => ({ pos: i + 1, id, difficulty: (byId.get(id) || {}).difficulty }));
+  console.table(rows);
+  return rows;
+};
+
 setInterval(tick, 30000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
 </script>
