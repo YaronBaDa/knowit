@@ -265,17 +265,16 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   font-family: var(--font-sans); font-size: 16px; font-weight: 600; line-height: 20px;
   color: var(--text-secondary);
 }
-.tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px; margin: 0; padding: 4px 0; }
-.tc-cell { position: relative; height: 12px; border-radius: 4px; background: var(--bg-surface-subtle); }
-.tc-cell.ok { background: var(--correct); }
-.tc-cell.miss { background: var(--wrong); }
-/* Bet rubric (mini): inset stroke, transparent buffer, rounded inner fill */
-.tc-cell.bet { background: transparent; box-shadow: none; border: 1px solid transparent; }
-.tc-cell.bet::before { content: ''; position: absolute; inset: 4px; border-radius: 4px; z-index: 0; }
-.tc-cell.bet.ok { border-color: var(--correct); }
-.tc-cell.bet.ok::before { background: var(--correct); }
-.tc-cell.bet.miss { border-color: var(--wrong); }
-.tc-cell.bet.miss::before { background: var(--wrong); }
+.tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px; margin: 0; padding: 0; }
+/* Unified rubric tile: 24px flat rect, solid fill, optional 12px dark-ink glyph */
+.tc-cell {
+  position: relative; height: 24px; border-radius: 4px; border: none;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-surface-subtle);
+}
+.tc-cell.ok { background: #21C868; }
+.tc-cell.miss { background: #F22933; cursor: pointer; }
+.tc-cell svg { width: 12px; height: 12px; display: block; }
 #next-set-line, .tc-count { font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
 /* Completed hub: countdown + lifetime line reads as body copy, never a mono counter */
 #screen-landing.is-completed .tc-count {
@@ -555,21 +554,17 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
   background: none; border: none; border-radius: 0; padding: 0; max-width: none; width: 100%;
 }
-.share-cell { position: relative; height: 20px; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
-.share-cell.correct { background: var(--correct); }
-.share-cell.wrong { background: transparent; border: 2px solid var(--wrong); cursor: pointer; transition: transform .12s; }
-.share-cell.correct { border: 1px solid transparent; }
+.share-cell {
+  position: relative; height: 24px; border-radius: 4px; border: none;
+  display: flex; align-items: center; justify-content: center;
+  background: transparent;
+}
+.share-cell.correct { background: #21C868; }
+.share-cell.wrong { background: #F22933; cursor: pointer; transition: transform .12s; }
 .share-cell.wrong:active { transform: scale(0.92); }
 .share-cell.empty { background: var(--surface-3); }
-/* Endless: a lost heart replaces the hollow miss square */
-.share-cell.heart { background: #140F12; border: 1.5px solid #F22933; cursor: pointer; }
-.share-cell.heart svg { width: 12px; height: 12px; display: block; }
-/* Bet marker: bolt in the corner (no glyphs, no extra ring) */
-.share-cell .bet-bolt { position: absolute; top: 0; right: 0; width: 12px; height: 12px; display: block; z-index: 2; }
-.share-cell .bet-bolt svg { width: 100%; height: 100%; display: block; }
-.share-cell.correct .bet-bolt { color: var(--bg-canvas); }
-.share-cell.wrong .bet-bolt { color: var(--accent-bet); }
-.share-cell.bet.empty .bet-bolt { color: var(--text-secondary); }
+.share-cell.heart { background: #F22933; cursor: pointer; }
+.share-cell svg { width: 12px; height: 12px; display: block; }
 /* Divider + 4-column stat bar */
 .sc-divider { height: 4px; background: var(--border-subtle); margin: 12px 0 12px; }
 .sc-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 16px 0; text-align: center; }
@@ -2589,6 +2584,9 @@ function $(id){ return document.getElementById(id); }
 // ---- Inline monochrome icons (Lucide-style, 1.5px stroke) ----
 const ICONS = {
   lightning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>',
+  // Rubric glyphs — 12x12, dark ink, drawn on either fill colour
+  boltInk: '<svg width="12" height="12" viewBox="0 0 24 24" fill="#140F12" aria-hidden="true"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>',
+  heartBroken: '<svg width="12" height="12" viewBox="0 0 24 24" fill="#140F12" aria-hidden="true"><path d="M11.2 4.3C9.6 2.8 7.3 2.5 5.4 3.5 2.7 4.9 1.6 8.3 3 11c1.3 2.6 4.7 6 8.4 9.3l-.9-4.8 2.3-2.6-2.4-2.8 1.8-3.2-1-2.6z"/><path d="M18.6 3.5c-1.8-.9-3.9-.7-5.5.6l.9 2.8-1.8 3.2 2.4 2.8-2.3 2.6.8 4.6c3.6-3.2 6.8-6.5 8-9 1.4-2.8.3-6.2-2.5-7.6z"/></svg>',
   flame: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
   swords: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"/><line x1="5" x2="9" y1="14" y2="18"/><line x1="7" x2="4" y1="17" y2="20"/><line x1="3" x2="5" y1="19" y2="21"/></svg>',
   bulb: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>',
@@ -2684,7 +2682,8 @@ function renderHub() {
       const a = answers[i];
       if (a) {
         cell.classList.add(a.correct ? 'ok' : 'miss');
-        if (a.bet) cell.classList.add('bet');
+        if (a.bet) cell.innerHTML = ICONS.boltInk;   // 12px dark ink bolt, centred
+        if (!a.correct) cell.dataset.idx = i;
       }
       gridEl.appendChild(cell);
     }
@@ -3483,20 +3482,16 @@ function finishGame(opts = {}) {
     cell.className = 'share-cell';
     if (i < state.answers.length) {
       const a = state.answers[i];
-      if (a.correct) cell.classList.add('correct');
-      else {
+      if (a.correct) {
+        cell.classList.add('correct');
+        if (a.bet) cell.innerHTML = ICONS.boltInk;
+      } else {
         cell.classList.add('wrong');
-        if (endlessRun) { cell.classList.add('heart'); cell.innerHTML = ICONS.heartFill; }
+        if (endlessRun) cell.classList.add('heart');
+        // Endless losses read as a broken heart; a daily bet miss keeps the bolt
+        cell.innerHTML = endlessRun ? ICONS.heartBroken : (a.bet ? ICONS.boltInk : '');
         cell.dataset.idx = i;
         hasMiss = true;
-      }
-      if (a.bet) {
-        cell.classList.add('bet');
-        const bolt = document.createElement('span');
-        bolt.className = 'bet-bolt';
-        bolt.setAttribute('aria-hidden', 'true');
-        bolt.innerHTML = ICONS.lightning;
-        cell.appendChild(bolt);
       }
     } else cell.classList.add('empty');
     visualEl.appendChild(cell);
