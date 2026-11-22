@@ -581,7 +581,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .results-footer .action-row { display: flex; gap: 8px; align-items: stretch; }
 .results-footer .action-row #btn-challenge { flex: 1 1 auto; width: auto; max-width: none; }
 .results-footer #btn-endless-result { width: 100%; max-width: none; }
-.copy-btn { flex: 0 0 44px; width: 44px; height: 44px; min-height: 44px; padding: 0; border-radius: var(--radius); }
+.copy-btn { flex: 0 0 44px; width: 44px; height: 44px; min-height: 44px; padding: 0; border-radius: 12px; }
 .copy-btn svg { width: 20px; height: 20px; }
 .results-footer-meta { display: flex; align-items: center; justify-content: center; gap: 4px; font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); }
 .results-footer .footer-dot { opacity: 0.6; }
@@ -618,14 +618,16 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .bp-trigger-text.is-top { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .bp-trigger-btn {
-  flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px; height: 40px; padding: 0 16px; border-radius: 9999px;
-  background: var(--bg-surface-subtle); border: 1px solid rgba(255, 255, 255, 0.12); color: #F3F4F6;
-  font-family: var(--font-sans); font-size: 12px; font-weight: 600; letter-spacing: 0.01em; cursor: pointer;
-  transition: transform .08s ease, background .2s;
+  flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  height: 40px; padding: 0 16px; border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.14); color: #F3F4F6;
+  font-family: var(--font-sans); font-size: 12px; font-weight: 600; line-height: 1; letter-spacing: 0.01em; cursor: pointer;
+  transition: transform .08s ease, background .2s, border-color .2s;
 }
+.bp-trigger-btn:hover { background-color: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.22); }
 .bp-trigger-btn:active { transform: scale(0.97); }
 .bp-trigger-locked {
-  display: inline-flex; align-items: center; padding: 8px 12px; border-radius: 9999px;
+  display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 16px; border-radius: 12px;
   border: 1px dashed rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.03); color: var(--text-secondary);
   font-family: var(--font-sans); font-size: 12px; font-weight: 500; cursor: pointer;
 }
