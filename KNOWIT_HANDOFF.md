@@ -178,7 +178,7 @@ The modal is a 380px card: KNOWIT/Zetta + BRAINPRINT eyebrow, a plain 300×300 S
 | **Streak** | participation, not score: `streakAfterCompletion` + `dayDiff`; `effectiveStreak` returns 0 after a missed day |
 | **Endless** | 3 lives, random without repeats (`state.endlessUsed`); `RUN` = total questions lasted (0 if the run had zero correct answers), compared/stored as `bestEndless`; results grid renders one square per question with heart tiles for lost lives |
 | **Feedback pacing** | `FEEDBACK_MS_CORRECT = 1800`, `FEEDBACK_MS_WRONG = 3200` |
-| **Duels** | `?d=<puzzle>&vs=<score>_<time>`; wrong-day or already-played links are cleared with a toast |
+| **Duels** | `?d=<puzzle>&vs=<score>_<time>[_<name>]`. Fresh + today → pre-game modal (name input saved to `knowit_name`, Accept / Just play). Already played today → head-to-head card straight from `knowit_result_v1` vs the link, param cleared. Older puzzle → modal with an unranked-replay note; the replay reads `getDailyQuestions(n)`, sets `state.replayDay`, writes **no** stats/result/progress and labels itself `REPLAY #n`. Future puzzle → toast. Loss copy is `Outplayed by <name>.`, win stays `Outsmarted them.`, tie breaks on time. |
 
 ### localStorage (do not rename or extend)
 

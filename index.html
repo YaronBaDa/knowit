@@ -721,6 +721,20 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   padding: 20px 20px 0; max-width: 340px; width: 100%; max-height: 80vh; overflow-y: auto; text-align: left;
 }
 /* Modal primary action stays in reach while the body scrolls behind it */
+/* Duel pre-game modal */
+#duel-modal .modal-card { padding-bottom: 20px; }
+.duel-modal-vs { font-family: var(--font-sans); font-size: 20px; font-weight: 700; line-height: 1.25; color: var(--text-primary); margin-bottom: 8px; }
+.duel-modal-line { font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 1.45; color: var(--text-secondary); margin-bottom: 16px; }
+.duel-modal-note { color: var(--accent-bet); }
+.duel-name-label { display: block; font-family: var(--font-sans); font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; }
+.duel-name-input {
+  width: 100%; height: 48px; padding: 0 12px; margin-bottom: 16px; box-sizing: border-box;
+  border-radius: 12px; border: 1px solid var(--border); background: var(--bg-surface-subtle);
+  color: var(--text-primary); font-family: var(--font-sans); font-size: 16px;
+}
+.duel-name-input::placeholder { color: var(--text-muted); }
+.duel-name-input:focus-visible { outline: 2px solid var(--accent-brand); outline-offset: 2px; }
+
 .modal-cta, .bp-cta {
   position: sticky; bottom: 0; z-index: 3;
   background: var(--bg-surface);
@@ -1209,6 +1223,20 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   </div>
 
   <!-- Review modal -->
+  <!-- Duel pre-game modal -->
+  <div class="modal-backdrop" id="duel-modal" style="display:none;">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="duel-modal-vs">
+      <div class="duel-modal-vs" id="duel-modal-vs"></div>
+      <div class="duel-modal-line">Swipe right on an answer to bet: +2 if right, −2 if wrong. You get 3.</div>
+      <div class="duel-modal-line duel-modal-note" id="duel-modal-note" style="display:none;"></div>
+      <label class="duel-name-label" for="duel-name">Your name (for your own challenge link)</label>
+      <input class="duel-name-input" id="duel-name" type="text" maxlength="16" autocomplete="nickname" placeholder="Optional">
+      <div class="modal-cta">
+        <button class="btn-primary" id="duel-accept">Accept challenge</button>
+        <button class="link-home" id="duel-justplay" type="button">Just play</button>
+      </div>
+    </div>
+  </div>
   <div class="modal-backdrop" id="review-modal" style="display:none;">
     <div class="modal-card">
       <div class="cat-row" id="rm-cat"></div>
@@ -1933,6 +1961,8 @@ let state = {
   armed: false,
   // Ghost duel
   duel: null, // {score, time, name} or null
+  pendingDuel: null, // duel waiting on the pre-game modal
+  replayDay: null, // puzzle number being replayed unranked
 };
 
 
@@ -2037,6 +2067,7 @@ function categoryLabelOf(question) {
   return label || 'General';
 }
 function recordCategoryStat(question, isCorrect, isBet, answerIndex) {
+  if (state.replayDay) return false;   // unranked replay: lifetime tally untouched
   const cat = normalizeCategory(categoryLabelOf(question));
   if (answerIndex !== undefined && answerIndex !== null) {
     const key = String(answerIndex);
@@ -2508,6 +2539,7 @@ function loadProgress() {
 }
 function saveProgress(qShown) {
   if (state.mode !== 'daily') return;
+  if (state.replayDay) return;
   try {
     const prev = loadProgress();
     const keep = prev && prev.date === getToday() && prev.puzzle === getDailyNum() ? prev : null;
@@ -2604,9 +2636,21 @@ function parseDuelParam() {
     return { score, time, name, puzzle };
   } catch(e) { return null; }
 }
+const NAME_KEY = 'knowit_name';
+function getPlayerName() {
+  try { return (localStorage.getItem(NAME_KEY) || '').slice(0, 16); } catch(e) { return ''; }
+}
+// Underscores separate the vs parts, so they can never survive in a name
+function savePlayerName(name) {
+  const clean = String(name || '').replace(/_/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 16);
+  try { localStorage.setItem(NAME_KEY, clean); } catch(e) {}
+  return clean;
+}
 function getDuelUrl(score, time) {
   const base = window.location.origin + window.location.pathname;
-  return `${base}?d=${getDailyNum()}&vs=${score}_${Math.round(time*10)/10}`;
+  const name = getPlayerName();
+  const suffix = name ? `_${encodeURIComponent(name)}` : '';
+  return `${base}?d=${getDailyNum()}&vs=${score}_${Math.round(time*10)/10}${suffix}`;
 }
 function clearDuelParam() {
   const url = new URL(window.location);
@@ -2923,7 +2967,7 @@ function renderQuestion() {
   if (!q) return;
   // Header meta: daily number + question progress (mono tokens)
   $('header-meta').textContent = state.mode === 'daily'
-    ? `Daily #${getDailyNum()}`
+    ? (state.replayDay ? `REPLAY #${state.replayDay}` : `Daily #${getDailyNum()}`)
     : `ENDLESS · Q${String(state.currentQ+1).padStart(2,'0')}`;
   // Endless pace ramp: announce the faster tiers as they start
   const pacePill = $('pace-pill');
@@ -3181,6 +3225,7 @@ function stopQTimer() {
 // ---- Game logic ----
 function startDaily() {
   if (stats.completedDaily === getToday()) return;
+  state.replayDay = null;
   state.mode = 'daily';
   state.currentQ = 0;
   state.answers = [];
@@ -3216,16 +3261,42 @@ function startDaily() {
   }
   $('header-meta').textContent = `#${getDailyNum()} · Q01/10`;
   $('endless-hud').style.display = 'none';
+  renderDuelBanner();
+  showScreen('playing');
+  renderQuestion();
+}
+function renderDuelBanner() {
   if (state.duel) {
     $('duel-banner').style.display = 'flex';
     $('duel-banner-text').textContent = `DUELING: ${state.duel.name} (${fmtPts(state.duel.score)} · ${state.duel.time}s)`;
   } else {
     $('duel-banner').style.display = 'none';
   }
+}
+// Unranked replay of an older puzzle: no stats, no result, no progress writes
+function startDailyReplay(dayNum, duel) {
+  state.mode = 'daily';
+  state.replayDay = dayNum;
+  state.currentQ = 0;
+  state.answers = [];
+  state.questions = getDailyQuestions(dayNum);
+  state.startTime = performance.now();
+  state.waiting = false;
+  state.endlessLives = GAUNTLET_LIVES;
+  state.endlessStreak = 0;
+  state.betsLeft = 3;
+  state.armed = false;
+  state.resumeOffsetMs = 0;
+  state.duel = duel || null;
+  resetCategoryRunGuard();
+  $('header-meta').textContent = `#${dayNum} · Q01/10`;
+  $('endless-hud').style.display = 'none';
+  renderDuelBanner();
   showScreen('playing');
   renderQuestion();
 }
 function startEndless() {
+  state.replayDay = null;
   state.mode = 'endless';
   state.currentQ = 0;
   state.answers = [];
@@ -3329,8 +3400,10 @@ function handleAnswer(idx) {
     // Bet resolution
     if (bet) {
       state.betsLeft--;
-      stats.betsUsed++;
-      if (correct) stats.betsHit++;
+      if (!state.replayDay) {
+        stats.betsUsed++;
+        if (correct) stats.betsHit++;
+      }
     }
     // Silent lifetime category tally — recorded once per answer, persisted immediately
     recordCategoryStat(q, correct, bet, state.answers.length - 1);
@@ -3435,6 +3508,7 @@ function buildDailySharePayload(answers, puzzleNum, streak) {
 }
 function finishGame(opts = {}) {
   const replay = !!opts.replay;
+  const unranked = replay || !!state.replayDay;   // replays never write stats/results/progress
   stopQTimer();
   const total = state.answers.length;
   const correct = state.answers.filter(a=>a.correct).length;
@@ -3446,8 +3520,8 @@ function finishGame(opts = {}) {
   const run = state.mode === 'endless' ? (correct > 0 ? total : 0) : 0;
   let wasBestRun = false; // endless only: did this run beat the stored best?
 
-  // Stats (never on a replay of already-saved results)
-  if (!replay) {
+  // Stats (never on a replay of already-saved results, never on an unranked replay)
+  if (!unranked) {
     stats.played++;
     stats.totalAnswered += total;
     stats.totalCorrect += correct;
@@ -3468,12 +3542,14 @@ function finishGame(opts = {}) {
   // Results screen
   showScreen('results');
   // A duel run is consumed on results — drop the URL param so a refresh can't replay it
-  if (!replay) clearDuelParam();
+  if (!unranked) clearDuelParam();
   // Brand header stays KNOWIT; the mode lives in the eyebrow under it
   $('result-title').textContent = 'KNOWIT';
-  $('result-eyebrow').textContent = state.mode === 'daily' ? "TODAY'S SET" : 'ENDLESS MODE';
+  $('result-eyebrow').textContent = state.replayDay ? `REPLAY #${state.replayDay}`
+    : (state.mode === 'daily' ? "TODAY'S SET" : 'ENDLESS MODE');
   const metaEl = $('result-meta');
-  metaEl.textContent = state.mode === 'daily' ? `Daily #${getDailyNum()}` : '';
+  metaEl.textContent = state.replayDay ? `Daily #${state.replayDay}`
+    : (state.mode === 'daily' ? `Daily #${getDailyNum()}` : '');
   metaEl.style.display = state.mode === 'daily' ? '' : 'none';
 
   const betUsed = state.answers.filter(a=>a.bet).length;
@@ -3611,11 +3687,12 @@ function finishGame(opts = {}) {
     $('duel-them-time').textContent = fmtTimeSec(d.time);
     $('duel-you-score').textContent = fmtPts(totalPoints);
     $('duel-you-time').textContent = fmtTimeSec(totalTimeSec);
+    const losing = `Outplayed by ${d.name}.`;
     let outcome = 'Dead heat.', oIcon = null, oColor = 'var(--accent-warm)';
     if (totalPoints > d.score) { outcome = 'Outsmarted them.'; oIcon = 'trophy'; oColor = 'var(--correct)'; }
-    else if (totalPoints < d.score) { outcome = 'Outsmarted.'; oIcon = 'skull'; oColor = 'var(--wrong)'; }
+    else if (totalPoints < d.score) { outcome = losing; oIcon = 'skull'; oColor = 'var(--wrong)'; }
     else if (totalTimeSec < d.time) { outcome = 'Outsmarted them.'; oIcon = 'trophy'; oColor = 'var(--correct)'; }
-    else if (totalTimeSec > d.time) { outcome = 'Outsmarted.'; oIcon = 'skull'; oColor = 'var(--wrong)'; }
+    else if (totalTimeSec > d.time) { outcome = losing; oIcon = 'skull'; oColor = 'var(--wrong)'; }
     $('duel-outcome').innerHTML = `${outcome}${oIcon ? ICONS[oIcon] : ''}`;
     $('duel-outcome').style.color = oColor;
   } else {
@@ -3644,18 +3721,49 @@ function finishGame(opts = {}) {
   renderBrainprintTriggers();
 
   // Confetti for perfect daily
-  if (!replay && state.mode === 'daily' && correct === total) launchConfetti();
+  if (!unranked && state.mode === 'daily' && correct === total) launchConfetti();
 }
 
 // Re-render today's saved results (no stats, no confetti, no storage writes)
-function viewTodaysResults() {
+function viewTodaysResults(duelOverride) {
   const r = loadResult();
   if (!r || r.date !== getToday()) return;
   state.mode = 'daily';
+  state.replayDay = null;
   state.questions = getDailyQuestions();
-  state.duel = r.duel || null;
+  // A challenge link opened after today's run compares against the LINK, not the stored duel
+  state.duel = duelOverride || r.duel || null;
   state.answers = r.answers.map((a,i)=>({ ...a, q: (state.questions[i] && state.questions[i].id === a.id) ? state.questions[i] : null }));
   finishGame({ replay: true });
+}
+
+// ---- Duel pre-game modal ----
+function openDuelModal(duelP, opts = {}) {
+  state.pendingDuel = duelP;
+  $('duel-modal-vs').textContent = `${duelP.name} scored ${fmtPts(duelP.score)} in ${fmtTimeSec(duelP.time)}. Beat them.`;
+  $('duel-name').value = getPlayerName();
+  const note = $('duel-modal-note');
+  if (opts.replayDay) {
+    note.textContent = `This challenge is from #${opts.replayDay}. Play it as an unranked replay.`;
+    note.style.display = 'block';
+  } else {
+    note.textContent = '';
+    note.style.display = 'none';
+  }
+  $('duel-modal').style.display = 'flex';
+}
+function closeDuelModal() {
+  $('duel-modal').style.display = 'none';
+  state.pendingDuel = null;
+}
+function startDuelFromModal(clearLink) {
+  const p = state.pendingDuel;
+  savePlayerName($('duel-name').value);
+  closeDuelModal();
+  if (clearLink) { clearDuelParam(); state.duel = null; }
+  else { state.duel = p; }
+  if (p && p.puzzle < getDailyNum()) startDailyReplay(p.puzzle, clearLink ? null : p);
+  else startDaily();
 }
 
 // ---- Review modal ----
@@ -3865,26 +3973,33 @@ $('bp-share').addEventListener('click', () => { audio.click(); shareBrainprint()
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && $('brainprint-modal').style.display === 'flex') closeBrainprint();
 });
-$('btn-home').onclick = ()=>{ audio.click(); showScreen('landing'); renderLanding(); };
+$('btn-home').onclick = ()=>{ audio.click(); state.replayDay = null; showScreen('landing'); renderLanding(); };
 
 // ---- Init ----
 renderLanding();
-// If arriving via challenge link, auto-start duel mode
+// Challenge links: pre-game modal for today or an unranked replay, head-to-head if already played
 const duelP = parseDuelParam();
 if (duelP) {
-  if (duelP.puzzle !== getDailyNum()) {
-    // Link is for a different day's puzzle — never start, never compare
+  const todayNum = getDailyNum();
+  if (duelP.puzzle > todayNum) {
+    // Future puzzle — nothing to compare against yet
     clearDuelParam();
-    toast(`That link was for #${duelP.puzzle}. Today is #${getDailyNum()}.`);
-  } else if (stats.completedDaily === getToday()) {
-    // Daily already locked — don't let a link bypass it
-    clearDuelParam();
-    toast("You already played today's set. Rematch tomorrow.");
+    toast(`That link is for #${duelP.puzzle} — not out yet. Today is #${todayNum}.`);
+  } else if (duelP.puzzle === todayNum) {
+    if (stats.completedDaily === getToday()) {
+      // Already played: show the head-to-head straight away
+      viewTodaysResults(duelP);
+      clearDuelParam();
+    } else {
+      openDuelModal(duelP);
+    }
   } else {
-    // Small delay so landing renders first, then jump straight in
-    setTimeout(()=>startDaily(), 400);
+    // Older puzzle: offer it as an unranked replay
+    openDuelModal(duelP, { replayDay: duelP.puzzle });
   }
 }
+$('duel-accept').onclick = () => { audio.click(); startDuelFromModal(false); };
+$('duel-justplay').onclick = () => { audio.click(); startDuelFromModal(true); };
 
 // Lazy audio init + unlock on the first gesture (Web Audio needs one)
 document.addEventListener('pointerdown', () => audio.unlock(), { once: true });
