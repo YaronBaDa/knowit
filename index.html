@@ -1935,12 +1935,26 @@ const Q_PER_DAY = 10;
 // Daily set shape: a deliberate difficulty ramp (3 easy / 4 medium / 3 hard per set)
 const SET_TIERS = ['easy','easy','easy','medium','medium','medium','medium','hard','hard','hard'];
 const CAT_CAP = 2;
+// Canonical public URL — will change when we get a custom domain
+const SITE_URL = 'https://yaronbada.github.io/knowit/';
 const HOLD_IDS = new Set(['p11','p23','p32','sp13','g36']);   // time-sensitive answers, excluded until reviewed
 const NO_SAME_DAY = [['n5','n27'],['s20','s46']];            // near-duplicate pairs
 const FAST_TIME_SEC = 55;
 const FEEDBACK_MS_CORRECT = 1800;
 const FEEDBACK_MS_WRONG = 3200;
 const GAUNTLET_LIVES = 3;
+
+// Entry channel from ?s= on the link that brought them here (c=copy, g=challenge, h=home hub, b=brainprint).
+// Session only, never persisted — exposed for the analytics hook later.
+function getChannelParam() {
+  try {
+    const raw = new URLSearchParams(window.location.search).get('s');
+    return raw ? String(raw).toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 8) : '';
+  } catch(e) { return ''; }
+}
+let ENTRY_SOURCE = getChannelParam();
+window.ENTRY_SOURCE = ENTRY_SOURCE;
+
 let state = {
   mode: 'daily', // 'daily' | 'endless'
   screen: 'landing',
@@ -2138,7 +2152,7 @@ function brainprintSummaryText(d) {
   const s = d.strongest ? `${d.strongest.category} ${d.strongest.accuracy}%` : '—';
   const b = d.blindspot ? `${d.blindspot.category} ${d.blindspot.accuracy}%` : '—';
   const bet = d.betsTotal ? `${d.betsWon}/${d.betsTotal} bets` : 'no bets yet';
-  return `My KNOWIT Brainprint\nStrongest: ${s} · Blindspot: ${b}\n${d.totalAnswered} answered · ${d.overallAccuracy}% accuracy · ${bet}`;
+  return `My KNOWIT Brainprint\nStrongest: ${s} · Blindspot: ${b}\n${d.totalAnswered} answered · ${d.overallAccuracy}% accuracy · ${bet}\n${SITE_URL}?s=b`;
 }
 function brainprintGeometry(rows, cx, cy, maxR, labelGap) {
   const N = rows.length || 1;
@@ -2459,7 +2473,7 @@ function drawBrainprintCard(ctx, d) {
   ctx.fillStyle = 'rgba(178, 164, 172, 0.6)';
   ctx.fillText('KNOWIT · Daily trivia', 48, 876);
   ctx.textAlign = 'right';
-  ctx.fillText('yaronbada.github.io/knowit', 672, 876);
+  ctx.fillText(SITE_URL.replace(/^https?:\/\//, '') + '?s=b', 672, 876);
 }
 async function brainprintBlob(d) {
   await ensureBrandFonts();
@@ -2655,6 +2669,8 @@ function getDuelUrl(score, time) {
 function clearDuelParam() {
   const url = new URL(window.location);
   url.searchParams.delete('vs');
+  url.searchParams.delete('d');
+  url.searchParams.delete('s');
   window.history.replaceState({}, '', url);
 }
 
@@ -3488,7 +3504,8 @@ function shareBlindspot(answers) {
   missed.sort((a, b) => (a[1].correct / a[1].total) - (b[1].correct / b[1].total));
   return missed.length ? missed[0][0] : null;
 }
-function buildDailySharePayload(answers, puzzleNum, streak) {
+function buildDailySharePayload(answers, puzzleNum, streak, channel) {
+  const src = channel || 'g';
   const { row1, row2 } = shareRows(answers);
   const totalPoints = sumPoints(answers);
   const correct = answers.filter(a => a.correct).length;
@@ -3502,8 +3519,8 @@ function buildDailySharePayload(answers, puzzleNum, streak) {
   const grid = `${row1}${row2 ? '\n' + row2 : ''}`;
   return {
     head, row1, row2, totalPoints, correct, total, totalTimeSec, arch, blindspot,
-    shareClean: `${head}\n${grid}`,
-    shareFull: `${head}\n${grid}\n${arch.name} (${fmtTimeSec(totalTimeSec)})${blindspot ? ` · Blindspot: ${blindspot}` : ''}\n${getDuelUrl(totalPoints, totalTimeSec)}`,
+    shareClean: `${head}\n${grid}\n${SITE_URL}?s=c`,
+    shareFull: `${head}\n${grid}\n${arch.name} (${fmtTimeSec(totalTimeSec)})${blindspot ? ` · Blindspot: ${blindspot}` : ''}\n${getDuelUrl(totalPoints, totalTimeSec)}&s=${src}`,
   };
 }
 function finishGame(opts = {}) {
@@ -3664,7 +3681,7 @@ function finishGame(opts = {}) {
 
   // Share texts — daily rows split 2x5; endless squares in rows of 5
   const dailyNum = getDailyNum();
-  const challengeUrl = getDuelUrl(totalPoints, totalTimeSec);
+  const challengeUrl = getDuelUrl(totalPoints, totalTimeSec) + '&s=g';
   if (state.mode === 'daily') {
     const payload = buildDailySharePayload(state.answers, dailyNum, stats.streak);
     state.shareClean = payload.shareClean;
@@ -3673,7 +3690,7 @@ function finishGame(opts = {}) {
     const squares = state.answers.map(a => (a.correct ? '🟩' : '💔'));
     const rows = [];
     for (let i = 0; i < squares.length; i += 5) rows.push(squares.slice(i, i + 5).join(''));
-    state.shareClean = `KNOWIT Endless · ${run} run (${correct}/${total})\n${rows.join('\n')}`;
+    state.shareClean = `KNOWIT Endless · ${run} run (${correct}/${total})\n${rows.join('\n')}\n${SITE_URL}?s=c`;
     state.shareFull = `${state.shareClean}\n\nBeat my run.\n${challengeUrl}`;
   }
   $('share-text').textContent = state.shareFull;
@@ -3878,7 +3895,7 @@ $('btn-quick-share').onclick = ()=>{
   audio.click();
   const r = loadResult();
   if (!r || r.date !== getToday() || !Array.isArray(r.answers)) return;
-  const payload = buildDailySharePayload(r.answers, r.puzzle || getDailyNum(), stats.streak);
+  const payload = buildDailySharePayload(r.answers, r.puzzle || getDailyNum(), stats.streak, 'h');
   const btn = $('btn-quick-share');
   if (navigator.share) {
     navigator.share({ title: 'KNOWIT', text: payload.shareFull }).catch(()=>{});
