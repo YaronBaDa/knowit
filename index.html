@@ -357,6 +357,17 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   padding: 12px 16px; background: var(--bg-surface-subtle);
 }
 .option-btn.swiping:active { transform: none; }
+.option-btn .option-text { min-width: 0; overflow-wrap: anywhere; }
+/* Point-delta badge: right-aligned, never wraps, colour + glyph carry the meaning */
+.opt-badge {
+  display: inline-flex; align-items: center; gap: 4px; margin-left: auto; flex-shrink: 0;
+  font-family: var(--font-mono); font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.opt-badge svg { width: 12px; height: 12px; display: block; }
+.opt-badge.pos { color: #21C868; }
+.opt-badge.neg { color: #F22933; }
+.opt-badge.is-check svg { width: 16px; height: 16px; }
 .option-btn .key-hint {
   width: 28px; height: 28px; border-radius: 8px; background: var(--bg-surface); border: 1px solid var(--border-subtle);
   display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; letter-spacing: 0.03em; color: var(--ink-faint); flex-shrink: 0;
@@ -371,14 +382,14 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .option-btn .bet-reveal svg { width: 20px; height: 20px; }
 .option-btn .bet-reveal .br-label { font-family: var(--font-sans); font-size: 12px; font-weight: 600; letter-spacing: 0.07em; }
 .option-btn .bet-reveal .br-sub { font-family: var(--font-sans); font-size: 12px; font-weight: 600; opacity: .85; }
-.option-btn.correct { border-color: var(--accent-correct); box-shadow: 0 0 0 4px var(--accent-correct); }
+.option-btn.correct { border: 2px solid #21C868; box-shadow: none; }
 .option-btn.correct .option-body { box-shadow: inset 0 0 0 9999px rgba(16,185,129,0.18); }
-.option-btn.wrong { border-color: var(--accent-incorrect); box-shadow: 0 0 0 4px var(--accent-incorrect); animation: shake 0.4s ease-in-out; }
+.option-btn.wrong { border: 2px solid #F22933; box-shadow: none; animation: shake 0.4s ease-in-out; }
 .option-btn.wrong .option-body { box-shadow: inset 0 0 0 9999px var(--accent-incorrect-tint); }
 .option-btn.dimmed { opacity: 0.35; pointer-events: none; }
 .option-btn.timeout { border-color: var(--accent-bet); }
 .option-btn.timeout .option-body { box-shadow: inset 0 0 0 9999px var(--accent-bet-tint); }
-.option-btn.bet { border: 2px solid var(--accent-bet); box-shadow: 0 0 16px rgba(245, 158, 11, 0.28); }
+.option-btn.bet:not(.correct):not(.wrong) { border: 2px solid var(--accent-bet); box-shadow: 0 0 16px rgba(245, 158, 11, 0.28); }
 .option-btn.nudge .option-body { animation: nudgeRight 0.9s ease; }
 @keyframes nudgeRight {
   0%, 100% { transform: translateX(0); }
@@ -2608,6 +2619,9 @@ function $(id){ return document.getElementById(id); }
 // ---- Inline monochrome icons (Lucide-style, 1.5px stroke) ----
 const ICONS = {
   lightning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>',
+  bolt12: '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>',
+  heart12: '<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+  check16: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 12 6 6L20 6"/></svg>',
   clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
   eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>',
   shareUp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="m8 8 4-4 4 4"/><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>',
@@ -2647,6 +2661,27 @@ function applyRubricTile(el, stateName, idx) {
   if (idx !== undefined && RUBRIC_CLICKABLE.test(st)) el.dataset.idx = idx;
   else el.removeAttribute('data-idx');
   return el;
+}
+// Right-aligned outcome badge on a revealed option card
+function applyOutcomeBadge(btn, kind) {
+  if (!btn) return;
+  const body = btn.querySelector('.option-body') || btn;
+  const old = body.querySelector('.opt-badge');
+  if (old) old.remove();
+  if (!kind) return;
+  const spec = {
+    correct:        { cls: 'pos', html: '+1' },
+    'correct-bet':  { cls: 'pos', html: ICONS.bolt12 + '+2' },
+    wrong:          { cls: 'neg', html: '−1' },
+    'wrong-bet':    { cls: 'neg', html: ICONS.bolt12 + '−2' },
+    'reveal-correct': { cls: 'pos is-check', html: ICONS.check16 },
+    'endless-wrong': { cls: 'neg', html: ICONS.heart12 + '−1' },
+  }[kind];
+  if (!spec) return;
+  const el = document.createElement('span');
+  el.className = 'opt-badge ' + spec.cls;
+  el.innerHTML = spec.html;
+  body.appendChild(el);
 }
 function rubricStateFor(answer, endless) {
   if (!answer) return 'upcoming';
@@ -2726,8 +2761,8 @@ function renderHub() {
     const totalTimeSec = answers.reduce((s, a) => s + (a.time || 0), 0) / 1000;
     const betUsed = answers.filter(a => a.bet).length;
     const betHit = answers.filter(a => a.bet && a.correct).length;
-    const arch = getArchetype(correct, total, totalTimeSec, betUsed, betHit);
-    scoreEl.innerHTML = `<span class="tc-points">${totalPoints} pts</span><span class="tc-sub">(${correct}/${total}) · ${escapeHtml(arch.name)}</span>`;
+    const arch = getArchetype(correct, total, totalTimeSec, betUsed, betHit, totalPoints);
+    scoreEl.innerHTML = `<span class="tc-points">${fmtPts(totalPoints)}</span><span class="tc-sub">(${correct}/${total}) · ${escapeHtml(arch.name)}</span>`;
     for (let i = 0; i < 10; i++) {
       const cell = document.createElement('div');
       const a = answers[i];
@@ -2910,7 +2945,7 @@ function renderQuestion() {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'option-btn';
-    btn.innerHTML = `<span class="bet-reveal">${ICONS.lightning}<span class="br-label">BET</span><span class="br-sub">+2 / -1</span></span><span class="option-body"><span class="key-hint">${String.fromCharCode(65+idx)}</span><span>${escapeHtml(opt)}</span></span>`;
+    btn.innerHTML = `<span class="bet-reveal">${ICONS.lightning}<span class="br-label">BET</span><span class="br-sub">+2 / −2</span></span><span class="option-body"><span class="key-hint">${String.fromCharCode(65+idx)}</span><span class="option-text">${escapeHtml(opt)}</span></span>`;
     btn.title = 'Swipe right to bet, or tap to answer';
     attachSwipe(btn, idx);
     grid.appendChild(btn);
@@ -3043,7 +3078,7 @@ function updateBetUI() {
   tg.style.visibility = state.waiting ? 'hidden' : '';
   tg.classList.toggle('armed', !!state.armed);
   tg.setAttribute('aria-pressed', String(!!state.armed));
-  tg.innerHTML = ICONS.lightning + (state.armed ? '<span>Bet armed · pick your answer</span>' : '<span>Bet on yourself · +2 / −1</span>');
+  tg.innerHTML = ICONS.lightning + (state.armed ? '<span>Bet armed · pick your answer</span>' : '<span>Bet on yourself · +2 / −2</span>');
 }
 function renderProgressStrip() {
   const el = $('progress-strip');
@@ -3219,9 +3254,12 @@ function handleTimeout() {
   if (state.waiting) return;
   const q = state.questions[state.currentQ];
   const time = performance.now() - state.qStartTime;
-  const wasArmed = state.armed && state.betsLeft > 0;
-  state.answers.push({correct:false, time, category:q.category, q, picked:null, bet:false, points:0});
-  recordCategoryStat(q, false, false, state.answers.length - 1);
+  // An armed bet is a commitment: timing out costs the full −2 and spends the bet
+  const wasArmed = state.mode === 'daily' && state.armed && state.betsLeft > 0;
+  const timeoutPoints = wasArmed ? -2 : -1;
+  state.answers.push({correct:false, time, category:q.category, q, picked:null, bet:wasArmed, points:timeoutPoints});
+  if (wasArmed) { state.betsLeft--; stats.betsUsed++; }
+  recordCategoryStat(q, false, wasArmed, state.answers.length - 1);
   saveStats();
   saveProgress();
   state.waiting = true;
@@ -3230,10 +3268,11 @@ function handleTimeout() {
 
   const btns = document.querySelectorAll('.option-btn');
   btns.forEach((btn, i) => { if (i === q.correctIndex) btn.classList.add('correct'); else btn.classList.add('dimmed'); });
+  applyOutcomeBadge(btns[q.correctIndex], 'reveal-correct');
   audio.thud();
 
   const fb = $('feedback-strip');
-  $('fb-result').textContent = wasArmed ? 'Too slow. Bet refunded.' : 'Too slow.';
+  $('fb-result').textContent = 'Too slow.';
   $('fb-result').style.color = 'var(--warning)';
   $('fb-insight').textContent = q.didYouKnow;
   fb.className = 'feedback-strip show timeout';
@@ -3282,9 +3321,9 @@ function handleAnswer(idx) {
   const commit = () => {
     if (btns[idx]) btns[idx].classList.remove('bet-locked');
 
-    let points = 0;
-    if (correct) points = bet ? 2 : 1;
-    else if (bet) points = -1;
+    // Symmetrical daily scoring: ±1 standard, ±2 on a bet (endless stays ±1)
+    let points = correct ? 1 : -1;
+    if (bet) points = correct ? 2 : -2;
     state.answers.push({correct, time, category:q.category, q, picked:idx, bet, points});
 
     // Bet resolution
@@ -3301,6 +3340,12 @@ function handleAnswer(idx) {
     btns[idx].classList.add(correct ? 'correct' : 'wrong');
     if (bet) btns[idx].classList.add('bet');
     if (!correct) btns[q.correctIndex].classList.add('correct');
+    // Badges: the picked card carries the delta, a missed card shows a check on the real answer
+    if (correct) applyOutcomeBadge(btns[idx], state.mode === 'endless' ? 'correct' : (bet ? 'correct-bet' : 'correct'));
+    else {
+      applyOutcomeBadge(btns[idx], state.mode === 'endless' ? 'endless-wrong' : (bet ? 'wrong-bet' : 'wrong'));
+      applyOutcomeBadge(btns[q.correctIndex], 'reveal-correct');
+    }
     btns.forEach((btn, i) => { if (i !== idx && i !== q.correctIndex) btn.classList.add('dimmed'); });
 
     // Foley: chime climbs a semitone per consecutive correct answer in Endless
@@ -3309,7 +3354,7 @@ function handleAnswer(idx) {
 
     const fb = $('feedback-strip');
     if (bet) {
-      $('fb-result').textContent = correct ? `Knew it. +2` : `Overconfident. −1`;
+      $('fb-result').textContent = correct ? `Knew it. +2` : `Overconfident. −2`;
       $('fb-result').style.color = correct ? 'var(--accent-bet)' : 'var(--accent-incorrect-text)';
     } else {
       $('fb-result').textContent = correct ? 'Obviously.' : 'Bold guess.';
@@ -3378,9 +3423,9 @@ function buildDailySharePayload(answers, puzzleNum, streak) {
   const totalTimeSec = answers.reduce((s, a) => s + (a.time || 0), 0) / 1000;
   const betUsed = answers.filter(a => a.bet).length;
   const betHit = answers.filter(a => a.bet && a.correct).length;
-  const arch = getArchetype(correct, total, totalTimeSec, betUsed, betHit);
+  const arch = getArchetype(correct, total, totalTimeSec, betUsed, betHit, totalPoints);
   const blindspot = shareBlindspot(answers);
-  const head = `KNOWIT #${puzzleNum} · ${totalPoints} pts (${correct}/${total})` + (streak >= 2 ? `  🔥${streak}` : '');
+  const head = `KNOWIT #${puzzleNum} · ${fmtPts(totalPoints)} (${correct}/${total})` + (streak >= 2 ? `  🔥${streak}` : '');
   const grid = `${row1}${row2 ? '\n' + row2 : ''}`;
   return {
     head, row1, row2, totalPoints, correct, total, totalTimeSec, arch, blindspot,
@@ -3434,11 +3479,11 @@ function finishGame(opts = {}) {
   const betUsed = state.answers.filter(a=>a.bet).length;
   const betHit = state.answers.filter(a=>a.bet && a.correct).length;
   const totalPoints = sumPoints(state.answers);
-  const dailyArch = state.mode === 'daily' ? getArchetype(correct, total, totalTimeSec, betUsed, betHit) : null;
+  const dailyArch = state.mode === 'daily' ? getArchetype(correct, total, totalTimeSec, betUsed, betHit, totalPoints) : null;
 
   // Hero
   if (state.mode === 'daily') {
-    $('hero-score').innerHTML = `${totalPoints}<span class="of"> pts</span>`;
+    $('hero-score').textContent = fmtPts(totalPoints);
     $('hero-title').className = 'hero-title' + (correct === total ? ' aurora perfect-flash' : '');
     $('hero-title').innerHTML = `${ICONS[dailyArch.icon]}<span>${dailyArch.name}</span>`;
     $('hero-sub').style.display = 'none';
@@ -3527,7 +3572,7 @@ function finishGame(opts = {}) {
 
   // Stat bar: points / correct / time / bets (placed, never a hard-coded cap)
   // Endless has no points — the primary number is the run instead of a permanent 0.
-  $('stat-pts').textContent = endlessRun ? run : totalPoints;
+  $('stat-pts').textContent = endlessRun ? run : fmtPts(totalPoints);
   $('stat-pts-label').textContent = endlessRun ? 'RUN' : 'SCORE';
   $('stat-correct').textContent = `${correct}/${total}`;
   $('stat-time').textContent = fmtTimeSec(totalTimeSec);
@@ -3564,7 +3609,7 @@ function finishGame(opts = {}) {
     $('duel-them-name').textContent = d.name;
     $('duel-them-score').textContent = `${d.score} pts`;
     $('duel-them-time').textContent = fmtTimeSec(d.time);
-    $('duel-you-score').textContent = `${totalPoints} pts`;
+    $('duel-you-score').textContent = fmtPts(totalPoints);
     $('duel-you-time').textContent = fmtTimeSec(totalTimeSec);
     let outcome = 'Dead heat.', oIcon = null, oColor = 'var(--accent-warm)';
     if (totalPoints > d.score) { outcome = 'Outsmarted them.'; oIcon = 'trophy'; oColor = 'var(--correct)'; }
@@ -3635,14 +3680,21 @@ function fmtTimeSec(s) {
   return m ? `${m}m ${r}s` : `${r}s`;
 }
 function sumPoints(answers){ return answers.reduce((s,a)=>s+(a.points||0),0); }
-function getArchetype(correct, total, totalTimeSec, betUsed, betHit) {
+function getArchetype(correct, total, totalTimeSec, betUsed, betHit, points) {
+  // Daily tiers cut on POINTS (−13 … +13, 5/10 standard = 0), not the raw correct count.
+  const pts = typeof points === 'number' ? points : correct;
   if (correct === total) return { name: 'Insufferable.', icon: 'trophy', sub: 'Nobody asked. Yes, we noticed.' };
-  if (betUsed === 3 && betHit === 3) return { name: 'Psychic.', icon: 'target', sub: '3 for 3 on bets. Suspicious.' };
   if (betUsed === 3 && betHit === 0) return { name: 'Delusional.', icon: 'dice', sub: 'Missed all 3 bets. Respect the commitment.' };
-  if (correct >= 8) return { name: 'Smug.', icon: 'bulb', sub: 'Earned it. Barely hiding it.' };
-  if (correct >= 6) return { name: 'Smug-ish.', icon: 'chess', sub: 'Confidence slightly ahead of the facts.' };
-  if (correct >= 3) return { name: 'Humbled.', icon: 'skull', sub: 'A lot of feelings in a short quiz.' };
+  if (pts >= 11) return { name: 'Insufferable.', icon: 'trophy', sub: 'Nobody asked. Yes, we noticed.' };
+  if (pts >= 8) return { name: 'Psychic.', icon: 'target', sub: 'Called it before the options even landed.' };
+  if (pts >= 5) return { name: 'Smug.', icon: 'bulb', sub: 'Earned it. Barely hiding it.' };
+  if (pts >= 1) return { name: 'Smug-ish.', icon: 'chess', sub: 'Confidence slightly ahead of the facts.' };
+  if (pts >= -2) return { name: 'Humbled.', icon: 'skull', sub: 'A lot of feelings in a short quiz.' };
   return { name: 'Stumped.', icon: 'skull', sub: 'Come back tomorrow. Quietly.' };
+}
+function fmtPts(n) {
+  const v = Number(n) || 0;
+  return `${v < 0 ? '−' : ''}${Math.abs(v)} pts`;
 }
 function fmtClock(s) {
   const m = Math.floor(s / 60);

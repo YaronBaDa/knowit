@@ -173,7 +173,8 @@ The modal is a 380px card: KNOWIT/Zetta + BRAINPRINT eyebrow, a plain 300×300 S
 | **Answer side** | slot placement uses a second seed (`dayIndex*7919 + pos*104729`) — deterministic per day, never a rotation |
 | **Timer** | 20 s per question; `FAST_TIME_SEC = 55` aggregate; pct-based warn/danger classes |
 | **4px grid** | every spacing, size, radius, font-size and icon dimension is a multiple of 4 (24px pills, 52px CTAs/options, 40px secondary, 20px tiles, 16px card radius, 20px modal radius). Allowed exceptions: 1px / 1.5px / 2px border, outline and hairline stroke widths, and `9999px` pill radii |
-| **Bets** | 3/day; +2 correct, −1 wrong, refunded on timeout; swipe 96px reveals / 56px commits; bolts go hollow as they're spent |
+| **Daily scoring** | symmetrical: +1 correct, −1 wrong **or timeout**, ±2 when a bet is armed (a bet timeout costs −2 and spends the bet — no refund). Range −13…+13, 5/10 standard = 0. Tiers cut on points: ≥11 Insufferable, ≥8 Psychic, ≥5 Smug, ≥1 Smug-ish, ≥−2 Humbled, <−2 Stumped (10/10 always Insufferable, 0/3 bets always Delusional). `fmtPts()` renders `0 pts` / `−2 pts`. |
+| **Bets** | 3/day; ±2 on the outcome, −2 even on a timeout; swipe 96px reveals / 56px commits; bolts go hollow as they're spent |
 | **Streak** | participation, not score: `streakAfterCompletion` + `dayDiff`; `effectiveStreak` returns 0 after a missed day |
 | **Endless** | 3 lives, random without repeats (`state.endlessUsed`); `RUN` = total questions lasted (0 if the run had zero correct answers), compared/stored as `bestEndless`; results grid renders one square per question with heart tiles for lost lives |
 | **Feedback pacing** | `FEEDBACK_MS_CORRECT = 1800`, `FEEDBACK_MS_WRONG = 3200` |
