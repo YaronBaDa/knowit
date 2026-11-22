@@ -234,7 +234,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   flex: 1 1 auto; min-height: 0;
 }
 #screen-landing.is-completed .completed-stack {
-  flex: 1 1 auto; min-height: 0;
+  flex: 0 0 auto; margin-top: auto;
   padding-bottom: max(20px, env(safe-area-inset-bottom));
 }
 #screen-landing.is-completed .landing-footer { display: none; }
@@ -245,14 +245,19 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .streak-pill svg { width: 12px; height: 12px; }
 .trophy-card {
   width: 100%; max-width: 340px; background: #1A1418; border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px; padding: 20px; text-align: left;
-  flex: 1 1 auto; min-height: 0;
-  display: flex; flex-direction: column; justify-content: space-between; gap: 20px;
+  border-radius: 16px; padding: 16px; text-align: left;
+  flex: 0 0 auto;
+  display: flex; flex-direction: column; justify-content: flex-start; gap: 12px;
 }
-.tc-top, .tc-mid, .tc-bottom { display: flex; flex-direction: column; width: 100%; flex: 1 1 0; min-height: 0; }
-.tc-top { gap: 4px; align-items: flex-start; justify-content: flex-start; }
-.tc-mid { gap: 12px; justify-content: center; }
-.tc-bottom { gap: 16px; justify-content: flex-end; }
+.tc-top, .tc-bottom { display: flex; flex-direction: column; width: 100%; }
+/* one data block (top) and one interaction block (bottom); a single flexible gap between them */
+.tc-top { gap: 8px; align-items: stretch; flex: 0 0 auto; }
+.tc-bottom { gap: 12px; flex: 0 0 auto; justify-content: flex-end; }
+/* header row: run label left, countdown right */
+.tc-head-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
+.tc-countdown { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-sans); font-size: 12px; line-height: 16px; color: var(--text-secondary); white-space: nowrap; }
+.tc-clock { display: inline-flex; }
+.tc-clock svg { width: 12px; height: 12px; display: block; opacity: .8; }
 .tc-eyebrow { display: block; font-family: var(--font-sans); font-size: 12px; line-height: 16px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); font-weight: 600; margin: 0; }
 .tc-score { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; width: 100%; color: var(--text-primary); }
 .tc-points {
@@ -266,6 +271,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   color: var(--text-secondary);
 }
 .tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin: 0; padding: 0; }
+.tc-top .tc-grid { margin-top: 4px; }
 
 /* ---- Unified rubric tile: ONE design for in-game, home and results ---- */
 .rubric-tile {
@@ -288,8 +294,13 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 1.35;
   letter-spacing: 0; color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: normal;
 }
-.tc-actions { display: flex; gap: 12px; }
-.tc-actions .btn-secondary { flex: 1 1 0; max-width: none; height: 44px; padding: 0 12px; font-size: 16px; border-radius: 12px; }
+.tc-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tc-actions .btn-secondary {
+  max-width: none; width: 100%; height: 44px; padding: 0 12px; font-size: 16px; border-radius: 12px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.14); color: var(--text-primary);
+}
+.tc-actions .btn-secondary svg { width: 16px; height: 16px; flex-shrink: 0; opacity: .85; }
 #screen-landing.is-completed #landing-stats { display: none; }
 #screen-landing:not(.is-completed) #landing-stats { display: none !important; }
 
@@ -616,6 +627,20 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .bp-trigger-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
 .bp-trigger-text { font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 16px; color: var(--text-secondary); min-width: 0; }
 .bp-trigger-text.is-top { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* ONE clickable container for the hub: trophy + top category ← → Brainprint ↗ */
+.bp-hub-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%;
+  height: 48px; padding: 0 12px; border-radius: 12px; cursor: pointer; text-align: left;
+  background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);
+  font-family: var(--font-sans); font-size: 12px; line-height: 16px; color: var(--text-secondary);
+  transition: background .2s, border-color .2s;
+}
+.bp-hub-row:hover { background: rgba(255, 255, 255, 0.07); border-color: rgba(255, 255, 255, 0.2); }
+.bp-hub-row:active { transform: scale(0.995); }
+.bp-hub-left { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.bp-hub-left svg { width: 12px; height: 12px; flex-shrink: 0; color: var(--brand-glow); }
+.bp-hub-left span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bp-hub-cta { flex-shrink: 0; color: #F3F4F6; font-weight: 600; }
 
 .bp-trigger-btn {
   flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; gap: 4px;
@@ -997,18 +1022,19 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
       <div class="hub-cards completed-stack" id="hub-cards">
         <div class="trophy-card" id="trophy-card">
           <div class="tc-top">
-            <div class="tc-eyebrow" id="trophy-eyebrow">TODAY'S RUN</div>
+            <div class="tc-head-row">
+              <div class="tc-eyebrow" id="trophy-eyebrow">TODAY'S RUN</div>
+              <div class="tc-countdown"><span class="tc-clock" id="tc-clock" aria-hidden="true"></span><span id="next-set-in"></span></div>
+            </div>
             <div class="tc-score" id="trophy-score"><span class="tc-sub">Today's set complete.</span></div>
-          </div>
-          <div class="tc-mid">
             <div class="tc-grid" id="trophy-grid"></div>
             <div class="tc-count" id="next-set-line"></div>
           </div>
           <div class="tc-bottom">
             <div class="bp-trigger-wrap" id="bp-trigger-hub"></div>
             <div class="tc-actions">
-              <button class="btn-secondary" id="btn-view-results" style="display:none;">Review</button>
-              <button class="btn-secondary" id="btn-quick-share" style="display:none;">Share</button>
+              <button class="btn-secondary" id="btn-view-results" style="display:none;"><span class="btn-label">Review</span></button>
+              <button class="btn-secondary" id="btn-quick-share" style="display:none;"><span class="btn-label">Share</span></button>
             </div>
           </div>
         </div>
@@ -2185,16 +2211,25 @@ function renderBrainprintTrigger(host, opts = {}) {
   host.innerHTML = '';
   const open = () => { audio.click(); openBrainprint(); };
   if (d.totalAnswered > 0) {
+    // Career takeaway only — "Blindspot" belongs to the run, not the lifetime strip.
+    const bestAll = d.played.slice().sort((a, b) => (b.accuracy - a.accuracy) || (b.answered - a.answered))[0];
+    if (opts.compact) {
+      // Hub: the whole row is the control — trophy + top category on the left, CTA on the right
+      const row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'bp-hub-row';
+      row.innerHTML = `<span class="bp-hub-left">${ICONS.trophy}<span>Top: ${escapeHtml(d.strongest.category)} (${d.strongest.accuracy}%)</span></span>`
+                    + `<span class="bp-hub-cta">Brainprint ↗</span>`;
+      row.addEventListener('click', open);
+      host.appendChild(row);
+      return;
+    }
     const row = document.createElement('div');
     row.className = 'bp-trigger-row';
     const txt = document.createElement('div');
-    txt.className = 'bp-trigger-text' + (opts.compact ? ' is-top' : '');
-    // Career takeaway only — "Blindspot" belongs to the run, not the lifetime strip.
-    const bestAll = d.played.slice().sort((a, b) => (b.accuracy - a.accuracy) || (b.answered - a.answered))[0];
-    txt.textContent = opts.compact
-      ? `Top: ${d.strongest.category} (${d.strongest.accuracy}%)`
-      : (bestAll ? `All-time best: ${bestAll.category} (${bestAll.accuracy}%)`
-                 : `Career accuracy: ${d.overallAccuracy}%`);
+    txt.className = 'bp-trigger-text';
+    txt.textContent = bestAll ? `All-time best: ${bestAll.category} (${bestAll.accuracy}%)`
+                              : `Career accuracy: ${d.overallAccuracy}%`;
     const btn = document.createElement('button');
     btn.type = 'button'; btn.className = 'bp-trigger-btn'; btn.textContent = 'Brainprint ↗';
     btn.addEventListener('click', open);
@@ -2530,9 +2565,12 @@ function nextSetLine(now = new Date()) {
   return `Next set in ${fmtCountdown(nextMs - now.getTime())} (${local})`;
 }
 // Hub card line: countdown plus the lifetime Daily numbers, one muted line
-function nextRunLine(now = new Date()) {
+function nextSetIn(now = new Date()) {
   const nextMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1);
-  return `Next set in ${fmtCountdown(nextMs - now.getTime())} · ${stats.played} played · Best ${stats.maxStreak}d`;
+  return `Next set in ${fmtCountdown(nextMs - now.getTime())}`;
+}
+function careerLine() {
+  return `${stats.played} played · Best ${stats.maxStreak}d`;
 }
 
 // ---- Ghost Duel ----
@@ -2570,6 +2608,9 @@ function $(id){ return document.getElementById(id); }
 // ---- Inline monochrome icons (Lucide-style, 1.5px stroke) ----
 const ICONS = {
   lightning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>',
+  shareUp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="m8 8 4-4 4 4"/><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>',
   // Rubric glyphs — same geometry as the HUD (#bet-pips bolt, .endless-hud heart), 12x12 dark ink
   boltInk: '<svg width="12" height="12" viewBox="0 0 24 24" fill="#140F12" stroke="none" aria-hidden="true"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>',
   heartBroken: '<svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path fill="#140F12" stroke="none" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/><path d="M12 5 L10.5 10 L13.5 13 L11.5 19" stroke="#F22933" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>',
@@ -2663,14 +2704,15 @@ function renderHub() {
   if (eff > 0) {
     pill.style.display = 'inline-flex';
     $('streak-pill-fire').innerHTML = ICONS.flame;
-    $('streak-pill-text').textContent = `${eff}-day`;
+    $('streak-pill-text').textContent = `${eff}-day Streak`;
   } else {
     pill.style.display = 'none';
   }
 
   // trophy card
   $('trophy-eyebrow').textContent = `TODAY'S RUN · #${getDailyNum()}`;
-  $('next-set-line').textContent = nextRunLine();
+  $('next-set-in').textContent = nextSetIn();
+  $('next-set-line').textContent = careerLine();
   const savedRes = loadResult();
   const hasRes = !!(savedRes && savedRes.date === getToday());
   const scoreEl = $('trophy-score');
@@ -3431,7 +3473,7 @@ function finishGame(opts = {}) {
   {
     const sb = $('streak-badge');
     if (state.mode === 'daily' && stats.streak > 0) {
-      sb.innerHTML = `${ICONS.flame}<span>${stats.streak}-day streak</span>`;
+      sb.innerHTML = `${ICONS.flame}<span>${stats.streak}-day Streak</span>`;
       sb.className = 'streak-badge';
       sb.style.display = 'inline-flex';
     } else {
@@ -3667,7 +3709,10 @@ $('btn-daily').onclick = ()=>{ audio.click(); startDaily(); };
 $('btn-endless').onclick = ()=>{ audio.click(); startEndless(); };
 $('btn-endless-result').onclick = ()=>{ audio.click(); startEndless(); };
 $('btn-practice').onclick = ()=>{ audio.click(); startDaily(); };
+$('btn-view-results').innerHTML = `${ICONS.eye}<span class="btn-label">Review</span>`;
 $('btn-view-results').onclick = ()=>{ audio.click(); viewTodaysResults(); };
+$('btn-quick-share').innerHTML = `${ICONS.shareUp}<span class="btn-label">Share</span>`;
+$('tc-clock').innerHTML = ICONS.clock;
 // Landing card: share today's result (same payload finishGame produced)
 $('btn-quick-share').onclick = ()=>{
   audio.click();
@@ -3813,7 +3858,10 @@ renderMuteBtn();
 
 // ---- Countdown ticker: keeps the next-set line fresh and unlocks a new day ----
 function tick() {
-  if (stats.completedDaily === getToday()) $('next-set-line').textContent = nextRunLine();
+  if (stats.completedDaily === getToday()) {
+    $('next-set-in').textContent = nextSetIn();
+    $('next-set-line').textContent = careerLine();
+  }
   if ($('next-set-results').style.display === 'block') $('next-set-results').textContent = nextSetLine();
   if (state.screen === 'landing' && getToday() !== lastRenderedDay) renderLanding();
 }
