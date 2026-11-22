@@ -203,7 +203,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* Endless teaser */
 .endless-teaser {
   background: #1F181C; border: 1px solid rgba(244, 84, 176, 0.28); border-radius: 16px;
-  padding: 16px 16px; max-width: 340px; width: 100%; text-align: left;
+  padding: 16px; max-width: 340px; width: 100%; text-align: left;
+  flex: 0 0 auto;
 }
 .endless-teaser .et-eyebrow { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--brand-glow); font-weight: 600; margin-bottom: 8px; }
 .endless-teaser .et-title { color: var(--text-primary); margin-bottom: 4px; }
@@ -227,10 +228,13 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 #screen-landing.is-completed #streak-bar,
 #screen-landing.is-completed #btn-practice { display: none !important; }
 #screen-landing.is-completed .hub-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; max-width: 340px; flex-shrink: 0; }
-#screen-landing.is-completed .hub-cards { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 340px; flex-shrink: 0; }
-/* Both cards travel together and dock at the bottom thumb zone */
+/* Completed body: header row, then a full-height stack that fills the rest */
+#screen-landing.is-completed .hub-cards {
+  display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 340px;
+  flex: 1 1 auto; min-height: 0;
+}
 #screen-landing.is-completed .completed-stack {
-  margin-top: auto;
+  flex: 1 1 auto; min-height: 0;
   padding-bottom: max(20px, env(safe-area-inset-bottom));
 }
 #screen-landing.is-completed .landing-footer { display: none; }
@@ -239,14 +243,27 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .streak-pill { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 9999px; border: 1px solid rgba(244, 84, 176, 0.28); background: var(--accent-brand-tint); color: var(--brand-pink); font-family: var(--font-mono); font-size: 12px; font-weight: 600; }
 .streak-pill .fire { display: inline-flex; }
 .streak-pill svg { width: 12px; height: 12px; }
-.trophy-card { width: 100%; max-width: 340px; background: #1A1418; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 16px 16px; text-align: left; }
-.tc-eyebrow { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); font-weight: 600; margin-bottom: 8px; }
-.tc-score { font-size: 20px; font-weight: 700; color: var(--text-primary); line-height: 1.3; }
-.tc-score b { font-size: 20px; font-weight: 700; }
-.tc-score .tc-paren { font-weight: 500; color: var(--text-secondary); }
-.tc-score .tc-sep { font-weight: 500; color: var(--text-secondary); }
-.tc-score .muted { color: var(--text-secondary); font-weight: 500; font-size: 16px; }
-.tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px; margin: 12px 0; padding: 4px 4px; }
+.trophy-card {
+  width: 100%; max-width: 340px; background: #1A1418; border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px; padding: 20px; text-align: left;
+  flex: 1 1 auto; min-height: 0;
+  display: flex; flex-direction: column; justify-content: space-between; gap: 16px;
+}
+.tc-top, .tc-mid, .tc-bottom { display: flex; flex-direction: column; }
+.tc-top { gap: 8px; }
+.tc-mid { gap: 12px; }
+.tc-bottom { gap: 12px; }
+.tc-eyebrow { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); font-weight: 600; margin: 0; }
+.tc-score { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; color: var(--text-primary); }
+.tc-points {
+  font-family: var(--font-sans); font-size: 36px; font-weight: 800; line-height: 40px;
+  letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: #F3F4F6;
+}
+.tc-sub {
+  font-family: var(--font-sans); font-size: 16px; font-weight: 600; line-height: 20px;
+  color: var(--text-secondary);
+}
+.tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px; margin: 0; padding: 4px 0; }
 .tc-cell { position: relative; height: 12px; border-radius: 4px; background: var(--bg-surface-subtle); }
 .tc-cell.ok { background: var(--correct); }
 .tc-cell.miss { background: var(--wrong); }
@@ -263,8 +280,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 1.35;
   letter-spacing: 0; color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: normal;
 }
-.tc-actions { display: flex; gap: 8px; margin-top: 12px; }
-.tc-actions .btn-secondary { flex: 1 1 0; max-width: none; padding: 12px 12px; font-size: 16px; }
+.tc-actions { display: flex; gap: 8px; }
+.tc-actions .btn-secondary { flex: 1 1 0; max-width: none; height: 44px; padding: 0 12px; font-size: 16px; }
 #screen-landing.is-completed #landing-stats { display: none; }
 #screen-landing:not(.is-completed) #landing-stats { display: none !important; }
 
@@ -605,20 +622,6 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .bp-trigger-text { font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 16px; color: var(--text-secondary); min-width: 0; }
 .bp-trigger-text.is-top { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* Live Brainprint radar in the hub's open upper space */
-.home-radar-hero { display: none; }
-#screen-landing.is-completed .home-radar-hero {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  flex: 1 1 auto; min-height: 0; padding: 4px 0 8px; cursor: pointer;
-}
-#screen-landing.is-completed .home-radar-hero.is-empty { display: none; }
-.home-radar { width: clamp(168px, 46vw, 212px); }
-.home-radar svg { display: block; width: 100%; height: auto; max-height: 100%; overflow: visible; }
-.home-radar-hero:focus-visible { outline: 2px solid var(--accent-brand); outline-offset: 4px; border-radius: 16px; }
-@media (max-height: 700px) {
-  #screen-landing.is-completed .home-radar { width: clamp(128px, 40vw, 152px); }
-  #screen-landing.is-completed .home-radar-hero { padding: 0 0 4px; }
-}
 .bp-trigger-btn {
   flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px; height: 40px; padding: 0 16px; border-radius: 9999px;
   background: var(--bg-surface-subtle); border: 1px solid rgba(255, 255, 255, 0.12); color: #F3F4F6;
@@ -901,10 +904,10 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 
 /* .type-title */
-.game-header h1, .tc-score, .et-title, .modal-card .mq {
+.game-header h1, .et-title, .modal-card .mq {
   font-family: var(--font-sans); font-size: 20px; font-weight: 700; line-height: 1.25; letter-spacing: -0.01em;
 }
-.tc-score .muted { font-size: 20px; font-weight: 500; color: var(--text-secondary); }
+.tc-score-fallback { font-family: var(--font-sans); font-size: 20px; font-weight: 700; line-height: 1.25; color: var(--text-primary); }
 
 /* Results verdict: the emotional headline of the screen */
 #hero-title { font-family: var(--font-sans); font-size: clamp(24px, 6.6vw, 28px); font-weight: 700; line-height: 1.15; letter-spacing: -0.02em; color: var(--text-primary); }
@@ -1007,22 +1010,23 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
         <b>Today's set complete.</b>
       </div>
 
-      <!-- live Brainprint radar fills the open space above the cards -->
-      <div class="home-radar-hero" id="home-radar-hero" role="button" tabindex="0" aria-label="Open your Brainprint radar">
-        <div class="home-radar" id="home-radar"></div>
-      </div>
-
       <!-- completed-day cards: one bottom-anchored stack -->
       <div class="hub-cards completed-stack" id="hub-cards">
         <div class="trophy-card" id="trophy-card">
-          <div class="tc-eyebrow" id="trophy-eyebrow">TODAY'S RUN</div>
-          <div class="tc-score" id="trophy-score">Today's set complete.</div>
-          <div class="tc-grid" id="trophy-grid"></div>
-          <div class="tc-count" id="next-set-line"></div>
-          <div class="bp-trigger-wrap" id="bp-trigger-hub"></div>
-          <div class="tc-actions">
-            <button class="btn-secondary" id="btn-view-results" style="display:none;">Review</button>
-            <button class="btn-secondary" id="btn-quick-share" style="display:none;">Share</button>
+          <div class="tc-top">
+            <div class="tc-eyebrow" id="trophy-eyebrow">TODAY'S RUN</div>
+            <div class="tc-score" id="trophy-score"><span class="tc-sub">Today's set complete.</span></div>
+          </div>
+          <div class="tc-mid">
+            <div class="tc-grid" id="trophy-grid"></div>
+            <div class="tc-count" id="next-set-line"></div>
+          </div>
+          <div class="tc-bottom">
+            <div class="bp-trigger-wrap" id="bp-trigger-hub"></div>
+            <div class="tc-actions">
+              <button class="btn-secondary" id="btn-view-results" style="display:none;">Review</button>
+              <button class="btn-secondary" id="btn-quick-share" style="display:none;">Share</button>
+            </div>
           </div>
         </div>
 
@@ -2671,7 +2675,7 @@ function renderHub() {
     const betUsed = answers.filter(a => a.bet).length;
     const betHit = answers.filter(a => a.bet && a.correct).length;
     const arch = getArchetype(correct, total, totalTimeSec, betUsed, betHit);
-    scoreEl.innerHTML = `<b>${totalPoints} pts</b> <span class="tc-paren">(${correct}/${total})</span> <span class="tc-sep">·</span> ${escapeHtml(arch.name)}`;
+    scoreEl.innerHTML = `<span class="tc-points">${totalPoints} pts</span><span class="tc-sub">(${correct}/${total}) · ${escapeHtml(arch.name)}</span>`;
     for (let i = 0; i < 10; i++) {
       const cell = document.createElement('div');
       cell.className = 'tc-cell';
@@ -2685,21 +2689,9 @@ function renderHub() {
     $('btn-view-results').style.display = 'flex';
     $('btn-quick-share').style.display = 'flex';
   } else {
-    scoreEl.textContent = "Today's set complete.";
+    scoreEl.innerHTML = '<span class="tc-sub">Today&rsquo;s set complete.</span>';
     $('btn-view-results').style.display = 'none';
     $('btn-quick-share').style.display = 'none';
-  }
-
-  // Live radar hero: needs 3+ categories for a shape worth showing
-  const hero = $('home-radar-hero'), heroChart = $('home-radar');
-  const bpd = brainprintData();
-  if (bpd.played.length >= 3) {
-    heroChart.innerHTML = brainprintSVG(bpd, { size: 200, maxR: 54, gap: 13, showAccuracy: false, labelSize: 8.6 });
-    fitBrainprintLabels(heroChart.firstElementChild, 200);
-    hero.classList.remove('is-empty');
-  } else {
-    heroChart.innerHTML = '';
-    hero.classList.add('is-empty');
   }
 
   renderBrainprintTrigger($('bp-trigger-hub'), { compact: true });
@@ -3792,17 +3784,6 @@ $('review-modal').addEventListener('click', e => { if (e.target === $('review-mo
 $('bp-close').onclick = () => { audio.click(); closeBrainprint(); };
 $('brainprint-modal').addEventListener('click', e => { if (e.target === $('brainprint-modal')) closeBrainprint(); });
 $('bp-share').addEventListener('click', () => { audio.click(); shareBrainprint(); });
-// Hub radar hero opens the full Brainprint
-{
-  const hero = $('home-radar-hero');
-  hero.addEventListener('click', () => {
-    if (hero.classList.contains('is-empty')) return;
-    audio.click(); openBrainprint();
-  });
-  hero.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); hero.click(); }
-  });
-}
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && $('brainprint-modal').style.display === 'flex') closeBrainprint();
 });
