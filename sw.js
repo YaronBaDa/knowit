@@ -1,6 +1,6 @@
 // KNOWIT service worker — app shell cache-first, everything else network-first.
 // Bump CACHE when the shell changes; old caches are dropped on activate.
-const CACHE = 'knowit-v5';
+const CACHE = 'knowit-v6';
 
 const SHELL = [
   './',

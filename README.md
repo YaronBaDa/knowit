@@ -59,6 +59,50 @@ Text, options and `didYouKnow` edits are safe: schedule.json stores ids, not con
 already-frozen day keeps the same picks. Only removing or renaming an `id` breaks frozen days —
 in that case the game falls back to the computed set for those days (the id check fails).
 
+## Anonymous score aggregation (optional)
+
+Turned off by default. `API_BASE` in `index.html` is empty, so nothing is sent and the results
+screen is exactly as it always was. Set it to the deployed Worker origin to enable it:
+
+```js
+const API_BASE = 'https://knowit-stats.<your-account>.workers.dev';   // no trailing slash
+```
+
+### What is collected
+
+After a **completed, ranked daily** (never a replay, never Endless), the client makes one
+`POST /submit` and one `GET /agg`. The POST body is:
+
+| field | meaning |
+|---|---|
+| `puzzle` | the puzzle number, e.g. `12` |
+| `points` | your total for the set, −13 … 13 |
+| `correctByPos` | ten booleans — whether position 1…10 was answered correctly |
+| `seconds` | rounded total time on the ten questions |
+| `playerId` | a random UUID generated on this device, stored in `knowit_pid` |
+
+Nothing else is sent. **No picked options, no answer text, no names, no email, no
+`knowit_name`, no challenge links, no IP address is stored** (the IP is only used in memory for
+the per-minute rate limit). The Worker keeps one aggregate per puzzle — a count, a points
+histogram, and how many players got each position right — plus a 3-day de-dupe key that stops the
+same device counting twice for one puzzle.
+
+What you see back: “Top X% today” under the stat bar and “Hardest today: Q9 (48% got it)” under the
+grid, both only once at least **20** players have submitted that puzzle. If the API is slow,
+missing or erroring, both lines are simply absent — the game is unchanged.
+
+### Deploying the Worker
+
+```bash
+cd worker
+wrangler kv namespace create STATS     # copy the id into wrangler.toml
+wrangler deploy                        # note the printed https origin
+```
+
+Then set `API_BASE` in `index.html` to that origin and commit. The Worker only answers CORS for
+`https://yaronbada.github.io` (plus local dev origins), and accepts puzzle numbers for today or
+yesterday UTC only. KV is eventually consistent — a lost increment just nudges a percentage.
+
 ## Local development
 
 ```bash

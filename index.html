@@ -188,6 +188,9 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .backup-code { width: 100%; min-height: 64px; resize: vertical; padding: 8px; border-radius: 12px; border: 1px solid var(--border-subtle); background: var(--bg-surface-subtle); color: var(--text-primary); font-family: var(--font-mono); font-size: 12px; line-height: 16px; box-sizing: border-box; }
 .backup-code:focus { outline: 2px solid var(--accent-brand); outline-offset: 1px; }
 .backup-hint { font-family: var(--font-sans); font-size: 12px; line-height: 16px; color: var(--text-secondary); min-height: 16px; }
+/* Anonymous aggregate lines on the results card */
+.agg-hardest { font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 16px; color: var(--text-secondary); text-align: center; padding-top: 8px; }
+.agg-line { font-family: var(--font-sans); font-size: 12px; font-weight: 600; line-height: 16px; color: var(--accent-brand); text-align: center; padding-top: 8px; }
 #backup-modal .modal-card { display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px; }
 .btn-primary {
   width: 100%; max-width: 280px; height: 52px; padding: 0 20px; border-radius: 12px; border: none;
@@ -1215,12 +1218,14 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
       <!-- Scorecard: grid + divider + stat bar + tap hint -->
       <div class="scorecard" id="scorecard">
         <div class="share-visual" id="share-visual"></div>
+        <div class="agg-hardest" id="agg-hardest" style="display:none;"></div>
         <div class="sc-divider"></div>
         <div class="sc-stats" id="sc-stats">
           <div class="sc-stat sc-stat-primary"><b id="stat-pts">0</b><span id="stat-pts-label">SCORE</span></div>
           <div class="sc-stat"><b id="stat-correct">0/10</b><span>CORRECT</span></div>
           <div class="sc-stat"><b id="stat-time">0s</b><span>TIME</span></div>
         </div>
+        <div class="agg-line" id="agg-line" style="display:none;"></div>
         <div class="grid-hint" id="grid-hint" style="display:none;">Tap a miss to see what got you.</div>
         <div class="sc-meta" id="sc-meta" style="display:none;"></div>
       </div>
@@ -1991,6 +1996,10 @@ const TIER_SHUFFLE_FROM = 8;   // puzzles #8+ get their 10 picks reordered; #1-#
 const CAT_CAP = 2;
 // Canonical public URL — will change when we get a custom domain
 const SITE_URL = 'https://yaronbada.github.io/knowit/';
+// TODO: point this at the deployed Cloudflare Worker (see worker/README notes in README.md).
+// Empty = aggregation is skipped entirely and the game behaves exactly as before.
+const API_BASE = '';
+const AGG_MIN_PLAYERS = 20;   // never show "top X%" until enough players have played
 const HOLD_IDS = new Set(['p11','p23','p32','sp13','g36']);   // time-sensitive answers, excluded until reviewed
 const NO_SAME_DAY = [['n5','n27'],['s20','s46']];            // near-duplicate pairs
 const FAST_TIME_SEC = 55;
@@ -3784,6 +3793,80 @@ function handleAnswer(idx) {
   else commit();
 }
 
+// ---- Anonymous score aggregation (optional; silent when the API is down) ----
+// Sends: puzzle number, points, which of the ten positions were right, total seconds
+// and a random device id. Never picks, names, or anything that identifies a person.
+function getPlayerId() {
+  try {
+    let id = localStorage.getItem('knowit_pid');
+    if (!id || !/^[A-Za-z0-9_-]{8,64}$/.test(id)) {
+      id = (window.crypto && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : 'p-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+      localStorage.setItem('knowit_pid', id);
+    }
+    return id;
+  } catch(e) { return ''; }
+}
+function fetchWithTimeout(url, opts, ms) {
+  const ctrl = typeof AbortController === 'function' ? new AbortController() : null;
+  const timer = ctrl ? setTimeout(() => ctrl.abort(), ms) : null;
+  const options = Object.assign({}, opts || {}, ctrl ? { signal: ctrl.signal } : {});
+  return fetch(url, options).finally(() => { if (timer) clearTimeout(timer); });
+}
+function loadAggregates(answers, puzzleNum) {
+  const line = $('agg-line'), hard = $('agg-hardest');
+  if (line) { line.style.display = 'none'; line.textContent = ''; }
+  if (hard) { hard.style.display = 'none'; hard.textContent = ''; }
+  if (!API_BASE) return;                      // disabled: behave exactly as before
+  const playerId = getPlayerId();
+  if (!playerId) return;
+  const points = sumPoints(answers);
+  const body = {
+    puzzle: puzzleNum,
+    points,
+    correctByPos: answers.map(a => !!a.correct),
+    seconds: Math.round(answers.reduce((s, a) => s + (a.time || 0), 0) / 1000),
+    playerId,
+  };
+  // One attempt only — never retried from the results screen.
+  fetchWithTimeout(API_BASE + '/submit', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(body),
+  }, 2000)
+    .catch(() => null)
+    .then(() => fetchWithTimeout(API_BASE + '/agg?puzzle=' + puzzleNum + '&points=' + points, {}, 2000))
+    .then(r => (r && r.ok ? r.json() : null))
+    .then(d => { if (d) renderAggregates(d, puzzleNum); })
+    .catch(() => {});
+}
+function renderAggregates(d, puzzleNum) {
+  const n = Number(d.n) || 0;
+  const line = $('agg-line'), hard = $('agg-hardest');
+  if (n < AGG_MIN_PLAYERS) return;
+  const pct = Number(d.percentileFor);
+  if (line && isFinite(pct)) {
+    const top = Math.max(1, Math.min(100, Math.round(100 - pct)));
+    line.textContent = `Top ${top}% today`;
+    line.style.display = 'block';
+    // The percentile only exists now, so refresh the share head (visual grid is unchanged)
+    if (state.mode === 'daily' && !state.replayDay) {
+      const payload = buildDailySharePayload(state.answers, puzzleNum, stats.streak, undefined, top);
+      state.shareClean = payload.shareClean;
+      state.shareFull = payload.shareFull;
+      $('share-text').textContent = state.shareFull;
+    }
+  }
+  const rates = Array.isArray(d.qRate) ? d.qRate.map(Number) : [];
+  if (hard && rates.length) {
+    let k = 0;
+    for (let i = 1; i < rates.length; i++) if (rates[i] < rates[k]) k = i;
+    hard.textContent = `Hardest today: Q${k + 1} (${Math.round(rates[k] * 100)}% got it)`;
+    hard.style.display = 'block';
+  }
+}
+
 // ---- Share payload (single source of truth for results + landing card) ----
 function shareRows(answers) {
   const cells = answers.map(a => a.bet ? (a.correct ? '✅' : '❌') : (a.correct ? '🟩' : '🟥'));
@@ -3800,7 +3883,7 @@ function shareBlindspot(answers) {
   missed.sort((a, b) => (a[1].correct / a[1].total) - (b[1].correct / b[1].total));
   return missed.length ? missed[0][0] : null;
 }
-function buildDailySharePayload(answers, puzzleNum, streak, channel) {
+function buildDailySharePayload(answers, puzzleNum, streak, channel, topPct) {
   const src = channel || 'g';
   const { row1, row2 } = shareRows(answers);
   const totalPoints = sumPoints(answers);
@@ -3811,7 +3894,8 @@ function buildDailySharePayload(answers, puzzleNum, streak, channel) {
   const betHit = answers.filter(a => a.bet && a.correct).length;
   const arch = getArchetype(correct, total, totalTimeSec, betUsed, betHit, totalPoints);
   const blindspot = shareBlindspot(answers);
-  const head = `KNOWIT #${puzzleNum} · ${fmtPts(totalPoints)} (${correct}/${total})` + (streak >= 2 ? `  🔥${streak}` : '');
+  const topTag = (typeof topPct === 'number' && isFinite(topPct) && topPct > 0) ? ` · Top ${Math.round(topPct)}%` : '';
+  const head = `KNOWIT #${puzzleNum} · ${fmtPts(totalPoints)} (${correct}/${total})${topTag}` + (streak >= 2 ? `  🔥${streak}` : '');
   const grid = `${row1}${row2 ? '\n' + row2 : ''}`;
   return {
     head, row1, row2, totalPoints, correct, total, totalTimeSec, arch, blindspot,
@@ -4011,6 +4095,8 @@ function finishGame(opts = {}) {
     state.shareFull = `${state.shareClean}\n\nBeat my run.\n${challengeUrl}`;
   }
   $('share-text').textContent = state.shareFull;
+  // Anonymous aggregates: one shot, daily only, never on a replay
+  if (state.mode === 'daily' && !unranked) loadAggregates(state.answers.slice(), dailyNum);
 
   // Duel result card
   if (state.duel && state.mode === 'daily') {
