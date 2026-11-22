@@ -9,6 +9,7 @@
 <link rel="icon" href="https://yaronbada.github.io/knowit/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="64x64" href="https://yaronbada.github.io/knowit/favicon.png">
 <link rel="apple-touch-icon" href="https://yaronbada.github.io/knowit/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
 <!-- Analytics (Plausible). Replace YOUR_DOMAIN_HERE with the real domain; every call goes through track() -->
 <script defer data-domain="YOUR_DOMAIN_HERE" src="https://plausible.io/js/script.js"></script>
 <meta property="og:type" content="website">
@@ -4136,6 +4137,16 @@ window.__debugDay = (n = getDailyNum()) => {
   console.table(rows);
   return rows;
 };
+
+// ---- PWA: register the service worker (https or localhost only) ----
+try {
+  const localHost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || localHost)) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+  }
+} catch(e) {}
 
 setInterval(tick, 30000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
