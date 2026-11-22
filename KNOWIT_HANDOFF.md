@@ -114,8 +114,8 @@ Every category name renders inside a pill — gameplay, review modal, and the Br
 - `.cat-row` (wrapper `#q-cat` / `#rm-cat`) sits directly above the text with **`margin-bottom: 10px`**, `#q-text` keeps `margin-top: 0`, so the pill reads as part of the question.
 - `.progress-strip` is `margin-bottom: 22px` so the 10 segments stay grouped with the HUD above.
 - Short-viewport override (`max-height: 600px`): strip 12px, pill 8px, stage `padding-bottom: 4px` — keeps the 505-question sweep at **0 clipped** on 320×568.
-- Colours come from `applyCategoryPillStyle(el, name)` (JS, not CSS): 6 muted palettes — green `#6EE7B7` (Nature/Biology/Earth/Animals), stone `#D6D3D1` (History/Geography/Travel), blue `#7DD3FC` (Science/Space/Tech/Math), orange `#FDBA74` (Sports/Games), purple `#D8B4FE` (Literature/Arts/Music/Books), red `#FDA4AF` (Pop Culture/Film/TV). **No palette is amber**, so a pill can never read as a bet. Unknown names hash (FNV-1a) across the 6 in declaration order.
-- Keyword map covers all bank categories; `Food & Drink` and `Business` are unmapped and therefore take the hash.
+- Colours come from `applyCategoryPillStyle(el, rawTag)` (JS, not CSS). It normalises first, then applies one fixed tint per umbrella: **Science & Nature** green `#6EE7B7`, **Geography** blue `#7DD3FC`, **History** stone `#D6D3D1`, **Sports & Leisure** orange `#FDBA74`, **Pop Culture** red `#FDA4AF`, **Arts & Lit** purple `#D8B4FE`. **No tint is amber**, so a pill can never read as a bet.
+- The function also writes the normalised umbrella into `textContent`, so a pin never displays a raw bank tag (SPACE, MUSIC, FOOD & DRINK) — always the umbrella.
 
 ---
 
@@ -174,7 +174,23 @@ Every category name renders inside a pill — gameplay, review modal, and the Br
 `knowit_result_v1` — today's finished run (drives the hub card + "Review")
 `knowit_muted` — `'1'`/`'0'` sound preference for the header speaker toggle (default unmuted)
 
-`categories` is a silent lifetime map: `{ "<Category>": { answered, correct, betsWon, betsLost } }`. `recordCategoryStat(q, isCorrect, isBet, answerIndex)` writes one row per answer (Daily and Endless, timeouts included as a plain miss — no bet), guarded against double-submits and resumed dailies by an answer-index Set that resets per run. `getCategoryStats()` returns the read-only aggregate sorted by `answered` desc (`category, answered, correct, accuracy %, betsWon, betsLost`); it feeds the Brainprint modal via `brainprintData()` (top 6 axes, padded at 0% from the bank).
+`categories` holds exactly **six** keys — the umbrellas — never a raw bank tag: `{ "Science & Nature": { answered, correct, betsWon, betsLost }, … }`. `recordCategoryStat(q, isCorrect, isBet, answerIndex)` normalises the tag first, writes one row per answer (Daily and Endless, timeouts count as a plain miss — no bet), and is guarded against double-submits and resumed dailies by an answer-index Set that resets per run.
+
+### Category model (6 umbrellas, one source of truth)
+
+`UMBRELLA_CATEGORIES = ['Science & Nature','Geography','History','Sports & Leisure','Pop Culture','Arts & Lit']` — fixed order, clockwise from top-centre on every radar.
+
+`normalizeCategory(raw)` lowercase-slugs the tag, matches it against `UMBRELLA_RULES` word lists, and is **idempotent** (an umbrella name maps to itself). All 16 bank tags resolve:
+
+Science → Science & Nature · Nature → Science & Nature · Space → Science & Nature · Math → Science & Nature · Technology → Science & Nature · Geography → Geography · Travel → Geography · History → History · Sports → Sports & Leisure · Food & Drink → Sports & Leisure · Pop Culture → Pop Culture · Film → Pop Culture · Business → Pop Culture · Literature → Arts & Lit · Arts → Arts & Lit · Music → Arts & Lit
+
+Unknown tags fall back to a deterministic FNV-1a hash across the six, so a label never changes bucket between sessions.
+
+Called at every boundary: `recordCategoryStat`, `applyCategoryPillStyle` (pill label + tint), the per-run blindspot aggregation in `finishGame()`, and `getCategoryStats()` (which re-folds defensively).
+
+**Migration**: `loadStats()` runs `migrateCategoryBuckets(s)` — legacy granular keys (SPACE, MATH, TRAVEL, MUSIC, FOOD & DRINK, ARTS, NATURE, LITERATURE, …) are summed per umbrella, the map is rewritten to the 6 keys, and `knowit_stats_v3` is saved once. `played`, `streak`, `bestEndless`, bet counters are untouched.
+
+**Radar 1:1**: `getCategoryStats()` always returns 6 rows in canonical order (0% when unplayed), `brainprintData().rows` plots them verbatim, and `#bp-list` renders the same 6 — no top-N, no padding from the bank. Modal viewBox is `0 0 340 300` with `fillBrainprintLabels(svg, 340, 300)` clamping; the compact hub chart uses `labelSize: 8.6` so long umbrellas still fit 200×200.
 
 ---
 

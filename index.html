@@ -1894,6 +1894,64 @@ let state = {
   duel: null, // {score, time, name} or null
 };
 
+
+// ---- Canonical umbrella categories (single source of truth) ----
+// Every raw bank tag (SPACE, MATH, TRAVEL, FOOD & DRINK, …) folds into one of these six,
+// in this fixed clockwise order. The radar and the modal list both read this array.
+const UMBRELLA_CATEGORIES = ['Science & Nature', 'Geography', 'History', 'Sports & Leisure', 'Pop Culture', 'Arts & Lit'];
+const UMBRELLA_RULES = {
+  'Science & Nature':  ['science', 'nature', 'space', 'math', 'maths', 'biology', 'tech', 'technology', 'medicine', 'medical', 'physics', 'chemistry', 'astronomy', 'environment', 'earth', 'animals', 'animal', 'wildlife', 'anatomy', 'engineering'],
+  'Geography':         ['geography', 'travel', 'landmarks', 'landmark', 'countries', 'country', 'world', 'capitals', 'capital', 'cities', 'city', 'maps'],
+  'History':           ['history', 'historical', 'politics', 'political', 'mythology', 'war', 'ancient', 'empires', 'empire', 'monarchy'],
+  'Sports & Leisure':  ['sports', 'sport', 'food & drink', 'food drink', 'food', 'drink', 'drinks', 'games', 'game', 'leisure', 'fitness', 'olympics', 'cooking', 'cuisine'],
+  'Pop Culture':       ['pop culture', 'pop', 'film', 'films', 'tv', 'television', 'movies', 'movie', 'cinema', 'entertainment', 'gaming', 'celebrity', 'celebrities', 'media', 'business', 'brands', 'brand', 'finance', 'economy', 'companies', 'company'],
+  'Arts & Lit':        ['arts', 'art', 'literature', 'music', 'books', 'book', 'architecture', 'poetry', 'poems', 'novels', 'painting', 'sculpture'],
+};
+function slugCategory(name) {
+  return String(name == null ? '' : name).toLowerCase().replace(/&/g, ' & ').replace(/[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ').trim();
+}
+// normalizeCategory('FOOD & DRINK') -> 'Sports & Leisure'
+function normalizeCategory(raw) {
+  const s = slugCategory(raw);
+  if (!s) return UMBRELLA_CATEGORIES[0];
+  for (let i = 0; i < UMBRELLA_CATEGORIES.length; i++) {
+    if (slugCategory(UMBRELLA_CATEGORIES[i]) === s) return UMBRELLA_CATEGORIES[i];
+  }
+  const padded = ' ' + s + ' ';
+  for (let i = 0; i < UMBRELLA_CATEGORIES.length; i++) {
+    const words = UMBRELLA_RULES[UMBRELLA_CATEGORIES[i]] || [];
+    for (let w = 0; w < words.length; w++) {
+      if (padded.indexOf(' ' + slugCategory(words[w]) + ' ') !== -1) return UMBRELLA_CATEGORIES[i];
+    }
+  }
+  // Unknown tag: deterministic FNV-1a so the same label always lands in the same umbrella
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return UMBRELLA_CATEGORIES[Math.abs(h) % UMBRELLA_CATEGORIES.length];
+}
+function emptyCatRow() { return { answered: 0, correct: 0, betsWon: 0, betsLost: 0 }; }
+// Fold any legacy granular keys into the 6 umbrellas, in place. Returns true when it changed anything.
+function migrateCategoryBuckets(store) {
+  if (!store || typeof store !== 'object') return false;
+  const map = store.categories;
+  if (!map || typeof map !== 'object' || Array.isArray(map)) { store.categories = {}; return true; }
+  const keys = Object.keys(map);
+  let changed = keys.some(k => !UMBRELLA_CATEGORIES.includes(k));
+  const out = {};
+  UMBRELLA_CATEGORIES.forEach(u => { out[u] = emptyCatRow(); });
+  keys.forEach(k => {
+    const u = normalizeCategory(k);
+    const r = map[k] || {};
+    out[u].answered += Number(r.answered) || 0;
+    out[u].correct  += Number(r.correct) || 0;
+    out[u].betsWon  += Number(r.betsWon) || 0;
+    out[u].betsLost += Number(r.betsLost) || 0;
+  });
+  if (keys.length !== UMBRELLA_CATEGORIES.length) changed = true;
+  store.categories = out;
+  return changed;
+}
+
 let stats = loadStats();
 
 function loadStats() {
@@ -1910,7 +1968,9 @@ function loadStats() {
       const hadCategories = !!s.categories && typeof s.categories === 'object' && !Array.isArray(s.categories);
       if (!hadCategories) {
         s.categories = {};
-        // Persist the upgrade once so the schema is stable across tabs/sessions
+        try { localStorage.setItem('knowit_stats_v3', JSON.stringify(s)); } catch(e){}
+      } else if (migrateCategoryBuckets(s)) {
+        // Legacy granular keys (SPACE, MATH, TRAVEL, MUSIC, …) folded into the 6 umbrellas; saved once.
         try { localStorage.setItem('knowit_stats_v3', JSON.stringify(s)); } catch(e){}
       }
       return s;
@@ -1936,7 +1996,7 @@ function categoryLabelOf(question) {
   return label || 'General';
 }
 function recordCategoryStat(question, isCorrect, isBet, answerIndex) {
-  const cat = categoryLabelOf(question);
+  const cat = normalizeCategory(categoryLabelOf(question));
   if (answerIndex !== undefined && answerIndex !== null) {
     const key = String(answerIndex);
     if (_catRecorded.has(key)) return false;   // already counted (double submit / resumed run)
@@ -1956,19 +2016,23 @@ function recordCategoryStat(question, isCorrect, isBet, answerIndex) {
 }
 function getCategoryStats() {
   const map = (stats && stats.categories && typeof stats.categories === 'object' && !Array.isArray(stats.categories)) ? stats.categories : {};
-  return Object.keys(map).map(category => {
-    const r = map[category] || {};
-    const answered = Number(r.answered) || 0;
-    const correct = Number(r.correct) || 0;
-    return {
-      category,
-      answered,
-      correct,
-      accuracy: answered > 0 ? Math.round((correct / answered) * 100) : 0,
-      betsWon: Number(r.betsWon) || 0,
-      betsLost: Number(r.betsLost) || 0,
-    };
-  }).sort((a, b) => b.answered - a.answered || a.category.localeCompare(b.category));
+  const acc = {};
+  UMBRELLA_CATEGORIES.forEach(u => { acc[u] = emptyCatRow(); });
+  Object.keys(map).forEach(k => {
+    const u = normalizeCategory(k);          // belt-and-braces: legacy keys still fold here
+    const r = map[k] || {};
+    acc[u].answered += Number(r.answered) || 0;
+    acc[u].correct  += Number(r.correct) || 0;
+    acc[u].betsWon  += Number(r.betsWon) || 0;
+    acc[u].betsLost += Number(r.betsLost) || 0;
+  });
+  // Always exactly six rows, always in canonical order — this is what the radar plots.
+  return UMBRELLA_CATEGORIES.map(u => {
+    const r = acc[u];
+    return { category: u, answered: r.answered, correct: r.correct,
+             accuracy: r.answered > 0 ? Math.round((r.correct / r.answered) * 100) : 0,
+             betsWon: r.betsWon, betsLost: r.betsLost };
+  });
 }
 // ---- Brainprint: lifetime category radar + PNG share card ----
 const BP_MIN_ANSWERED = 5;
@@ -1984,15 +2048,8 @@ function brainprintData() {
   const betsLost = all.reduce((s, r) => s + r.betsLost, 0);
   const betsTotal = betsWon + betsLost;
 
-  const rows = played.slice(0, BP_MAX_AXES).map(r => ({ ...r }));
-  if (rows.length < BP_MAX_AXES) {
-    const seen = new Set(all.map(r => r.category));
-    const bank = [];
-    QUESTIONS.forEach(q => { if (!seen.has(q.category) && bank.indexOf(q.category) === -1) bank.push(q.category); });
-    for (let i = 0; i < bank.length && rows.length < BP_MAX_AXES; i++) {
-      rows.push({ category: bank[i], answered: 0, correct: 0, accuracy: 0, betsWon: 0, betsLost: 0 });
-    }
-  }
+  // Radar axes are fixed: the same 6 umbrellas, same order, 0% until answered.
+  const rows = all.map(r => ({ ...r }));
 
   const ranked = played.slice().sort((a, b) => (b.accuracy - a.accuracy) || (b.answered - a.answered));
   return {
@@ -2036,10 +2093,13 @@ function splitRadarLabel(name) {
   return [parts.slice(0, mid).join(' '), parts.slice(mid).join(' ')];
 }
 function brainprintSVG(d, opts = {}) {
-  const size = opts.size || 300;
-  const cx = size / 2, cy = size / 2;
-  const maxR = opts.maxR || (size === 300 ? 86 : 56);
-  const gap = opts.gap || (size === 300 ? 15 : 12);
+  const vh = opts.vh || opts.size || 300;
+  const vw = opts.vw || opts.size || 300;
+  const cx = vw / 2, cy = vh / 2;
+  const maxR = opts.maxR || (vh >= 300 ? 84 : 56);
+  const gap = opts.gap || (vh >= 300 ? 16 : 12);
+  const fs = opts.labelSize || 10;               // axis label size
+  const lh = Math.round(fs * 1.1);               // label line height
   const showAccuracy = opts.showAccuracy !== false;
   const g = brainprintGeometry(d.rows, cx, cy, maxR, gap);
   const rings = [1, 2, 3].map(i => `<circle cx="${cx}" cy="${cy}" r="${(maxR * i / 3).toFixed(2)}" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>`).join('');
@@ -2055,28 +2115,28 @@ function brainprintSVG(d, opts = {}) {
     const lines = splitRadarLabel(p.category);
     let out = `<g class="bp-axis">`;
     if (showAccuracy) {
-      const lineH = 11;
+      const lineH = lh;
       const blockH = lines.length * lineH + 13;
       let y = p.ly - blockH / 2 + lineH;
       lines.forEach(l => {
-        out += `<text x="${p.lx.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="10" font-weight="600" letter-spacing="0.6" fill="#B2A4AC">${escapeHtml(l)}</text>`;
+        out += `<text x="${p.lx.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="${fs}" font-weight="600" letter-spacing="0.4" fill="#B2A4AC">${escapeHtml(l)}</text>`;
         y += lineH;
       });
-      out += `<text x="${p.lx.toFixed(2)}" y="${(y + 1).toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="10" font-weight="600" letter-spacing="0.6" fill="#F3F4F6" style="font-variant-numeric: tabular-nums">${p.acc}%</text></g>`;
+      out += `<text x="${p.lx.toFixed(2)}" y="${(y + 1).toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="${fs}" font-weight="600" letter-spacing="0.4" fill="#F3F4F6" style="font-variant-numeric: tabular-nums">${p.acc}%</text></g>`;
     } else {
       // Compact home radar: names only, no percentages — keeps the chart airy
-      const lineH = 11;
+      const lineH = lh;
       const blockH = lines.length * lineH;
       let y = p.ly - blockH / 2 + lineH;
       lines.forEach(l => {
-        out += `<text x="${p.lx.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="10" font-weight="600" letter-spacing="0.6" fill="#B2A4AC">${escapeHtml(l)}</text>`;
+        out += `<text x="${p.lx.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="${fs}" font-weight="600" letter-spacing="0.4" fill="#B2A4AC">${escapeHtml(l)}</text>`;
         y += lineH;
       });
       out += `</g>`;
     }
     return out;
   }).join('');
-  return `<svg viewBox="0 0 ${size} ${size}" role="img" aria-label="Category accuracy radar">
+  return `<svg viewBox="0 0 ${vw} ${vh}" role="img" aria-label="Category accuracy radar">
     ${rings}${spokes}
     <polygon points="${poly}" fill="none" stroke="#F454B0" stroke-width="2" stroke-linejoin="round"/>
     <polygon points="${poly}" fill="rgba(244, 84, 176, 0.22)" stroke="url(#knowit-grad)" stroke-width="2" stroke-linejoin="round"/>
@@ -2085,15 +2145,17 @@ function brainprintSVG(d, opts = {}) {
   </svg>`;
 }
 // Keep every axis label inside the viewBox (never clip at narrow widths)
-function fitBrainprintLabels(svg, size = 300) {
+function fitBrainprintLabels(svg, w = 300, h = w) {
   if (!svg) return;
-  const hi = size - 1, limit = size - 8;
+  const hiX = w - 1, hiY = h - 1, limit = w - 8;
   const clamp = grp => {
     const box = grp.getBBox();
-    let dx = 0;
+    let dx = 0, dy = 0;
     if (box.x < 1) dx = 1 - box.x;
-    else if (box.x + box.width > hi) dx = hi - (box.x + box.width);
-    if (dx) grp.setAttribute('transform', `translate(${dx.toFixed(2)}, 0)`);
+    else if (box.x + box.width > hiX) dx = hiX - (box.x + box.width);
+    if (box.y < 1) dy = 1 - box.y;
+    else if (box.y + box.height > hiY) dy = hiY - (box.y + box.height);
+    if (dx || dy) grp.setAttribute('transform', `translate(${dx.toFixed(2)}, ${dy.toFixed(2)})`);
     else grp.removeAttribute('transform');
   };
   svg.querySelectorAll('.bp-axis').forEach(grp => {
@@ -2143,8 +2205,8 @@ function renderBrainprintTrigger(host, opts = {}) {
 function renderBrainprint() {
   const d = brainprintData();
   const radar = $('bp-radar');
-  radar.innerHTML = brainprintSVG(d);
-  fitBrainprintLabels(radar.firstElementChild);
+  radar.innerHTML = brainprintSVG(d, { vw: 340, vh: 300, maxR: 84, gap: 16 });
+  fitBrainprintLabels(radar.firstElementChild, 340, 300);
 
   $('bp-total').textContent = d.totalAnswered;
   $('bp-accuracy').textContent = d.totalAnswered ? `${d.overallAccuracy}%` : '—';
@@ -2152,13 +2214,14 @@ function renderBrainprint() {
 
   const list = $('bp-list');
   list.innerHTML = '';
-  if (!d.played.length) {
+  if (!d.totalAnswered) {
     const empty = document.createElement('div');
     empty.className = 'bp-note';
     empty.textContent = "No answers recorded yet. Play today's set to start your Brainprint.";
     list.appendChild(empty);
-  } else {
-    d.played.forEach(r => {
+  }
+  // Always the same 6 umbrellas, in the same order as the spokes above
+  d.rows.forEach(r => {
       const row = document.createElement('div');
       row.className = 'bp-list-row';
       row.appendChild(makeCategoryPill(r.category));
@@ -2166,10 +2229,9 @@ function renderBrainprint() {
       meta.className = 'bp-list-meta';
       const bets = r.betsWon + r.betsLost;
       meta.innerHTML = `${r.accuracy}% <span class="muted">· ${r.betsWon}/${bets} bets</span>`;
-      row.appendChild(meta);
-      list.appendChild(row);
-    });
-  }
+    row.appendChild(meta);
+    list.appendChild(row);
+  });
 
   const note = $('bp-note');
   if (d.unlocked) {
@@ -2612,7 +2674,7 @@ function renderHub() {
   const hero = $('home-radar-hero'), heroChart = $('home-radar');
   const bpd = brainprintData();
   if (bpd.played.length >= 3) {
-    heroChart.innerHTML = brainprintSVG(bpd, { size: 200, maxR: 56, gap: 12, showAccuracy: false });
+    heroChart.innerHTML = brainprintSVG(bpd, { size: 200, maxR: 54, gap: 13, showAccuracy: false, labelSize: 8.6 });
     fitBrainprintLabels(heroChart.firstElementChild, 200);
     hero.classList.remove('is-empty');
   } else {
@@ -2721,53 +2783,32 @@ function getRandomQuestion() {
   return { ...q, options: opts, correctIndex: opts.indexOf(q.options[q.correctIndex]) };
 }
 
-// ---- Category pill palette ----
-// Muted, dark-mode-safe tints. Never amber-ish, so category colour can't be confused with
-// bet indicators; every text colour clears 4.5:1 against --bg-canvas (#140F12).
-const CATEGORY_PALETTES = [
-  { key: 'green',  color: '#6EE7B7', bg: 'rgba(16, 185, 129, 0.14)',  border: 'rgba(16, 185, 129, 0.30)' },  // Nature / Biology / Earth / Animals
-  { key: 'stone',  color: '#D6D3D1', bg: 'rgba(214, 211, 209, 0.12)', border: 'rgba(214, 211, 209, 0.26)' }, // History / Geography / Travel
-  { key: 'blue',   color: '#7DD3FC', bg: 'rgba(56, 189, 248, 0.14)',  border: 'rgba(56, 189, 248, 0.30)' },  // Science / Space / Tech / Math
-  { key: 'orange', color: '#FDBA74', bg: 'rgba(249, 115, 22, 0.15)',  border: 'rgba(249, 115, 22, 0.32)' },  // Sports / Games
-  { key: 'purple', color: '#D8B4FE', bg: 'rgba(192, 132, 252, 0.14)', border: 'rgba(192, 132, 252, 0.30)' }, // Literature / Arts / Music / Books
-  { key: 'red',    color: '#FDA4AF', bg: 'rgba(251, 113, 133, 0.14)', border: 'rgba(251, 113, 133, 0.30)' }, // Pop Culture / Film / TV
-];
-const CATEGORY_KEYWORDS = {
-  green:  ['nature', 'biology', 'earth', 'animals', 'animal', 'wildlife', 'environment'],
-  stone:  ['history', 'geography', 'travel', 'exploration', 'politics', 'war'],
-  blue:   ['science', 'space', 'astronomy', 'tech', 'technology', 'math', 'maths', 'physics', 'chemistry'],
-  orange: ['sport', 'sports', 'games', 'game', 'gaming', 'fitness'],
-  purple: ['literature', 'art', 'arts', 'music', 'book', 'books', 'poetry', 'language'],
-  red:    ['pop', 'film', 'tv', 'television', 'movies', 'movie', 'cinema', 'entertainment', 'celebrity', 'media'],
+// ---- Category pill palette: exactly six tints, one per umbrella ----
+// Never amber-ish, so a category can't be mistaken for a bet indicator. Every text
+// colour clears 4.5:1 against --bg-canvas (#140F12).
+const UMBRELLA_COLORS = {
+  'Science & Nature':  { color: '#6EE7B7', bg: 'rgba(16, 185, 129, 0.14)',  border: 'rgba(16, 185, 129, 0.30)' },
+  'Geography':         { color: '#7DD3FC', bg: 'rgba(56, 189, 248, 0.14)',  border: 'rgba(56, 189, 248, 0.30)' },
+  'History':           { color: '#D6D3D1', bg: 'rgba(214, 211, 209, 0.12)', border: 'rgba(214, 211, 209, 0.26)' },
+  'Sports & Leisure':  { color: '#FDBA74', bg: 'rgba(249, 115, 22, 0.15)',  border: 'rgba(249, 115, 22, 0.32)' },
+  'Pop Culture':       { color: '#FDA4AF', bg: 'rgba(251, 113, 133, 0.14)', border: 'rgba(251, 113, 133, 0.30)' },
+  'Arts & Lit':        { color: '#D8B4FE', bg: 'rgba(192, 132, 252, 0.14)', border: 'rgba(192, 132, 252, 0.30)' },
 };
-function normalizeCategory(name) {
-  return String(name == null ? '' : name).toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').trim();
-}
-function categoryPaletteIndex(name) {
-  const norm = normalizeCategory(name);
-  const padded = ' ' + norm + ' ';
-  for (let i = 0; i < CATEGORY_PALETTES.length; i++) {
-    const words = CATEGORY_KEYWORDS[CATEGORY_PALETTES[i].key] || [];
-    if (words.some(w => padded.includes(' ' + w + ' '))) return i;
-  }
-  // Unknown category: deterministic FNV-1a hash, so the same name always gets the same tint
-  let h = 2166136261;
-  for (let i = 0; i < norm.length; i++) { h ^= norm.charCodeAt(i); h = Math.imul(h, 16777619); }
-  return Math.abs(h) % CATEGORY_PALETTES.length;
-}
-function applyCategoryPillStyle(el, categoryName) {
+// Normalises first, so a raw bank tag (SPACE, FOOD & DRINK, MUSIC) still gets the right tint + label.
+function applyCategoryPillStyle(el, rawCategory) {
   if (!el) return el;
-  const p = CATEGORY_PALETTES[categoryPaletteIndex(categoryName)];
+  const label = normalizeCategory(rawCategory);
+  const p = UMBRELLA_COLORS[label] || UMBRELLA_COLORS[UMBRELLA_CATEGORIES[0]];
   el.style.color = p.color;
   el.style.backgroundColor = p.bg;
   el.style.border = `1px solid ${p.border}`;
+  el.textContent = label;
   return el;
 }
-function makeCategoryPill(categoryName) {
+function makeCategoryPill(rawCategory) {
   const el = document.createElement('span');
   el.className = 'category-pill';
-  el.textContent = categoryName == null ? '' : String(categoryName);
-  return applyCategoryPillStyle(el, categoryName);
+  return applyCategoryPillStyle(el, rawCategory);
 }
 
 // ---- Rendering ----
@@ -3381,9 +3422,10 @@ function finishGame(opts = {}) {
   // Highlights (compact — replaces pill cloud)
   const categories = {};
   state.answers.forEach(a => {
-    if (!categories[a.category]) categories[a.category] = { total:0, correct:0 };
-    categories[a.category].total++;
-    if (a.correct) categories[a.category].correct++;
+    const u = normalizeCategory(a.category);   // per-run blindspot uses the same 6 umbrellas
+    if (!categories[u]) categories[u] = { total:0, correct:0 };
+    categories[u].total++;
+    if (a.correct) categories[u].correct++;
   });
   const entries = Object.entries(categories);
   const missedCats = entries.filter(([,d]) => d.total >= 2 && d.correct / d.total < 0.5);
