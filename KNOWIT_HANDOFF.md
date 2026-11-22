@@ -109,13 +109,14 @@ A **wiring block** immediately after them assigns each component to one tier (se
 
 ### Category pill (`.category-pill`)
 
-Every category name renders inside a pill — gameplay, review modal, and the Brainprint modal. Layout: `inline-flex`, **20px tall**, `padding: 1px 9px 0`, `999px`, 10/600, `line-height: 1`, `0.06em`, uppercase.
+Every category name renders inside a pill — gameplay, review modal, and the Brainprint modal. Layout on a strict 4px grid: `inline-flex`, **24px tall**, `gap: 4px`, `padding: 0 8px`, `999px`, **12/600**, `line-height: 1`, `0.04em`, uppercase, `white-space: nowrap`.
 
 - `.cat-row` (wrapper `#q-cat` / `#rm-cat`) sits directly above the text with **`margin-bottom: 10px`**, `#q-text` keeps `margin-top: 0`, so the pill reads as part of the question.
 - `.progress-strip` is `margin-bottom: 22px` so the 10 segments stay grouped with the HUD above.
 - Short-viewport override (`max-height: 600px`): strip 12px, pill 8px, stage `padding-bottom: 4px` — keeps the 505-question sweep at **0 clipped** on 320×568.
 - Colours come from `applyCategoryPillStyle(el, rawTag)` (JS, not CSS). It normalises first, then applies one fixed tint per umbrella: **Science & Nature** green `#6EE7B7`, **Geography** blue `#7DD3FC`, **History** stone `#D6D3D1`, **Sports & Leisure** orange `#FDBA74`, **Pop Culture** red `#FDA4AF`, **Arts & Lit** purple `#D8B4FE`. **No tint is amber**, so a pill can never read as a bet.
-- The function also writes the normalised umbrella into `textContent`, so a pin never displays a raw bank tag (SPACE, MUSIC, FOOD & DRINK) — always the umbrella.
+- The function writes `${CATEGORY_ICONS[cat]}<span>${cat}</span>`, so a pill never displays a raw bank tag (SPACE, MUSIC, FOOD & DRINK) — always the umbrella. **Never assign `textContent` to a pill after styling it**; that silently deletes the icon (the blindspot line used to do exactly this).
+- `CATEGORY_ICONS` holds one 12×12 inline SVG per umbrella — flask, globe, classical landmark, medal, clapperboard, quill — all `viewBox="0 0 24 24"`, `stroke="currentColor"`, `stroke-width: 2`, so each icon inherits its pill's tint. CSS pins them to `.category-pill svg { width: 12px; height: 12px; flex-shrink: 0; display: block; }`.
 
 ---
 

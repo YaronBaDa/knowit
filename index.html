@@ -275,21 +275,24 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 20px;
-  padding: 1px 9px 0 9px;
+  gap: 4px;
+  height: 24px;
+  padding: 0 8px;
   border-radius: 999px;
   font-family: var(--font-sans);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   line-height: 1;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   width: fit-content;
   vertical-align: middle;
+  white-space: nowrap;
   background: rgba(178, 164, 172, 0.14);
   color: #B2A4AC;
   border: 1px solid rgba(178, 164, 172, 0.28);
 }
+.category-pill svg { width: 12px; height: 12px; flex-shrink: 0; display: block; }
 /* Gestalt proximity: the pill belongs to the question, so it sits 10px above it */
 .cat-row { display: flex; margin: 0 0 10px; }
 .cat-row:empty { display: none; }
@@ -2782,6 +2785,17 @@ function getRandomQuestion() {
   return { ...q, options: opts, correctIndex: opts.indexOf(q.options[q.correctIndex]) };
 }
 
+
+// ---- Umbrella icons: crisp 12x12 inline SVG on a 4px grid ----
+const CATEGORY_ICONS = {
+  'Science & Nature': '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg>',
+  'Geography': '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>',
+  'History': '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>',
+  'Sports & Leisure': '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.21 15 2.66 7.14a2 2 0 0 1 .13-2.2L4.4 2.8A2 2 0 0 1 6 2h12a2 2 0 0 1 1.6.8l1.6 2.14a2 2 0 0 1 .14 2.2L16.79 15"/><path d="M11 12 5.12 2.2"/><path d="m13 12 5.88-9.8"/><path d="M8 7h8"/><circle cx="12" cy="17" r="5"/><path d="M12 18v-2h-.5"/></svg>',
+  'Pop Culture': '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/><path d="m6.2 5.3 3.1 3.9"/><path d="m12.4 3.4 3.1 4"/><path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>',
+  'Arts & Lit': '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.67 19a2 2 0 0 0 1.416-.588l6.154-6.172a6 6 0 0 0-8.49-8.49L5.586 9.914A2 2 0 0 0 5 11.328V18a1 1 0 0 0 1 1z"/><path d="M16 8 2 22"/><path d="M17.5 15H9"/></svg>',
+};
+
 // ---- Category pill palette: exactly six tints, one per umbrella ----
 // Never amber-ish, so a category can't be mistaken for a bet indicator. Every text
 // colour clears 4.5:1 against --bg-canvas (#140F12).
@@ -2801,7 +2815,7 @@ function applyCategoryPillStyle(el, rawCategory) {
   el.style.color = p.color;
   el.style.backgroundColor = p.bg;
   el.style.border = `1px solid ${p.border}`;
-  el.textContent = label;
+  el.innerHTML = `${CATEGORY_ICONS[label] || ''}<span>${label}</span>`;
   return el;
 }
 function makeCategoryPill(rawCategory) {
@@ -3435,7 +3449,6 @@ function finishGame(opts = {}) {
     const [wc, wd] = missedCats[0];
     hlEl.innerHTML = `${ICONS.snowflake} <b>Blindspot:</b> <span class="category-pill" id="blindspot-pill"></span> (${wd.correct}/${wd.total})`;
     const bp = $('blindspot-pill');
-    bp.textContent = wc;
     applyCategoryPillStyle(bp, wc);
     hlEl.style.display = 'block';
   } else {
