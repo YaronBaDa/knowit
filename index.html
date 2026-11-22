@@ -50,6 +50,7 @@
   --accent-bet: #F59E0B;
   --accent-brand: #F454B0;
   --accent-indigo: #FF7BC8;
+  --accent-ice: #7DD3FC;   /* same tint as the Geography category */
 
   /* Brand gradient system — Brainy Pink → Orchid */
   --brand-grad: linear-gradient(135deg, #FF6EB4 0%, #F454B0 50%, #A855F7 100%);
@@ -176,6 +177,18 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 .landing-streak-bar .fire { font-size: 12px; }
 .landing-streak-bar .broken { opacity: 0.55; filter: grayscale(1); }
+.freeze-tag { display: inline-flex; align-items: center; gap: 4px; color: var(--accent-ice); font-size: 12px; font-weight: 600; line-height: 1; }
+.freeze-tag svg { width: 12px; height: 12px; }
+.backup-link { background: none; border: 0; padding: 4px 8px; margin-top: 4px; color: var(--text-secondary); font-family: var(--font-sans); font-size: 12px; font-weight: 500; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.backup-link:active { color: var(--text-primary); }
+/* Backup modal */
+.backup-title { font-family: var(--font-display); font-size: 20px; font-weight: 700; line-height: 24px; color: var(--text-primary); }
+.backup-label { font-family: var(--font-sans); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); }
+.backup-line { font-family: var(--font-sans); font-size: 12px; line-height: 16px; color: var(--text-secondary); }
+.backup-code { width: 100%; min-height: 64px; resize: vertical; padding: 8px; border-radius: 12px; border: 1px solid var(--border-subtle); background: var(--bg-surface-subtle); color: var(--text-primary); font-family: var(--font-mono); font-size: 12px; line-height: 16px; box-sizing: border-box; }
+.backup-code:focus { outline: 2px solid var(--accent-brand); outline-offset: 1px; }
+.backup-hint { font-family: var(--font-sans); font-size: 12px; line-height: 16px; color: var(--text-secondary); min-height: 16px; }
+#backup-modal .modal-card { display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px; }
 .btn-primary {
   width: 100%; max-width: 280px; height: 52px; padding: 0 20px; border-radius: 12px; border: none;
   background: #F454B0; background-image: var(--brand-cta-grad); color: #140F12; font-size: 16px; font-weight: 700; cursor: pointer;
@@ -1035,7 +1048,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
           <span class="logo-mark-sm" aria-hidden="true"><svg viewBox="0 0 48 48" preserveAspectRatio="xMidYMid meet"><use href="#knowit-symbol"></use></svg></span>
           <span class="hub-wordmark">KNOWIT</span>
         </div>
-        <span class="streak-pill" id="streak-pill" style="display:none;"><span class="fire" id="streak-pill-fire"></span><span id="streak-pill-text"></span></span>
+        <span class="streak-pill" id="streak-pill" style="display:none;"><span class="fire" id="streak-pill-fire"></span><span id="streak-pill-text"></span><span class="freeze-tag" id="streak-pill-freeze" style="display:none;" aria-label="Freeze ready"></span></span>
       </div>
 
       <!-- pre-completion hero -->
@@ -1089,9 +1102,11 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
       <div class="landing-streak-bar" id="streak-bar" style="display:none;">
         <span class="fire" id="streak-fire"></span>
         <span id="streak-text"></span>
+        <span class="freeze-tag" id="streak-freeze" style="display:none;"></span>
       </div>
       <div class="grid-hint" id="landing-puzzle"></div>
       <button class="btn-primary" id="btn-daily">Play Today's Set</button>
+      <button class="backup-link" id="btn-backup" type="button">Backup</button>
     </div>
   </div>
 
@@ -1247,6 +1262,27 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
       <div class="modal-cta">
         <button class="btn-primary" id="duel-accept">Accept challenge</button>
         <button class="link-home" id="duel-justplay" type="button">Just play</button>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop" id="backup-modal" style="display:none;">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="backup-title">
+      <div class="backup-title" id="backup-title">Backup</div>
+
+      <div class="backup-label">Export code</div>
+      <div class="backup-line">Carries your streak, Brainprint and today's result to another device.</div>
+      <button class="btn-secondary" id="backup-gen" type="button">Generate code</button>
+      <textarea class="backup-code" id="backup-code" readonly rows="3" placeholder="Your code appears here"></textarea>
+      <button class="btn-secondary" id="backup-copy" type="button" disabled>Copy</button>
+
+      <div class="backup-label">Restore</div>
+      <div class="backup-line">Paste a code to merge it in. Higher numbers win, nothing is added twice.</div>
+      <textarea class="backup-code" id="backup-input" rows="3" placeholder="Paste a backup code"></textarea>
+      <div class="backup-hint" id="backup-hint"></div>
+
+      <div class="modal-cta">
+        <button class="btn-primary" id="backup-restore" type="button">Restore</button>
+        <button class="link-home" id="backup-close" type="button">Close</button>
       </div>
     </div>
   </div>
@@ -1961,6 +1997,8 @@ const FAST_TIME_SEC = 55;
 const FEEDBACK_MS_CORRECT = 1800;
 const FEEDBACK_MS_WRONG = 3200;
 const GAUNTLET_LIVES = 3;
+const FREEZE_MAX = 2;      // banked streak freezes — earned only, never bought
+const FREEZE_EVERY = 7;    // one freeze for every 7 consecutive days
 
 // Entry channel from ?s= on the link that brought them here (c=copy, g=challenge, h=home hub, b=brainprint).
 // Session only, never persisted — exposed for the analytics hook later.
@@ -2084,6 +2122,10 @@ function loadStats() {
       // New bet stats — default for existing saved data
       if (s.betsUsed === undefined) s.betsUsed = 0;
       if (s.betsHit === undefined) s.betsHit = 0;
+      // Streak freezes — additive fields, existing saves get sane defaults
+      if (typeof s.freezes !== 'number' || !isFinite(s.freezes)) s.freezes = 0;
+      s.freezes = Math.max(0, Math.min(FREEZE_MAX, Math.floor(s.freezes)));
+      if (!Array.isArray(s.freezeUsedOn)) s.freezeUsedOn = [];
       // Per-category lifetime map — migrate older saves in place, never touch streak/played/bestEndless
       const hadCategories = !!s.categories && typeof s.categories === 'object' && !Array.isArray(s.categories);
       if (!hadCategories) {
@@ -2096,7 +2138,7 @@ function loadStats() {
       return s;
     }
   } catch(e){}
-  return { played:0, streak:0, maxStreak:0, totalCorrect:0, totalAnswered:0, bestEndless:0, lastDate:null, completedDaily:null, betsUsed:0, betsHit:0, categories:{} };
+  return { played:0, streak:0, maxStreak:0, totalCorrect:0, totalAnswered:0, bestEndless:0, lastDate:null, completedDaily:null, betsUsed:0, betsHit:0, freezes:0, freezeUsedOn:[], categories:{} };
 }
 function saveStats() {
   try { localStorage.setItem('knowit_stats_v3', JSON.stringify(stats)); } catch(e){}
@@ -2730,16 +2772,39 @@ function dayDiff(aStr, bStr) {   // whole days from a to b, both 'YYYY-MM-DD'
   const p = s => { const [y,m,d] = s.split('-').map(Number); return Date.UTC(y, m-1, d); };
   return Math.round((p(bStr) - p(aStr)) / 86400000);
 }
+function shiftDate(dateStr, days) {   // 'YYYY-MM-DD' + n days (UTC)
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const t = new Date(Date.UTC(y, m - 1, d) + days * 86400000);
+  return `${t.getUTCFullYear()}-${String(t.getUTCMonth() + 1).padStart(2, '0')}-${String(t.getUTCDate()).padStart(2, '0')}`;
+}
+let _freezeUsedOn = null;   // consumed this run → toast after saveStats
+let _freezeEarned = false;  // milestone hit this run → toast after saveStats
 function streakAfterCompletion(prevStreak, lastDate, today) {
   if (!lastDate) return 1;
   const gap = dayDiff(lastDate, today);
   if (gap <= 0) return Math.max(1, prevStreak);   // same day or clock oddity: never decrease, never double count
   if (gap === 1) return prevStreak + 1;
+  // Exactly one missed day can be covered by a banked freeze (gap of 3+ always resets)
+  if (gap === 2 && stats.freezes > 0) {
+    stats.freezes--;
+    const skipped = shiftDate(lastDate, 1);
+    stats.freezeUsedOn.push(skipped);
+    _freezeUsedOn = skipped;
+    return prevStreak + 1;
+  }
   return 1;                                        // missed at least one day
 }
 function effectiveStreak(s, today = getToday()) {
   if (!s.lastDate) return 0;
-  return dayDiff(s.lastDate, today) <= 1 ? s.streak : 0;   // gap 0 or 1 = alive; older = ended
+  const gap = dayDiff(s.lastDate, today);
+  if (gap <= 1) return s.streak;                   // gap 0 or 1 = alive
+  if (gap === 2 && (s.freezes || 0) > 0) return s.streak;   // one missed day, a freeze covers it
+  return 0;
+}
+function grantFreeze() {
+  if (stats.freezes >= FREEZE_MAX) return false;
+  stats.freezes++;
+  return true;
 }
 // ---- Next set countdown (next UTC midnight) ----
 function msUntilNextSet(now = new Date()) { return Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1) - now.getTime(); }
@@ -2931,6 +2996,16 @@ function renderHub() {
   } else {
     pill.style.display = 'none';
   }
+  const pillFreeze = $('streak-pill-freeze');
+  if (pillFreeze) {
+    if (eff > 0 && stats.freezes > 0) {
+      pillFreeze.innerHTML = ICONS.snowflake + '<span>Freeze ready</span>';
+      pillFreeze.style.display = 'inline-flex';
+    } else {
+      pillFreeze.innerHTML = '';
+      pillFreeze.style.display = 'none';
+    }
+  }
 
   // trophy card
   $('trophy-eyebrow').textContent = `TODAY'S RUN · #${getDailyNum()}`;
@@ -2992,6 +3067,14 @@ function renderStreakBar() {
       : `${eff}-day streak · Play today to keep it`;
     fire.innerHTML = ICONS.flame;
     fire.classList.remove('broken');
+    const tag = $('streak-freeze');
+    if (stats.freezes > 0) {
+      tag.innerHTML = `${ICONS.snowflake}<span>Freeze ready</span>`;
+      tag.style.display = 'inline-flex';
+    } else {
+      tag.innerHTML = '';
+      tag.style.display = 'none';
+    }
   } else {
     // no live streak: the line stays out of the way entirely
     bar.style.display = 'none';
@@ -3760,11 +3843,15 @@ function finishGame(opts = {}) {
       stats.lastDate = today;
       stats.maxStreak = Math.max(stats.maxStreak, stats.streak);
       stats.completedDaily = today;
+      // Every 7th consecutive day banks a freeze, up to the cap
+      if (stats.streak > 0 && stats.streak % FREEZE_EVERY === 0 && grantFreeze()) _freezeEarned = true;
     } else {
       wasBestRun = run > stats.bestEndless && run > 0;
       stats.bestEndless = Math.max(stats.bestEndless, run);
     }
     saveStats();
+    if (_freezeUsedOn) { toast(`Freeze used — ${stats.freezes} left. Streak kept.`); _freezeUsedOn = null; }
+    if (_freezeEarned) { toast('Freeze earned — one missed day is covered.'); _freezeEarned = false; }
     // Finished daily: persist the result, drop the in-progress copy
     if (state.mode === 'daily') { saveResult(); clearProgress(); }
   }
@@ -4019,6 +4106,112 @@ function startDuelFromModal(clearLink) {
   else startDaily();
 }
 
+// ---- Backup: export / restore a self-contained code (never touches progress) ----
+const BACKUP_MAX_CHARS = 20000;                     // 20KB ceiling
+const BACKUP_MAX_FIELDS = ['played','maxStreak','totalCorrect','totalAnswered','bestEndless','betsUsed','betsHit'];
+function b64urlEncode(str) {
+  const bytes = new TextEncoder().encode(str);
+  let bin = '';
+  bytes.forEach(b => { bin += String.fromCharCode(b); });
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+function b64urlDecode(str) {
+  const b64 = String(str).replace(/-/g, '+').replace(/_/g, '/');
+  const pad = b64.length % 4 ? '='.repeat(4 - (b64.length % 4)) : '';
+  const bin = atob(b64 + pad);
+  const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+function backupPayload() {
+  const r = loadResult();
+  return {
+    v: 1,
+    stats: {
+      played: stats.played, streak: stats.streak, maxStreak: stats.maxStreak,
+      totalCorrect: stats.totalCorrect, totalAnswered: stats.totalAnswered,
+      bestEndless: stats.bestEndless, lastDate: stats.lastDate, completedDaily: stats.completedDaily,
+      betsUsed: stats.betsUsed, betsHit: stats.betsHit,
+      freezes: stats.freezes, freezeUsedOn: stats.freezeUsedOn,
+      categories: stats.categories,
+    },
+    result: (r && r.date === getToday()) ? r : null,   // today only, never history
+  };
+}
+function buildBackupCode() {
+  try { return b64urlEncode(JSON.stringify(backupPayload())); } catch (e) { return ''; }
+}
+function parseBackupCode(code) {
+  const raw = String(code || '').trim();
+  if (!raw) throw new Error('Paste a backup code first.');
+  if (raw.length > BACKUP_MAX_CHARS) throw new Error('That code is too large — 20KB max.');
+  let obj;
+  try { obj = JSON.parse(b64urlDecode(raw)); } catch (e) { throw new Error("That doesn't look like a KNOWIT backup code."); }
+  if (!obj || typeof obj !== 'object' || obj.v !== 1) throw new Error('Unsupported backup code version.');
+  const st = obj.stats;
+  if (!st || typeof st !== 'object' || Array.isArray(st)) throw new Error('Backup is missing its stats.');
+  for (const k of BACKUP_MAX_FIELDS.concat(['streak'])) {
+    if (typeof st[k] !== 'number' || !isFinite(st[k])) throw new Error('Backup stats are malformed (' + k + ').');
+  }
+  if (!st.categories || typeof st.categories !== 'object' || Array.isArray(st.categories)) throw new Error('Backup categories are malformed.');
+  if (obj.result !== null && obj.result !== undefined) {
+    if (typeof obj.result !== 'object' || !Array.isArray(obj.result.answers)) throw new Error('Backup result is malformed.');
+  }
+  return obj;
+}
+function mergeBackup(obj) {
+  const inc = obj.stats;
+  // Counters: keep the higher value, never add them together
+  BACKUP_MAX_FIELDS.forEach(k => {
+    stats[k] = Math.max(Number(stats[k]) || 0, Math.round(Number(inc[k]) || 0));
+  });
+  // Streak travels with the more recent lastDate
+  const localDate = typeof stats.lastDate === 'string' ? stats.lastDate : '';
+  const incDate = typeof inc.lastDate === 'string' ? inc.lastDate : '';
+  if (incDate && incDate > localDate) {
+    stats.lastDate = incDate;
+    stats.streak = Math.round(Number(inc.streak) || 0);
+    if (typeof inc.completedDaily === 'string' && inc.completedDaily === incDate) stats.completedDaily = incDate;
+  }
+  // Categories: keep whichever bucket has more answers (Brainprint comes back, nothing is double counted)
+  Object.keys(inc.categories).forEach(key => {
+    const b = inc.categories[key];
+    if (!b || typeof b !== 'object') return;
+    const a = stats.categories[key];
+    if (!a || (Number(b.answered) || 0) > (Number(a.answered) || 0)) stats.categories[key] = { ...b };
+  });
+  // Freezes: best of each, skipped dates unioned
+  stats.freezes = Math.min(FREEZE_MAX, Math.max(Number(stats.freezes) || 0, Number(inc.freezes) || 0));
+  const used = new Set([].concat(Array.isArray(stats.freezeUsedOn) ? stats.freezeUsedOn : [], Array.isArray(inc.freezeUsedOn) ? inc.freezeUsedOn : []));
+  stats.freezeUsedOn = [...used].slice(-20);
+  saveStats();
+  // Today's result only, and only if this device has none yet
+  const local = loadResult();
+  if (obj.result && obj.result.date === getToday() && !(local && local.date === getToday())) {
+    try { localStorage.setItem('knowit_result_v1', JSON.stringify(obj.result)); } catch(e){}
+  }
+}
+function openBackup() {
+  $('backup-code').value = '';
+  $('backup-copy').disabled = true;
+  $('backup-input').value = '';
+  $('backup-hint').textContent = '';
+  $('backup-modal').style.display = 'flex';
+}
+function closeBackup() { $('backup-modal').style.display = 'none'; }
+function restoreBackup() {
+  const hint = $('backup-hint');
+  let obj;
+  try { obj = parseBackupCode($('backup-input').value); }
+  catch (e) { hint.textContent = e.message; return; }
+  if (!confirm('Merge this backup into your stats? Higher numbers win and nothing is added twice.')) return;
+  mergeBackup(obj);
+  hint.textContent = 'Restored.';
+  renderLanding();
+  renderStreakBar();
+  renderBrainprintTriggers();
+  toast('Backup restored.');
+}
+
 // ---- Review modal ----
 function openReview(i) {
   const a = state.answers[i];
@@ -4226,11 +4419,28 @@ $('rm-close').onclick = closeReview;
 $('review-modal').addEventListener('click', e => { if (e.target === $('review-modal')) closeReview(); });
 
 // Brainprint modal wiring
+$('btn-backup').onclick = () => { audio.click(); openBackup(); };
+$('backup-close').onclick = () => { audio.click(); closeBackup(); };
+$('backup-modal').addEventListener('click', e => { if (e.target === $('backup-modal')) closeBackup(); });
+$('backup-gen').onclick = () => {
+  audio.click();
+  const code = buildBackupCode();
+  $('backup-code').value = code;
+  $('backup-copy').disabled = !code;
+  $('backup-hint').textContent = code ? 'Code ready — copy it somewhere safe.' : 'Nothing to back up yet.';
+};
+$('backup-copy').onclick = () => {
+  audio.click();
+  const code = $('backup-code').value;
+  if (code) copyText(code, $('backup-copy'), 'Copy');
+};
+$('backup-restore').onclick = () => { audio.click(); restoreBackup(); };
 $('bp-close').onclick = () => { audio.click(); closeBrainprint(); };
 $('brainprint-modal').addEventListener('click', e => { if (e.target === $('brainprint-modal')) closeBrainprint(); });
 $('bp-share').addEventListener('click', () => { audio.click(); shareBrainprint(); });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && $('brainprint-modal').style.display === 'flex') closeBrainprint();
+  if (e.key === 'Escape' && $('backup-modal').style.display === 'flex') closeBackup();
 });
 $('btn-home').onclick = ()=>{ audio.click(); state.replayDay = null; showScreen('landing'); renderLanding(); };
 
