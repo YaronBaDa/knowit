@@ -466,19 +466,28 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* Feedback strip — floats over the bottom of the question area; takes no space when hidden */
 .mid-slot { position: relative; flex-shrink: 0; margin-top: auto; }
 .feedback-strip {
-  position: absolute; left: 0; right: 0; bottom: 8px; margin: 0; z-index: 5; background: var(--bg-surface); pointer-events: none;
-  text-align: left; padding: 12px 12px; border-radius: var(--radius);
-  border: 1px solid var(--border-subtle); opacity: 0; transform: translateY(4px); transition: opacity .2s, transform .2s;
-  height: 80px; overflow: hidden; flex-shrink: 0;
-  display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 4px;
+  /* In-flow above the answer dock: grows with its copy, never clipped, never covers a card. */
+  position: static; width: 100%; box-sizing: border-box;
+  margin: 8px 0 0; padding: 12px 16px; border-radius: 12px;
+  background: var(--bg-surface); border: 1px solid var(--border-subtle);
+  text-align: left; pointer-events: none; z-index: 5;
+  display: none; flex-direction: column; align-items: stretch; justify-content: center; gap: 4px;
+  height: auto; min-height: 64px; max-height: none; overflow: visible; flex-shrink: 0;
 }
-.feedback-strip.show { opacity: 1; transform: translateY(0); }
+.feedback-strip.show { display: flex; animation: fb-in 180ms ease both; }
+@keyframes fb-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 .feedback-strip.correct { border-color: var(--accent-correct); }
 .feedback-strip.wrong { border-color: var(--accent-incorrect); }
 .feedback-strip.timeout { border-color: var(--accent-bet); }
-.feedback-strip .fb-result { font-size: 16px; font-weight: 700; line-height: 1.2; }
-.feedback-strip .fb-insight { font-size: 12px; color: var(--text-secondary); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-@media (min-height: 700px) { .feedback-strip { height: 104px; } .feedback-strip .fb-insight { -webkit-line-clamp: 3; } }
+.feedback-strip .fb-result {
+  font-family: var(--font-sans); font-size: 16px; font-weight: 700; line-height: 20px;
+  margin: 0; letter-spacing: 0;
+}
+.feedback-strip .fb-insight {
+  font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 16px;
+  color: #E5E7EB; margin: 0; word-wrap: break-word; overflow-wrap: anywhere;
+  display: block; overflow: visible; -webkit-line-clamp: none; -webkit-box-orient: initial;
+}
 
 /* Share / results */
 .results-body { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; text-align: center; gap: 12px; min-height: 0; overflow-y: auto; padding-bottom: 16px; }
@@ -918,6 +927,10 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .modal-card .mdyk, .toast, .duel-card .d-time, #rm-picked, .grid-hint {
   font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 1.45; letter-spacing: 0;
 }
+
+/* Feedback box owns its own type scale (16/20 verdict, 12/16 body) */
+.feedback-strip .fb-result { font-size: 16px; line-height: 20px; }
+.feedback-strip .fb-insight { font-size: 12px; line-height: 16px; }
 
 /* .type-eyebrow */
 .tc-eyebrow, .endless-teaser .et-eyebrow, .sc-stat span,
