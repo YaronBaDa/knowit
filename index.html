@@ -9,6 +9,8 @@
 <link rel="icon" href="https://yaronbada.github.io/knowit/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="64x64" href="https://yaronbada.github.io/knowit/favicon.png">
 <link rel="apple-touch-icon" href="https://yaronbada.github.io/knowit/apple-touch-icon.png">
+<!-- Analytics (Plausible). Replace YOUR_DOMAIN_HERE with the real domain; every call goes through track() -->
+<script defer data-domain="YOUR_DOMAIN_HERE" src="https://plausible.io/js/script.js"></script>
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="KNOWIT">
 <meta property="og:title" content="KNOWIT — Daily Trivia">
@@ -1956,6 +1958,21 @@ function getChannelParam() {
 let ENTRY_SOURCE = getChannelParam();
 window.ENTRY_SOURCE = ENTRY_SOURCE;
 
+// ---- Analytics: one wrapper so the provider can be swapped; never throws, never blocks ----
+function track(name, props) {
+  try {
+    if (typeof window.plausible === 'function') window.plausible(name, { props });
+  } catch(e) {}
+}
+function currentSource() {
+  try {
+    if (typeof ENTRY_SOURCE === 'string' && ENTRY_SOURCE) return ENTRY_SOURCE;
+    const raw = new URLSearchParams(window.location.search).get('s');
+    return raw || 'direct';
+  } catch(e) { return 'direct'; }
+}
+let _trackedDaily = null;   // puzzle number already counted, so daily_complete can't double-fire
+
 let state = {
   mode: 'daily', // 'daily' | 'endless'
   screen: 'landing',
@@ -2347,6 +2364,7 @@ function renderBrainprint() {
   return d;
 }
 function openBrainprint() {
+  track('brainprint_open');
   renderBrainprint();
   $('brainprint-modal').style.display = 'flex';
 }
@@ -2521,6 +2539,7 @@ async function shareBrainprint() {
     const file = new File([blob], 'knowit-brainprint.png', { type: 'image/png' });
     const text = brainprintSummaryText(d);
     const canShareFiles = !!(navigator.canShare && navigator.share && navigator.canShare({ files: [file] }));
+    track('share_tap', { type: 'brainprint', method: canShareFiles ? 'native' : 'clipboard' });
     if (canShareFiles) {
       try {
         await navigator.share({ title: 'My KNOWIT Brainprint', text, files: [file] });
@@ -3278,6 +3297,7 @@ function startDaily() {
   state.duel = parseDuelParam();
   resetCategoryRunGuard();
   // Resume an interrupted daily for today's puzzle (same ids, same order)
+  let resumed = false;
   const saved = loadProgress();
   if (saved) {
     const idsOk = Array.isArray(saved.ids) && saved.ids.length === state.questions.length
@@ -3286,6 +3306,7 @@ function startDaily() {
       && Array.isArray(saved.answers) && saved.answers.length <= 10;
     if (valid) {
       state.answers = saved.answers.map((a, i) => ({ ...a, q: state.questions[i] }));
+      resumed = true;
       state.betsLeft = saved.betsLeft;
       state.currentQ = state.answers.length;
       if (saved.duel) state.duel = saved.duel;
@@ -3301,6 +3322,7 @@ function startDaily() {
   $('header-meta').textContent = `#${getDailyNum()} · Q01/10`;
   $('endless-hud').style.display = 'none';
   renderDuelBanner();
+  track('daily_start', { resumed, is_duel: !!state.duel });
   showScreen('playing');
   renderQuestion();
 }
@@ -3337,6 +3359,7 @@ function startDailyReplay(dayNum, duel) {
 function startEndless() {
   state.replayDay = null;
   state.mode = 'endless';
+  track('endless_start');
   state.currentQ = 0;
   state.answers = [];
   state.questions = [];
@@ -3597,6 +3620,23 @@ function finishGame(opts = {}) {
   const totalPoints = sumPoints(state.answers);
   const dailyArch = state.mode === 'daily' ? getArchetype(correct, total, totalTimeSec, betUsed, betHit, totalPoints) : null;
 
+  // Analytics: once per puzzle, never on a replay of saved results
+  if (!unranked) {
+    if (state.mode === 'daily' && _trackedDaily !== getDailyNum()) {
+      _trackedDaily = getDailyNum();
+      track('daily_complete', {
+        points: totalPoints,
+        correct,
+        bets_used: betUsed,
+        bets_hit: betHit,
+        seconds: Math.round(totalTimeSec),
+        streak: stats.streak,
+      });
+    } else if (state.mode === 'endless') {
+      track('endless_complete', { run });
+    }
+  }
+
   // Hero
   if (state.mode === 'daily') {
     $('hero-score').textContent = fmtPts(totalPoints);
@@ -3735,6 +3775,11 @@ function finishGame(opts = {}) {
     else if (totalTimeSec > d.time) { outcome = losing; oIcon = 'skull'; oColor = 'var(--wrong)'; }
     $('duel-outcome').innerHTML = `${outcome}${oIcon ? ICONS[oIcon] : ''}`;
     $('duel-outcome').style.color = oColor;
+    // Only a run just played counts as a duel result — viewing saved results is not a new duel
+    if (!unranked) {
+      track('duel_result', { outcome: totalPoints > d.score || (totalPoints === d.score && totalTimeSec < d.time) ? 'win'
+        : (totalPoints < d.score || (totalPoints === d.score && totalTimeSec > d.time) ? 'loss' : 'tie') });
+    }
   } else {
     $('duel-card').style.display = 'none';
   }
@@ -3798,6 +3843,7 @@ function closeDuelModal() {
 }
 function startDuelFromModal(clearLink) {
   const p = state.pendingDuel;
+  if (!clearLink) track('duel_accept');
   savePlayerName($('duel-name').value);
   closeDuelModal();
   if (clearLink) { clearDuelParam(); state.duel = null; }
@@ -3919,6 +3965,7 @@ $('btn-quick-share').onclick = ()=>{
   const r = loadResult();
   if (!r || r.date !== getToday() || !Array.isArray(r.answers)) return;
   const payload = buildDailySharePayload(r.answers, r.puzzle || getDailyNum(), stats.streak, 'h');
+  track('share_tap', { type: 'quick', method: navigator.share ? 'native' : 'clipboard' });
   const btn = $('btn-quick-share');
   if (navigator.share) {
     navigator.share({ title: 'KNOWIT', text: payload.shareFull }).catch(()=>{});
@@ -3938,7 +3985,10 @@ $('btn-close').onclick = ()=>{
   const msg = state.mode === 'daily'
     ? "Stepping away? You can resume today, but this question's clock keeps running."
     : 'Leave Endless mode? Your current streak will be lost.';
-  if (confirm(msg)) { stopQTimer(); showScreen('landing'); renderLanding(); }
+  if (confirm(msg)) {
+    track('question_abandon', { q_index: state.currentQ });
+    stopQTimer(); showScreen('landing'); renderLanding();
+  }
 };
 function setBtnLabel(btn, txt) {
   const l = btn.querySelector('.btn-label');
@@ -3960,6 +4010,7 @@ function copyText(text, btn, label) {
 // Challenge a Friend — duel payload (native share sheet when available)
 $('btn-challenge').onclick = ()=>{
   audio.click();
+  track('share_tap', { type: 'challenge', method: navigator.share ? 'native' : 'clipboard' });
   const btn = $('btn-challenge');
   const text = state.shareFull || state.shareClean || $('share-text').textContent;
   if (navigator.share) {
@@ -3992,6 +4043,7 @@ function copyGridOnly(btn) {
 }
 $('btn-copy').onclick = ()=>{
   audio.click();
+  track('share_tap', { type: 'copy', method: 'clipboard' });
   copyGridOnly($('btn-copy'));
 };
 // Inject inline SVG icons into action buttons (monochrome, matches core UI)
@@ -4017,6 +4069,11 @@ $('btn-home').onclick = ()=>{ audio.click(); state.replayDay = null; showScreen(
 
 // ---- Init ----
 renderLanding();
+track('landing_view', {
+  source: currentSource(),
+  is_duel: !!parseDuelParam(),
+  returning: stats.played > 0,
+});
 // Challenge links: pre-game modal for today or an unranked replay, head-to-head if already played
 const duelP = parseDuelParam();
 if (duelP) {
