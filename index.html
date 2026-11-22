@@ -1117,7 +1117,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
     </div>
 
     <!-- Swipe-to-bet day-1 tip (daily only) -->
-    <div class="swipe-tip" id="swipe-tip" style="display:none;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span>Swipe right on an answer to bet (+2 / −1)</span></div>
+    <div class="swipe-tip" id="swipe-tip" style="display:none;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span>Swipe right on an answer to bet (+2 / −2)</span></div>
 
     <div class="mid-slot" id="mid-slot">
       <button type="button" class="bet-toggle" id="bet-toggle" aria-pressed="false" style="display:none;"></button>
@@ -2600,7 +2600,7 @@ function parseDuelParam() {
     const score = parseInt(parts[0]);
     const time = parseFloat(parts[1]);
     const name = parts[2] ? decodeURIComponent(parts.slice(2).join('_')) : 'Challenger';
-    if (isNaN(score) || isNaN(time) || score < -3 || score > 13) return null;
+    if (isNaN(score) || isNaN(time) || score < -13 || score > 13) return null;
     return { score, time, name, puzzle };
   } catch(e) { return null; }
 }
@@ -3218,7 +3218,7 @@ function startDaily() {
   $('endless-hud').style.display = 'none';
   if (state.duel) {
     $('duel-banner').style.display = 'flex';
-    $('duel-banner-text').textContent = `DUELING: ${state.duel.name} (${state.duel.score} pts · ${state.duel.time}s)`;
+    $('duel-banner-text').textContent = `DUELING: ${state.duel.name} (${fmtPts(state.duel.score)} · ${state.duel.time}s)`;
   } else {
     $('duel-banner').style.display = 'none';
   }
@@ -3607,7 +3607,7 @@ function finishGame(opts = {}) {
     const d = state.duel;
     $('duel-card').style.display = 'block';
     $('duel-them-name').textContent = d.name;
-    $('duel-them-score').textContent = `${d.score} pts`;
+    $('duel-them-score').textContent = fmtPts(d.score);
     $('duel-them-time').textContent = fmtTimeSec(d.time);
     $('duel-you-score').textContent = fmtPts(totalPoints);
     $('duel-you-time').textContent = fmtTimeSec(totalTimeSec);
@@ -3668,7 +3668,7 @@ function openReview(i) {
   $('rm-question').textContent = a.q.question;
   $('rm-picked').textContent = a.picked === null ? 'No answer (time ran out)' : a.q.options[a.picked];
   $('rm-correct').textContent = a.q.options[a.q.correctIndex];
-  $('rm-bet').textContent = a.bet ? (a.correct ? 'Hit +2' : 'Missed -1') : 'None';
+  $('rm-bet').textContent = a.bet ? (a.correct ? 'Hit +2' : 'Missed −2') : 'None';
   $('rm-dyk').textContent = a.q.didYouKnow;
   $('review-modal').style.display = 'flex';
 }
