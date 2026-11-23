@@ -28,7 +28,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lexend+Zetta:wght@700&family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lexend+Zetta:wght@700&family=Lexend:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <title>KNOWIT</title>
 <style>
 :root {
@@ -93,6 +93,7 @@
   --font-display: 'Lexend Zetta', sans-serif;
   /* labels/counters now use Lexend; the token name is kept so sizes stay untouched */
   --font-mono: var(--font-sans);
+  --font-telemetry: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -220,15 +221,28 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .daily-locked b { color: var(--ink); font-size: 16px; }
 
 /* Endless teaser */
+/* Hero Endless stage — the primary post-completion destination */
 .endless-teaser {
-  background: #1F181C; border: 1px solid rgba(244, 84, 176, 0.28); border-radius: 16px;
-  padding: 16px; max-width: 340px; width: 100%; text-align: left;
-  flex: 0 0 auto;
+  max-width: 340px; width: 100%; text-align: left;
+  border-radius: 16px; padding: 20px;
+  background: radial-gradient(circle at 50% 0%, rgba(244, 84, 176, 0.14) 0%, rgba(168, 85, 247, 0.06) 45%, #1F181C 85%);
+  border: 1px solid rgba(244, 84, 176, 0.28);
+  flex: 1 1 auto; min-height: 0;
+  display: flex; flex-direction: column; justify-content: space-between; gap: 12px;
 }
-.endless-teaser .et-eyebrow { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--brand-glow); font-weight: 600; margin-bottom: 8px; }
-.endless-teaser .et-title { color: var(--text-primary); margin-bottom: 4px; }
-.endless-teaser .et-line { color: var(--text-secondary); margin-bottom: 12px; }
-.endless-teaser .btn-primary { width: 100%; max-width: none; }
+.et-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
+.et-eyebrow { font-family: var(--font-sans); font-size: 12px; font-weight: 700; line-height: 16px; letter-spacing: 0.08em; color: #F454B0; }
+.et-pill {
+  font-family: var(--font-sans); font-size: 12px; font-weight: 600; line-height: 16px;
+  color: var(--text-secondary); background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10); border-radius: 9999px; padding: 4px 12px;
+}
+.et-center { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; flex: 1; width: 100%; }
+.et-num { font-family: var(--font-sans); font-size: 48px; font-weight: 800; line-height: 52px; font-variant-numeric: tabular-nums; color: #F3F4F6; }
+.et-headline { font-family: var(--font-sans); font-size: 24px; font-weight: 700; line-height: 28px; color: #F3F4F6; }
+.et-num-label { font-family: var(--font-sans); font-size: 12px; font-weight: 600; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); margin-top: 4px; }
+.et-line { font-family: var(--font-sans); font-size: 13px; line-height: 18px; color: var(--text-secondary); margin-top: 8px; }
+.endless-teaser .btn-primary { width: 100%; max-width: none; height: 48px; border-radius: 12px; flex-shrink: 0; }
 
 /* ---- Completed-day hub: bottom-anchored 2-card stack ---- */
 .hub-head, .hub-cards { display: none; }
@@ -264,12 +278,15 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .streak-pill { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 9999px; border: 1px solid rgba(244, 84, 176, 0.28); background: var(--accent-brand-tint); color: var(--brand-pink); font-family: var(--font-mono); font-size: 12px; font-weight: 600; }
 .streak-pill .fire { display: inline-flex; }
 .streak-pill svg { width: 12px; height: 12px; }
+/* Compact daily receipt — the top, content-sized card */
 .trophy-card {
-  width: 100%; max-width: 340px; background: #1A1418; border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px; padding: 20px; text-align: left;
-  flex: 1 1 auto; min-height: 0;
-  display: flex; flex-direction: column; justify-content: space-between; gap: 8px;
+  width: 100%; max-width: 340px; background: #1F181C; border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px; padding: 16px; text-align: left;
+  flex: 0 0 auto;
+  display: flex; flex-direction: column;
 }
+.tc-hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; margin-top: 8px; width: 100%; }
+.tc-result { font-family: var(--font-sans); font-size: 14px; font-weight: 600; line-height: 20px; color: var(--text-secondary); text-align: right; }
 .tc-top, .tc-mid, .tc-bottom { display: flex; flex-direction: column; width: 100%; }
 /* one data block (top) and one interaction block (bottom); a single flexible gap between them */
 .tc-top { gap: 8px; align-items: stretch; flex: 0 0 auto; }
@@ -283,8 +300,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .tc-eyebrow { display: block; font-family: var(--font-sans); font-size: 12px; line-height: 16px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); font-weight: 600; margin: 0; }
 .tc-score { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; width: 100%; color: var(--text-primary); }
 .tc-points {
-  display: block; width: 100%; margin-top: 4px;
-  font-family: var(--font-sans); font-size: 44px; font-weight: 800; line-height: 48px;
+  display: block;
+  font-family: var(--font-sans); font-size: 28px; font-weight: 800; line-height: 32px;
   letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: #F3F4F6;
 }
 .tc-sub {
@@ -292,8 +309,13 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   font-family: var(--font-sans); font-size: 16px; font-weight: 600; line-height: 20px;
   color: var(--text-secondary);
 }
-.tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin: 0; padding: 0; }
-.tc-mid .tc-grid { margin-top: 0; }
+.tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 12px; padding: 0; }
+.tc-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; width: 100%; }
+.tc-actions > * { min-width: 0; }
+.tc-actions .btn-secondary, .tc-actions .bp-trigger-btn {
+  width: 100%; max-width: none; height: 40px; padding: 0 4px; border-radius: 12px;
+  font-size: 12px; font-weight: 600; white-space: nowrap;
+}
 
 /* ---- Unified rubric tile: ONE design for in-game, home and results ---- */
 .rubric-tile {
@@ -310,19 +332,17 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .rubric-incorrect, .rubric-incorrect-bet, .rubric-endless-incorrect { background: #F22933; border: none; cursor: pointer; }
 /* the home strip is a summary, not a control */
 .tc-grid .rubric-tile { cursor: default; }
-#next-set-line, .tc-count { font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+#next-set-line, .tc-count { font-family: var(--font-sans); font-size: 12px; line-height: 16px; color: var(--text-secondary); white-space: nowrap; margin-top: 8px; }
 /* Completed hub: countdown + lifetime line reads as body copy, never a mono counter */
 #screen-landing.is-completed .tc-count {
   font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 1.35;
   letter-spacing: 0; color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: normal;
 }
-.tc-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .tc-actions .btn-secondary {
-  max-width: none; width: 100%; height: 44px; padding: 0 12px; font-size: 16px; border-radius: 12px;
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
   background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.14); color: var(--text-primary);
 }
-.tc-actions .btn-secondary svg { width: 16px; height: 16px; flex-shrink: 0; opacity: .85; }
+.tc-actions .btn-secondary svg { width: 12px; height: 12px; flex-shrink: 0; opacity: .85; }
 #screen-landing.is-completed #landing-stats { display: none; }
 #screen-landing:not(.is-completed) #landing-stats { display: none !important; }
 
@@ -429,21 +449,26 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .endless-hud .life { transition: opacity .3s, filter .3s, transform .3s; }
 .endless-hud .life.lost { opacity: 0.25; filter: grayscale(1); transform: scale(0.85); }
 .endless-hud .streak {
-  font-family: var(--font-sans);
+  font-family: var(--font-telemetry);
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.04em;
   font-variant-numeric: tabular-nums;
-  opacity: 0.85;
-  color: var(--text-primary);
-  transition: all .3s;
+  color: rgba(243, 244, 246, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 4px 12px; border-radius: 9999px;
+  transition: color .3s, border-color .3s, background .3s, box-shadow .3s;
 }
-.endless-hud .streak.blazing {
-  font-weight: 600;
-  opacity: 1;
-  color: #F59E0B; text-shadow: 0 0 12px rgba(245, 158, 11, 0.35);
-  border: 1px solid rgba(245, 158, 11, 0.45); background: var(--accent-bet-tint);
-  padding: 4px 12px; border-radius: 20px;
+/* Tier 2 — Q05-Q09: amber warning */
+.endless-hud .streak.tier-2 {
+  color: #F59E0B; border-color: rgba(245, 158, 11, 0.45);
+  background: rgba(245, 158, 11, 0.12); font-weight: 700;
+}
+/* Tier 3 — Q10+: Brainy Pink-to-Orchid glow */
+.endless-hud .streak.tier-3 {
+  color: #FFFFFF; border: 1px solid #F454B0;
+  background: rgba(244, 84, 176, 0.16);
+  box-shadow: 0 0 12px rgba(244, 84, 176, 0.35); font-weight: 700;
 }
 
 /* Per-question timer */
@@ -502,7 +527,14 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   65% { transform: scale(1.1); opacity: .7; }
   100% { transform: scale(0.85); opacity: .25; filter: grayscale(1); }
 }
-.endless-hud .life.last-heart { animation: heartbeat 1.2s ease-in-out infinite; }
+.endless-hud .life.last-heart { color: #F22933; animation: lastHeartPulse 1.2s ease-in-out infinite; transform-origin: center; }
+@keyframes lastHeartPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .endless-hud .life.last-heart { animation: none; }
+}
 @keyframes heartbeat {
   0%, 100% { transform: scale(1); }
   18% { transform: scale(1.18); }
@@ -567,6 +599,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .hero-score .of { color: var(--ink-dim); font-size: 32px; font-weight: 700; }
 .hero-title { margin-top: 8px; }
 .hero-sub { display: none; font-family: var(--font-mono); font-size: 12px; color: var(--ink-faint); margin-top: 4px; }
+.near-miss { font-family: var(--font-sans); font-size: 12px; font-weight: 600; line-height: 16px; color: var(--accent-bet); margin-top: 8px; }
 .streak-badge {
   display: inline-flex; align-items: center; gap: 8px;
   font-family: var(--font-sans); font-size: 12px; font-weight: 500; letter-spacing: 0.03em; color: var(--ink);
@@ -661,15 +694,6 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .bp-trigger-text { font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 16px; color: var(--text-secondary); min-width: 0; }
 .bp-trigger-text.is-top { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* ONE clickable container for the hub: trophy + top category ← → Brainprint ↗ */
-/* Transparent row: muted "Top: …" on the left, a standalone secondary button on the right */
-.bp-hub-row {
-  display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%;
-  padding: 0; border: none; background: transparent; text-align: left;
-  font-family: var(--font-sans); font-size: 12px; line-height: 16px; color: var(--text-secondary);
-}
-.bp-hub-left { display: inline-flex; align-items: center; gap: 4px; min-width: 0; font-size: 12px; line-height: 16px; color: var(--text-secondary); }
-.bp-hub-left svg { width: 12px; height: 12px; flex-shrink: 0; color: var(--accent-bet); }
-.bp-hub-left span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .bp-trigger-btn {
   flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; gap: 4px;
@@ -680,6 +704,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 .bp-trigger-btn:hover { background-color: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.22); }
 .bp-trigger-btn:active { transform: scale(0.97); }
+.bp-trigger-btn.is-locked { color: var(--text-secondary); border-style: dashed; }
 .bp-trigger-locked {
   display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 16px; border-radius: 12px;
   border: 1px dashed rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.03); color: var(--text-secondary);
@@ -998,7 +1023,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 
 /* .type-subtitle — answer cards, buttons, verdict line */
-.option-btn, .btn-primary, .btn-secondary, .btn-emerald, .tc-actions .btn-secondary,
+.option-btn, .btn-primary, .btn-secondary, .btn-emerald,
 #btn-endless, .feedback-strip .fb-result {
   font-family: var(--font-sans); font-size: 16px; font-weight: 600; line-height: 1.35; letter-spacing: 0.01em;
 }
@@ -1023,7 +1048,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .endless-teaser .et-eyebrow { color: var(--brand-glow); }
 
 /* .type-hud */
-#header-meta, .game-header .meta, .endless-hud .streak, #landing-puzzle, .streak-pill,
+#header-meta, .game-header .meta, #landing-puzzle, .streak-pill,
 .stat-chip, #q-timer-text, .results-footer-meta {
   font-family: var(--font-sans); font-size: 12px; font-weight: 500; line-height: 1.2;
   letter-spacing: 0.03em; font-variant-numeric: tabular-nums;
@@ -1092,30 +1117,33 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
       <!-- completed-day cards: one bottom-anchored stack -->
       <div class="hub-cards completed-stack" id="hub-cards">
         <div class="trophy-card" id="trophy-card">
-          <div class="tc-top">
-            <div class="tc-head-row">
-              <div class="tc-eyebrow" id="trophy-eyebrow">TODAY'S RUN</div>
-              <div class="tc-countdown"><span class="tc-clock" id="tc-clock" aria-hidden="true"></span><span id="next-set-in"></span></div>
-            </div>
+          <div class="tc-head-row">
+            <div class="tc-eyebrow" id="trophy-eyebrow">TODAY'S RUN</div>
+            <div class="tc-countdown"><span class="tc-clock" id="tc-clock" aria-hidden="true"></span><span id="next-set-in"></span></div>
+          </div>
+          <div class="tc-hero">
             <div class="tc-score" id="trophy-score"><span class="tc-sub">Today's set complete.</span></div>
+            <div class="tc-result" id="trophy-result"></div>
           </div>
-          <div class="tc-mid">
-            <div class="tc-grid" id="trophy-grid"></div>
-            <div class="tc-count" id="next-set-line"></div>
-          </div>
-          <div class="tc-bottom">
+          <div class="tc-grid" id="trophy-grid"></div>
+          <div class="tc-count" id="next-set-line"></div>
+          <div class="tc-actions">
             <div class="bp-trigger-wrap" id="bp-trigger-hub"></div>
-            <div class="tc-actions">
-              <button class="btn-secondary" id="btn-view-results" style="display:none;"><span class="btn-label">Review</span></button>
-              <button class="btn-secondary" id="btn-quick-share" style="display:none;"><span class="btn-label">Share</span></button>
-            </div>
+            <button class="btn-secondary" id="btn-view-results" style="display:none;"><span class="btn-label">Review</span></button>
+            <button class="btn-secondary" id="btn-quick-share" style="display:none;"><span class="btn-label">Share</span></button>
           </div>
         </div>
 
         <div class="endless-teaser" id="endless-teaser" style="display:none;">
-          <div class="et-eyebrow">KEEP GOING</div>
-          <div class="et-title">Endless Mode · 3 lives</div>
-          <div class="et-line" id="gt-line">Set your first run.</div>
+          <div class="et-top">
+            <div class="et-eyebrow">ENDLESS MODE</div>
+            <span class="et-pill">3 LIVES</span>
+          </div>
+          <div class="et-center">
+            <div class="et-num" id="et-num"></div>
+            <div class="et-num-label" id="et-num-label" style="display:none;">BEST RUN</div>
+            <div class="et-line" id="gt-line">3 lives · See how far you can go.</div>
+          </div>
           <button class="btn-primary" id="btn-endless">Play Endless</button>
         </div>
       </div>
@@ -1219,6 +1247,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
         <div class="hero-score" id="hero-score">9<span class="of">/10</span></div>
         <div class="hero-title" id="hero-title">MASTERMIND</div>
         <div class="hero-sub" id="hero-sub">Total —</div>
+        <div class="near-miss" id="near-miss" style="display:none;"></div>
         <div class="streak-badge" id="streak-badge" style="display:none;"></div>
       </div>
 
@@ -2462,20 +2491,13 @@ function renderBrainprintTrigger(host, opts = {}) {
     // Career takeaway only — "Blindspot" belongs to the run, not the lifetime strip.
     const bestAll = d.played.slice().sort((a, b) => (b.accuracy - a.accuracy) || (b.answered - a.answered))[0];
     if (opts.compact) {
-      // Hub: transparent row — muted "Top: …" on the left, a 12px secondary button on the right
-      const row = document.createElement('div');
-      row.className = 'bp-hub-row';
-      const left = document.createElement('span');
-      left.className = 'bp-hub-left';
-      left.innerHTML = `${ICONS.trophy}<span>Top: ${escapeHtml(d.strongest.category)} (${d.strongest.accuracy}%)</span>`;
+      // Hub receipt: one button inside the 3-up action grid
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'bp-trigger-btn';
       btn.textContent = 'Brainprint ↗';
       btn.addEventListener('click', open);
-      row.appendChild(left);
-      row.appendChild(btn);
-      host.appendChild(row);
+      host.appendChild(btn);
       return;
     }
     const row = document.createElement('div');
@@ -2491,9 +2513,12 @@ function renderBrainprintTrigger(host, opts = {}) {
     host.appendChild(row);
   } else {
     const btn = document.createElement('button');
-    btn.type = 'button'; btn.className = 'bp-trigger-locked';
+    btn.type = 'button';
+    btn.className = opts.compact ? 'bp-trigger-btn is-locked' : 'bp-trigger-locked';
     // Short single-line progress: the category detail lives in the modal note
-    btn.textContent = `Brainprint · ${d.totalAnswered} of ${BP_MIN_ANSWERED} answers`;
+    btn.textContent = opts.compact
+      ? `Brainprint ${d.totalAnswered}/${BP_MIN_ANSWERED}`
+      : `Brainprint · ${d.totalAnswered} of ${BP_MIN_ANSWERED} answers`;
     btn.addEventListener('click', open);
     host.appendChild(btn);
   }
@@ -3039,10 +3064,22 @@ function renderLanding() {
   }
 
   // Endless card: only after the daily is done
-  $('endless-teaser').style.display = completedToday ? 'block' : 'none';
-  $('gt-line').textContent = stats.bestEndless > 0
-    ? `Beat your best run of ${stats.bestEndless}.`
-    : 'Set your first run.';
+  $('endless-teaser').style.display = completedToday ? 'flex' : 'none';
+  {
+    const bestRun = stats.bestEndless || 0;
+    const numEl = $('et-num'), labelEl = $('et-num-label');
+    if (bestRun > 0) {
+      numEl.className = 'et-num';
+      numEl.textContent = bestRun;
+      labelEl.style.display = 'block';
+      $('gt-line').textContent = `3 lives · Beat your best run of ${bestRun}.`;
+    } else {
+      numEl.className = 'et-headline';
+      numEl.textContent = 'How far can you go?';
+      labelEl.style.display = 'none';
+      $('gt-line').textContent = '3 lives · See how far you can go.';
+    }
+  }
 
   if (completedToday) renderHub();
 
@@ -3089,7 +3126,8 @@ function renderHub() {
     const betUsed = answers.filter(a => a.bet).length;
     const betHit = answers.filter(a => a.bet && a.correct).length;
     const arch = getArchetype(correct, total, totalTimeSec, betUsed, betHit, totalPoints);
-    scoreEl.innerHTML = `<span class="tc-points">${fmtPts(totalPoints)}</span><span class="tc-sub">(${correct}/${total}) · ${escapeHtml(arch.name)}</span>`;
+    scoreEl.innerHTML = `<span class="tc-points">${fmtPts(totalPoints)}</span>`;
+    $('trophy-result').textContent = `(${correct}/${total}) · ${arch.name}`;
     for (let i = 0; i < 10; i++) {
       const cell = document.createElement('div');
       const a = answers[i];
@@ -3099,7 +3137,8 @@ function renderHub() {
     $('btn-view-results').style.display = 'flex';
     $('btn-quick-share').style.display = 'flex';
   } else {
-    scoreEl.innerHTML = '<span class="tc-sub">Today&rsquo;s set complete.</span>';
+    scoreEl.innerHTML = '<span class="tc-points">—</span>';
+    $('trophy-result').textContent = 'Today’s set complete.';
     $('btn-view-results').style.display = 'none';
     $('btn-quick-share').style.display = 'none';
   }
@@ -3540,7 +3579,7 @@ function renderEndlessHUD() {
   const run = correctSoFar > 0 ? state.answers.length : 0;
   const streakEl = $('endless-streak');
   streakEl.textContent = `RUN: ${String(run).padStart(2,'0')}`;
-  streakEl.className = 'streak' + (run >= 5 ? ' blazing' : '');
+  streakEl.className = 'streak' + (run >= 10 ? ' tier-3' : run >= 5 ? ' tier-2' : '');
 }
 
 // Crimson vignette + question shake + haptics when a heart is lost
@@ -3988,6 +4027,7 @@ function finishGame(opts = {}) {
   // Endless RUN = total questions lasted across the 3 hearts; a 0-correct run reads 0
   const run = state.mode === 'endless' ? (correct > 0 ? total : 0) : 0;
   let wasBestRun = false; // endless only: did this run beat the stored best?
+  const prevBestEndless = stats.bestEndless;   // before this run updates it — drives the near-miss line
 
   // Stats (never on a replay of already-saved results, never on an unranked replay)
   if (!unranked) {
@@ -4054,6 +4094,8 @@ function finishGame(opts = {}) {
     $('hero-title').innerHTML = `${ICONS[dailyArch.icon]}<span>${dailyArch.name}</span>`;
     $('hero-sub').style.display = 'none';
     $('hero-sub').textContent = `${correct}/${total} correct • Total ${fmtTimeSec(totalTimeSec)} • ${dailyArch.sub}`;
+    $('near-miss').style.display = 'none';
+    $('near-miss').textContent = '';
   } else {
     $('hero-score').innerHTML = `${run}`;
     const survivedOnLast = state.lastHeartFrom !== null ? Math.max(0, total - state.lastHeartFrom) : 0;
@@ -4077,6 +4119,16 @@ function finishGame(opts = {}) {
     } else {
       subEl.style.display = 'none';
       subEl.textContent = (wasBestRun ? 'NEW BEST RUN' : `BEST RUN: ${stats.bestEndless}`) + ` • Total ${fmtTimeSec(totalTimeSec)}`;
+    }
+    // Near-miss: finished one or two questions short of the all-time best
+    const nm = $('near-miss');
+    const shortBy = prevBestEndless - run;
+    if (!wasBestRun && (shortBy === 1 || shortBy === 2)) {
+      nm.textContent = `${shortBy} away from tying your best run.`;
+      nm.style.display = 'block';
+    } else {
+      nm.style.display = 'none';
+      nm.textContent = '';
     }
   }
 
