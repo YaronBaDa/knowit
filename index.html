@@ -228,21 +228,22 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   background: radial-gradient(circle at 50% 0%, rgba(244, 84, 176, 0.14) 0%, rgba(168, 85, 247, 0.06) 45%, #1F181C 85%);
   border: 1px solid rgba(244, 84, 176, 0.28);
   flex: 1 1 0; min-height: 0;
-  display: flex; flex-direction: column; justify-content: space-between; gap: 12px;
+  display: flex; flex-direction: column; justify-content: center; gap: 0;
 }
-.et-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
-.et-eyebrow { font-family: var(--font-sans); font-size: 12px; font-weight: 700; line-height: 16px; letter-spacing: 0.08em; color: #F454B0; }
-.et-pill {
-  font-family: var(--font-sans); font-size: 12px; font-weight: 600; line-height: 16px;
-  color: var(--text-secondary); background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.10); border-radius: 9999px; padding: 4px 12px;
+.et-row { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; width: 100%; }
+.et-mascot { width: 96px; height: 96px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.et-mascot img { width: 96px; height: 96px; object-fit: contain; filter: drop-shadow(0 0 14px rgba(255, 92, 184, 0.35)); }
+.et-mascot img, .et-mascot.is-missing::after { box-sizing: border-box; }
+.et-mascot.is-missing img { display: none; }
+.et-mascot.is-missing::after {
+  content: '🧠'; width: 96px; height: 96px; display: flex; align-items: center; justify-content: center;
+  font-size: 44px; line-height: 1; border-radius: 24px;
+  background: rgba(255, 92, 184, 0.12); border: 1px dashed rgba(255, 92, 184, 0.35);
 }
-.et-center { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; flex: 1; width: 100%; }
-.et-num { font-family: var(--font-sans); font-size: 48px; font-weight: 800; line-height: 52px; font-variant-numeric: tabular-nums; color: #F3F4F6; }
-.et-headline { font-family: var(--font-sans); font-size: 24px; font-weight: 700; line-height: 28px; color: #F3F4F6; }
-.et-num-label { font-family: var(--font-sans); font-size: 12px; font-weight: 600; line-height: 16px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); margin-top: 4px; }
-.et-line { font-family: var(--font-sans); font-size: 13px; line-height: 18px; color: var(--text-secondary); margin-top: 8px; }
-.endless-teaser .btn-primary { width: 100%; max-width: none; height: 48px; border-radius: 12px; flex-shrink: 0; }
+.et-copy { display: flex; flex-direction: column; min-width: 0; text-align: left; }
+.et-headline { font-family: var(--font-sans); font-size: 24px; font-weight: 700; line-height: 1.2; color: #FFFFFF; }
+.et-sub { font-family: var(--font-sans); font-size: 14px; font-weight: 400; line-height: 1.45; color: #B8A6B2; margin-top: 8px; }
+.endless-teaser .btn-primary { width: 100%; max-width: none; height: 48px; border-radius: 16px; color: #140C12; flex-shrink: 0; }
 
 /* ---- Completed-day hub: bottom-anchored 2-card stack ---- */
 .hub-head, .hub-cards { display: none; }
@@ -1030,7 +1031,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .option-btn { font-weight: 500; }
 
 /* .type-body — secondary copy, feedback notes, hints */
-#next-set-line, .et-line, .bet-toggle, .feedback-strip .fb-insight, .hero-sub, .highlights,
+#next-set-line, .bet-toggle, .feedback-strip .fb-insight, .hero-sub, .highlights,
 .modal-card .mdyk, .toast, .duel-card .d-time, #rm-picked, .grid-hint {
   font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 1.45; letter-spacing: 0;
 }
@@ -1040,12 +1041,11 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .feedback-strip .fb-insight { font-size: 12px; line-height: 16px; }
 
 /* .type-eyebrow */
-.tc-eyebrow, .endless-teaser .et-eyebrow, .sc-stat span,
+.tc-eyebrow, .sc-stat span,
 .modal-card .mlabel, .modal-card .mdyk-label {
   font-family: var(--font-sans); font-size: 12px; font-weight: 600; line-height: 1.2;
   letter-spacing: 0.07em; text-transform: uppercase;
 }
-.endless-teaser .et-eyebrow { color: var(--brand-glow); }
 
 /* .type-hud */
 #header-meta, .game-header .meta, #landing-puzzle, .streak-pill,
@@ -1135,16 +1135,16 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
         </div>
 
         <div class="endless-teaser" id="endless-teaser" style="display:none;">
-          <div class="et-top">
-            <div class="et-eyebrow">ENDLESS MODE</div>
-            <span class="et-pill">3 LIVES</span>
+          <div class="et-row">
+            <div class="et-mascot" id="et-mascot">
+              <img src="/brain-mascot.webp" alt="Knowit mascot" width="96" height="96">
+            </div>
+            <div class="et-copy">
+              <div class="et-headline">Want to keep going?</div>
+              <div class="et-sub" id="gt-line">Set your first record • 🏆 3 Lives</div>
+            </div>
           </div>
-          <div class="et-center">
-            <div class="et-num" id="et-num"></div>
-            <div class="et-num-label" id="et-num-label" style="display:none;">BEST RUN</div>
-            <div class="et-line" id="gt-line">3 lives · See how far you can go.</div>
-          </div>
-          <button class="btn-primary" id="btn-endless">Play Endless</button>
+          <button class="btn-primary" id="btn-endless">Keep Playing</button>
         </div>
       </div>
 
@@ -2906,7 +2906,7 @@ function nextSetLine(now = new Date()) {
 // Hub card line: countdown plus the lifetime Daily numbers, one muted line
 function nextSetIn(now = new Date()) {
   const nextMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1);
-  return `Next set in ${fmtCountdown(nextMs - now.getTime())}`;
+  return `Next quiz in ${fmtCountdown(nextMs - now.getTime())}`;
 }
 function careerLine() {
   return `${stats.played} played · Best ${stats.maxStreak}d`;
@@ -3043,6 +3043,21 @@ function toast(msg) {
 
 // ---- Landing ----
 let lastRenderedDay = null;
+// Mascot slot: /brain-mascot.webp may not exist yet — swap in a clean emoji tile instead of a broken image
+function initMascotFallback() {
+  const wrap = $('et-mascot');
+  if (!wrap) return;
+  const img = wrap.querySelector('img');
+  if (!img) return;
+  const mark = () => wrap.classList.add('is-missing');
+  if (img.complete) {
+    if (img.naturalWidth === 0) mark();
+    else wrap.classList.remove('is-missing');
+  } else {
+    img.addEventListener('error', mark, { once: true });
+    img.addEventListener('load', () => wrap.classList.remove('is-missing'), { once: true });
+  }
+}
 function renderLanding() {
   const completedToday = stats.completedDaily === getToday();
   $('screen-landing').classList.toggle('is-completed', completedToday);
@@ -3067,18 +3082,10 @@ function renderLanding() {
   $('endless-teaser').style.display = completedToday ? 'flex' : 'none';
   {
     const bestRun = stats.bestEndless || 0;
-    const numEl = $('et-num'), labelEl = $('et-num-label');
-    if (bestRun > 0) {
-      numEl.className = 'et-num';
-      numEl.textContent = bestRun;
-      labelEl.style.display = 'block';
-      $('gt-line').textContent = `3 lives · Beat your best run of ${bestRun}.`;
-    } else {
-      numEl.className = 'et-headline';
-      numEl.textContent = 'How far can you go?';
-      labelEl.style.display = 'none';
-      $('gt-line').textContent = '3 lives · See how far you can go.';
-    }
+    $('gt-line').textContent = bestRun > 0
+      ? `Beat your record of ${bestRun} • 🏆 3 Lives`
+      : 'Set your first record • 🏆 3 Lives';
+    initMascotFallback();
   }
 
   if (completedToday) renderHub();
@@ -3109,7 +3116,7 @@ function renderHub() {
   }
 
   // trophy card
-  $('trophy-eyebrow').textContent = `TODAY'S RUN · #${getDailyNum()}`;
+  $('trophy-eyebrow').textContent = `TODAY'S QUIZ · #${getDailyNum()}`;
   $('next-set-in').textContent = nextSetIn();
   $('next-set-line').textContent = careerLine();
   const savedRes = loadResult();
