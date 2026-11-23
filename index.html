@@ -233,8 +233,9 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* ---- Completed-day hub: bottom-anchored 2-card stack ---- */
 .hub-head, .hub-cards { display: none; }
 #screen-landing.is-completed .landing-body {
-  justify-content: flex-start; gap: 16px;
-  padding-bottom: 0;
+  flex: 1; min-height: 0;
+  display: flex; flex-direction: column; justify-content: space-between;
+  gap: 16px; padding-top: 12px; padding-bottom: 0;
 }
 #screen-landing.is-completed .landing-body::before,
 #screen-landing.is-completed .landing-body::after { content: none; }
@@ -253,7 +254,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   flex: 1 1 auto; min-height: 0;
 }
 #screen-landing.is-completed .completed-stack {
-  flex: 0 0 auto; margin-top: auto;
+  flex: 1 1 auto; min-height: 0; margin-top: 0;
+  justify-content: space-between;
   padding-bottom: max(20px, env(safe-area-inset-bottom));
 }
 #screen-landing.is-completed .landing-footer { display: none; }
@@ -264,13 +266,14 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .streak-pill svg { width: 12px; height: 12px; }
 .trophy-card {
   width: 100%; max-width: 340px; background: #1A1418; border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px; padding: 16px; text-align: left;
-  flex: 0 0 auto;
-  display: flex; flex-direction: column; justify-content: flex-start; gap: 12px;
+  border-radius: 16px; padding: 20px; text-align: left;
+  flex: 1 1 auto; min-height: 0;
+  display: flex; flex-direction: column; justify-content: space-between; gap: 8px;
 }
-.tc-top, .tc-bottom { display: flex; flex-direction: column; width: 100%; }
+.tc-top, .tc-mid, .tc-bottom { display: flex; flex-direction: column; width: 100%; }
 /* one data block (top) and one interaction block (bottom); a single flexible gap between them */
 .tc-top { gap: 8px; align-items: stretch; flex: 0 0 auto; }
+.tc-mid { gap: 4px; align-items: stretch; flex: 0 0 auto; }
 .tc-bottom { gap: 12px; flex: 0 0 auto; justify-content: flex-end; }
 /* header row: run label left, countdown right */
 .tc-head-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
@@ -290,7 +293,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   color: var(--text-secondary);
 }
 .tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin: 0; padding: 0; }
-.tc-top .tc-grid { margin-top: 4px; }
+.tc-mid .tc-grid { margin-top: 0; }
 
 /* ---- Unified rubric tile: ONE design for in-game, home and results ---- */
 .rubric-tile {
@@ -658,19 +661,15 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .bp-trigger-text { font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 16px; color: var(--text-secondary); min-width: 0; }
 .bp-trigger-text.is-top { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* ONE clickable container for the hub: trophy + top category ← → Brainprint ↗ */
+/* Transparent row: muted "Top: …" on the left, a standalone secondary button on the right */
 .bp-hub-row {
-  display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%;
-  height: 48px; padding: 0 12px; border-radius: 12px; cursor: pointer; text-align: left;
-  background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%;
+  padding: 0; border: none; background: transparent; text-align: left;
   font-family: var(--font-sans); font-size: 12px; line-height: 16px; color: var(--text-secondary);
-  transition: background .2s, border-color .2s;
 }
-.bp-hub-row:hover { background: rgba(255, 255, 255, 0.07); border-color: rgba(255, 255, 255, 0.2); }
-.bp-hub-row:active { transform: scale(0.995); }
-.bp-hub-left { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
-.bp-hub-left svg { width: 12px; height: 12px; flex-shrink: 0; color: var(--brand-glow); }
+.bp-hub-left { display: inline-flex; align-items: center; gap: 4px; min-width: 0; font-size: 12px; line-height: 16px; color: var(--text-secondary); }
+.bp-hub-left svg { width: 12px; height: 12px; flex-shrink: 0; color: var(--accent-bet); }
 .bp-hub-left span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.bp-hub-cta { flex-shrink: 0; color: #F3F4F6; font-weight: 600; }
 
 .bp-trigger-btn {
   flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; gap: 4px;
@@ -686,7 +685,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   border: 1px dashed rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.03); color: var(--text-secondary);
   font-family: var(--font-sans); font-size: 12px; font-weight: 500; cursor: pointer;
 }
-.trophy-card .bp-trigger-wrap { margin-top: 12px; }
+.trophy-card .bp-trigger-wrap { margin-top: 0; }
 
 /* Brainprint — full-bleed page, not a floating card */
 #brainprint-modal {
@@ -1099,6 +1098,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
               <div class="tc-countdown"><span class="tc-clock" id="tc-clock" aria-hidden="true"></span><span id="next-set-in"></span></div>
             </div>
             <div class="tc-score" id="trophy-score"><span class="tc-sub">Today's set complete.</span></div>
+          </div>
+          <div class="tc-mid">
             <div class="tc-grid" id="trophy-grid"></div>
             <div class="tc-count" id="next-set-line"></div>
           </div>
@@ -2461,13 +2462,19 @@ function renderBrainprintTrigger(host, opts = {}) {
     // Career takeaway only — "Blindspot" belongs to the run, not the lifetime strip.
     const bestAll = d.played.slice().sort((a, b) => (b.accuracy - a.accuracy) || (b.answered - a.answered))[0];
     if (opts.compact) {
-      // Hub: the whole row is the control — trophy + top category on the left, CTA on the right
-      const row = document.createElement('button');
-      row.type = 'button';
+      // Hub: transparent row — muted "Top: …" on the left, a 12px secondary button on the right
+      const row = document.createElement('div');
       row.className = 'bp-hub-row';
-      row.innerHTML = `<span class="bp-hub-left">${ICONS.trophy}<span>Top: ${escapeHtml(d.strongest.category)} (${d.strongest.accuracy}%)</span></span>`
-                    + `<span class="bp-hub-cta">Brainprint ↗</span>`;
-      row.addEventListener('click', open);
+      const left = document.createElement('span');
+      left.className = 'bp-hub-left';
+      left.innerHTML = `${ICONS.trophy}<span>Top: ${escapeHtml(d.strongest.category)} (${d.strongest.accuracy}%)</span>`;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'bp-trigger-btn';
+      btn.textContent = 'Brainprint ↗';
+      btn.addEventListener('click', open);
+      row.appendChild(left);
+      row.appendChild(btn);
       host.appendChild(row);
       return;
     }
