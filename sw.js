@@ -1,6 +1,9 @@
-// KNOWIT service worker — app shell cache-first, everything else network-first.
-// Bump CACHE when the shell changes; old caches are dropped on activate.
-const CACHE = 'knowit-v6';
+// KNOWIT service worker.
+// - Navigations + index.html: network-first, so a deploy shows up on the next reload (offline still works).
+// - Icons / manifest / og-image: cache-first, they never change between releases.
+// - Cross-origin requests (analytics, fonts, API) are left to the browser entirely.
+// BUMP `CACHE` ON EVERY RELEASE: activate deletes every cache that isn't this one.
+const CACHE = 'knowit-v7';
 
 const SHELL = [
   './',
@@ -12,90 +15,84 @@ const SHELL = [
   './og-image.png',
 ];
 
-const FONT_CSS = 'https://fonts.googleapis.com/css2?family=Lexend+Zetta:wght@700&family=Lexend:wght@400;500;600;700&display=swap';
-
-// Shell files are matched by basename so the /knowit/ prefix never matters.
-const SHELL_FILES = new Set(['', 'index.html', 'manifest.webmanifest', 'favicon.ico', 'favicon.png', 'apple-touch-icon.png', 'og-image.png']);
-const FONT_HOSTS = new Set(['fonts.googleapis.com', 'fonts.gstatic.com']);
+// Same-origin files that are safe to serve from cache first.
+const STATIC_FILES = new Set(['manifest.webmanifest', 'favicon.ico', 'favicon.png', 'apple-touch-icon.png', 'og-image.png']);
 
 const INDEX_URL = new URL('index.html', self.location.href).href;
 
-function isShell(url) {
-  if (url.origin === self.location.origin) {
-    const path = url.pathname;
-    return SHELL_FILES.has(path.substring(path.lastIndexOf('/') + 1));
+function isStatic(url) {
+  const path = url.pathname;
+  return STATIC_FILES.has(path.substring(path.lastIndexOf('/') + 1));
+}
+
+// Navigations share one cache entry, so ?d=…&vs=… works offline from the same copy.
+async function networkFirst(request, cacheKey) {
+  const cache = await caches.open(CACHE);
+  try {
+    const response = await fetch(request);
+    if (response && response.ok) {
+      try { await cache.put(cacheKey, response.clone()); } catch (e) {}
+    }
+    return response;
+  } catch (err) {
+    const cached = await cache.match(cacheKey, { ignoreSearch: true });
+    if (cached) return cached;
+    const shell = await cache.match(INDEX_URL, { ignoreSearch: true });
+    if (shell) return shell;
+    return new Response('Offline', { status: 503, statusText: 'Offline', headers: { 'content-type': 'text/plain' } });
   }
-  return FONT_HOSTS.has(url.hostname);
+}
+
+async function cacheFirst(request) {
+  const cache = await caches.open(CACHE);
+  const cached = await cache.match(request, { ignoreSearch: true });
+  if (cached) return cached;
+  try {
+    const response = await fetch(request);
+    if (response && response.ok) {
+      try { await cache.put(request, response.clone()); } catch (e) {}
+    }
+    return response;
+  } catch (err) {
+    return new Response('', { status: 504, statusText: 'Offline' });
+  }
 }
 
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
-    const cache = await caches.open(CACHE);
-    // One bad file must not abort the whole install.
-    await Promise.all(SHELL.map(url =>
-      cache.add(new Request(url, { cache: 'reload' })).catch(() => {})
-    ));
-    await cache.add(new Request(FONT_CSS, { mode: 'cors' })).catch(() => {});
-    await self.skipWaiting();
+    try {
+      const cache = await caches.open(CACHE);
+      // One missing file must not abort the install.
+      await Promise.all(SHELL.map(url => cache.add(new Request(url, { cache: 'reload' })).catch(() => {})));
+    } catch (e) {}
+    self.skipWaiting();
   })());
 });
 
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
-    const keys = await caches.keys();
-    await Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)));
+    try {
+      const keys = await caches.keys();
+      await Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)));
+    } catch (e) {}
     await self.clients.claim();
   })());
 });
 
 self.addEventListener('fetch', event => {
-  const req = event.request;
-  if (req.method !== 'GET') return;
+  const request = event.request;
+
+  // Only same-origin GETs. Everything else (Plausible, Google Fonts, the stats API) is untouched.
+  if (request.method !== 'GET') return;
   let url;
-  try { url = new URL(req.url); } catch (e) { return; }
+  try { url = new URL(request.url); } catch (e) { return; }
+  if (url.origin !== self.location.origin) return;
 
-  // Navigations (?d=..&vs=.. included): serve the cached shell, ignoreSearch so any query works offline.
-  if (req.mode === 'navigate') {
-    event.respondWith((async () => {
-      const cache = await caches.open(CACHE);
-      const cached = await cache.match(INDEX_URL, { ignoreSearch: true });
-      const network = fetch(req).then(res => {
-        if (res && res.ok) cache.put(INDEX_URL, res.clone());
-        return res;
-      }).catch(() => null);
-      return cached || (await network) || (await cache.match('./', { ignoreSearch: true })) || Response.error();
-    })());
-    return;
-  }
+  const work = (async () => {
+    if (request.mode === 'navigate') return networkFirst(request, INDEX_URL);
+    if (isStatic(url)) return cacheFirst(request);
+    return networkFirst(request, request);
+  })().catch(() => new Response('', { status: 504, statusText: 'Offline' }));
 
-  // App shell + Google Fonts: cache-first, fill the cache on miss.
-  if (isShell(url)) {
-    event.respondWith((async () => {
-      const cache = await caches.open(CACHE);
-      const hit = await cache.match(req, { ignoreSearch: true });
-      if (hit) return hit;
-      try {
-        const res = await fetch(req);
-        if (res && (res.ok || res.type === 'opaque')) cache.put(req, res.clone());
-        return res;
-      } catch (err) {
-        return (await cache.match(req, { ignoreSearch: true })) || Response.error();
-      }
-    })());
-    return;
-  }
-
-  // Everything else: network-first, cache as a fallback.
-  event.respondWith((async () => {
-    const cache = await caches.open(CACHE);
-    try {
-      const res = await fetch(req);
-      if (res && res.ok) cache.put(req, res.clone());
-      return res;
-    } catch (err) {
-      const hit = await cache.match(req, { ignoreSearch: true });
-      if (hit) return hit;
-      throw err;
-    }
-  })());
+  event.respondWith(work);
 });
