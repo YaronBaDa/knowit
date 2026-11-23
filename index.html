@@ -274,6 +274,10 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   padding-bottom: max(20px, env(safe-area-inset-bottom));
 }
 #screen-landing.is-completed .landing-footer { display: none; }
+/* Short screens: the receipt needs its natural height, so it stops forcing an equal split */
+@media (max-height: 700px) {
+  #screen-landing.is-completed .completed-stack { grid-template-rows: auto 1fr; }
+}
 .hub-brand { display: flex; align-items: center; gap: 8px; }
 .hub-wordmark { font-size: 16px; color: var(--text-primary); }
 .streak-pill { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 9999px; border: 1px solid rgba(244, 84, 176, 0.28); background: var(--accent-brand-tint); color: var(--brand-pink); font-family: var(--font-mono); font-size: 12px; font-weight: 600; }
@@ -286,8 +290,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   flex: 1 1 0; min-height: 0;
   display: flex; flex-direction: column; justify-content: space-between;
 }
-.tc-hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; margin-top: 8px; width: 100%; }
-.tc-result { font-family: var(--font-sans); font-size: 14px; font-weight: 600; line-height: 20px; color: var(--text-secondary); text-align: right; white-space: nowrap; }
+.tc-result { font-family: var(--font-sans); font-size: 16px; font-weight: 600; line-height: 20px; color: var(--text-secondary); text-align: left; margin-top: 4px; }
 .tc-top, .tc-mid, .tc-bottom { display: flex; flex-direction: column; width: 100%; }
 /* one data block (top) and one interaction block (bottom); a single flexible gap between them */
 .tc-top { gap: 8px; align-items: stretch; flex: 0 0 auto; }
@@ -301,8 +304,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .tc-eyebrow { display: block; font-family: var(--font-sans); font-size: 12px; line-height: 16px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); font-weight: 600; margin: 0; }
 .tc-score { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; width: 100%; color: var(--text-primary); }
 .tc-points {
-  display: block;
-  font-family: var(--font-sans); font-size: 28px; font-weight: 800; line-height: 32px;
+  display: block; width: 100%; margin-top: 4px;
+  font-family: var(--font-sans); font-size: 44px; font-weight: 800; line-height: 48px;
   letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: #F3F4F6;
 }
 .tc-sub {
@@ -311,11 +314,12 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   color: var(--text-secondary);
 }
 .tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 12px; padding: 0; }
-.tc-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; width: 100%; }
+.tc-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; width: 100%; }
 .tc-actions > * { min-width: 0; }
-.tc-actions .btn-secondary, .tc-actions .bp-trigger-btn {
-  width: 100%; max-width: none; height: 40px; padding: 0 4px; border-radius: 12px;
-  font-size: 12px; font-weight: 600; white-space: nowrap;
+.tc-actions .btn-secondary {
+  width: 100%; max-width: none; height: 44px; padding: 0 12px; border-radius: 12px;
+  font-size: 16px; font-weight: 600; white-space: nowrap;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
 }
 
 /* ---- Unified rubric tile: ONE design for in-game, home and results ---- */
@@ -691,6 +695,20 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
 /* ---- Brainprint: trigger bar, modal, radar ---- */
 .bp-trigger-wrap { width: 100%; max-width: 340px; }
+/* Boxed hub row: trophy + top category ← → Brainprint ↗ */
+.bp-hub-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%;
+  height: 48px; padding: 0 12px; border-radius: 12px; cursor: pointer; text-align: left;
+  background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);
+  font-family: var(--font-sans); font-size: 12px; line-height: 16px; color: var(--text-secondary);
+  transition: background .2s, border-color .2s;
+}
+.bp-hub-row:hover { background: rgba(255, 255, 255, 0.07); border-color: rgba(255, 255, 255, 0.2); }
+.bp-hub-row:active { transform: scale(0.995); }
+.bp-hub-left { display: inline-flex; align-items: center; gap: 8px; min-width: 0; font-size: 12px; line-height: 16px; color: var(--text-secondary); }
+.bp-hub-left svg { width: 12px; height: 12px; flex-shrink: 0; color: var(--accent-bet); }
+.bp-hub-left span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bp-hub-cta { flex-shrink: 0; color: #F3F4F6; font-weight: 600; }
 .bp-trigger-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
 .bp-trigger-text { font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 16px; color: var(--text-secondary); min-width: 0; }
 .bp-trigger-text.is-top { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -705,13 +723,12 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 .bp-trigger-btn:hover { background-color: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.22); }
 .bp-trigger-btn:active { transform: scale(0.97); }
-.bp-trigger-btn.is-locked { color: var(--text-secondary); border-style: dashed; }
 .bp-trigger-locked {
   display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 16px; border-radius: 12px;
   border: 1px dashed rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.03); color: var(--text-secondary);
   font-family: var(--font-sans); font-size: 12px; font-weight: 500; cursor: pointer;
 }
-.trophy-card .bp-trigger-wrap { margin-top: 0; }
+.trophy-card .bp-trigger-wrap { margin-top: 12px; }
 
 /* Brainprint — full-bleed page, not a floating card */
 #brainprint-modal {
@@ -1121,14 +1138,12 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
             <div class="tc-eyebrow" id="trophy-eyebrow">TODAY'S RUN</div>
             <div class="tc-countdown"><span class="tc-clock" id="tc-clock" aria-hidden="true"></span><span id="next-set-in"></span></div>
           </div>
-          <div class="tc-hero">
-            <div class="tc-score" id="trophy-score"><span class="tc-sub">Today's set complete.</span></div>
-            <div class="tc-result" id="trophy-result"></div>
-          </div>
+          <div class="tc-score" id="trophy-score"><span class="tc-sub">Today's set complete.</span></div>
+          <div class="tc-result" id="trophy-result"></div>
           <div class="tc-grid" id="trophy-grid"></div>
           <div class="tc-count" id="next-set-line"></div>
+          <div class="bp-trigger-wrap" id="bp-trigger-hub"></div>
           <div class="tc-actions">
-            <div class="bp-trigger-wrap" id="bp-trigger-hub"></div>
             <button class="btn-secondary" id="btn-view-results" style="display:none;"><span class="btn-label">Review</span></button>
             <button class="btn-secondary" id="btn-quick-share" style="display:none;"><span class="btn-label">Share</span></button>
           </div>
@@ -2491,13 +2506,14 @@ function renderBrainprintTrigger(host, opts = {}) {
     // Career takeaway only — "Blindspot" belongs to the run, not the lifetime strip.
     const bestAll = d.played.slice().sort((a, b) => (b.accuracy - a.accuracy) || (b.answered - a.answered))[0];
     if (opts.compact) {
-      // Hub receipt: one button inside the 3-up action grid
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'bp-trigger-btn';
-      btn.textContent = 'Brainprint ↗';
-      btn.addEventListener('click', open);
-      host.appendChild(btn);
+      // Hub: boxed row — trophy + top category on the left, Brainprint ↗ on the right
+      const row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'bp-hub-row';
+      row.innerHTML = `<span class="bp-hub-left">${ICONS.trophy}<span>Top: ${escapeHtml(d.strongest.category)} (${d.strongest.accuracy}%)</span></span>`
+                    + `<span class="bp-hub-cta">Brainprint ↗</span>`;
+      row.addEventListener('click', open);
+      host.appendChild(row);
       return;
     }
     const row = document.createElement('div');
@@ -2514,11 +2530,14 @@ function renderBrainprintTrigger(host, opts = {}) {
   } else {
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = opts.compact ? 'bp-trigger-btn is-locked' : 'bp-trigger-locked';
-    // Short single-line progress: the category detail lives in the modal note
-    btn.textContent = opts.compact
-      ? `Brainprint ${d.totalAnswered}/${BP_MIN_ANSWERED}`
-      : `Brainprint · ${d.totalAnswered} of ${BP_MIN_ANSWERED} answers`;
+    if (opts.compact) {
+      btn.className = 'bp-hub-row';
+      btn.innerHTML = `<span class="bp-hub-left"><span>Brainprint</span></span>`
+                    + `<span class="bp-hub-cta">${d.totalAnswered}/${BP_MIN_ANSWERED} answers</span>`;
+    } else {
+      btn.className = 'bp-trigger-locked';
+      btn.textContent = `Brainprint · ${d.totalAnswered} of ${BP_MIN_ANSWERED} answers`;
+    }
     btn.addEventListener('click', open);
     host.appendChild(btn);
   }
@@ -2906,7 +2925,7 @@ function nextSetLine(now = new Date()) {
 // Hub card line: countdown plus the lifetime Daily numbers, one muted line
 function nextSetIn(now = new Date()) {
   const nextMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1);
-  return `Next quiz in ${fmtCountdown(nextMs - now.getTime())}`;
+  return `Next set in ${fmtCountdown(nextMs - now.getTime())}`;
 }
 function careerLine() {
   return `${stats.played} played · Best ${stats.maxStreak}d`;
@@ -3116,7 +3135,7 @@ function renderHub() {
   }
 
   // trophy card
-  $('trophy-eyebrow').textContent = `TODAY'S QUIZ · #${getDailyNum()}`;
+  $('trophy-eyebrow').textContent = `TODAY'S RUN · #${getDailyNum()}`;
   $('next-set-in').textContent = nextSetIn();
   $('next-set-line').textContent = careerLine();
   const savedRes = loadResult();
