@@ -1999,7 +1999,8 @@ const SITE_URL = 'https://yaronbada.github.io/knowit/';
 // TODO: point this at the deployed Cloudflare Worker (see worker/README notes in README.md).
 // Empty = aggregation is skipped entirely and the game behaves exactly as before.
 const API_BASE = 'https://knowit-stats.ybachmandagan.workers.dev';
-const AGG_MIN_PLAYERS = 20;   // never show "top X%" until enough players have played
+const AGG_MIN_PERCENTILE = 2;   // "Top X% today" + the share-text tag need at least two players
+const AGG_MIN_HARDEST = 20;     // the "Hardest today" line waits for a real sample
 const HOLD_IDS = new Set(['p11','p23','p32','sp13','g36']);   // time-sensitive answers, excluded until reviewed
 const NO_SAME_DAY = [['n5','n27'],['s20','s46']];            // near-duplicate pairs
 const FAST_TIME_SEC = 55;
@@ -3844,9 +3845,8 @@ function loadAggregates(answers, puzzleNum) {
 function renderAggregates(d, puzzleNum) {
   const n = Number(d.n) || 0;
   const line = $('agg-line'), hard = $('agg-hardest');
-  if (n < AGG_MIN_PLAYERS) return;
   const pct = Number(d.percentileFor);
-  if (line && isFinite(pct)) {
+  if (n >= AGG_MIN_PERCENTILE && line && isFinite(pct)) {
     const top = Math.max(1, Math.min(100, Math.round(100 - pct)));
     line.textContent = `Top ${top}% today`;
     line.style.display = 'block';
@@ -3859,7 +3859,7 @@ function renderAggregates(d, puzzleNum) {
     }
   }
   const rates = Array.isArray(d.qRate) ? d.qRate.map(Number) : [];
-  if (hard && rates.length) {
+  if (n >= AGG_MIN_HARDEST && hard && rates.length) {
     let k = 0;
     for (let i = 1; i < rates.length; i++) if (rates[i] < rates[k]) k = i;
     hard.textContent = `Hardest today: Q${k + 1} (${Math.round(rates[k] * 100)}% got it)`;
