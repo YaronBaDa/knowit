@@ -369,7 +369,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
-`HUB` daily completion routes to a 4-zone post-completion home (habit bar, receipt, bridge, Endless)
+`5127669` daily completion routes to a 4-zone post-completion home (habit bar, receipt, bridge, Endless)
 `8de74a5` +300 evergreen questions (1,105 bank), correct answers balanced 75/75/75/75
 `0eeff68` +300 evergreen questions (805 bank), Endless difficulty weighting, schedule to day 150
 `be68019` feedback dwell 1500/3500ms + 2px countdown rail, tap-to-skip
