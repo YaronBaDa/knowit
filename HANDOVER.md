@@ -375,7 +375,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
-`HOMEv3` in-card streak row, archetype-first order, percentile wording, Review link, bets nudge
+`28667a2` in-card streak row, archetype-first order, percentile wording, Review link, bets nudge
 `6b138d0` home: challenge-first receipt, labelled stats, tappable misses, compact Endless, install hint
 `5127669` daily completion routes to a 4-zone post-completion home (habit bar, receipt, bridge, Endless)
 `8de74a5` +300 evergreen questions (1,105 bank), correct answers balanced 75/75/75/75
