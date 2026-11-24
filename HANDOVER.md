@@ -233,29 +233,29 @@ purpose — it stays dark in every theme. `?s=b` is appended to the URL line.
 `#screen-results` stays for Endless run-overs, `?vs=` ghost duels (head-to-head card) and unranked
 replays; `finishGame()` decides with `toHub` and `viewTodaysResults()`/Review forces results.
 
-**Post-completion home** (`.is-completed`), four zones on a 12 px rhythm:
+**Post-completion home** (`.is-completed`), four zones on a 12 px rhythm. The streak and countdown
+live inside the receipt (no floating pill): a 14 px row with the flame + `N-day streak` on the left
+and `Next set in Xh Ym` on the right, then a 1 px `--border` divider.
 
-1. **Header + habit bar** — brand mark + Zetta wordmark only, then a centred pill
-   (`6px 14px`, radius 999) reading `🔥 {streak}-day Streak · Next set in {countdown}`; `tick()`
-   refreshes it.
-2. **Today's Set receipt** (`#1F181C`, radius 16, padding 16): `TODAY'S SET · #N` → labelled stat row
-   (score / `c/10` correct / `Xm Ys`, values 20/800, crimson under zero) → optional `Bets n/m` →
-   optional `Top X% today` → rank title → optional insight (`N of M misses were hard questions.`,
-   only on a losing run where hard questions were at least half the misses) → 24 px ten-tile strip
-   (check on correct, X on miss, bolt kept on bets; misses carry `data-idx`) → `Tap a miss to see
-   what got you.` when there is a miss → filled **Challenge a Friend** + square copy button →
-   outline `Review`. `currentSharePayload()` feeds both the results and hub challenge/copy handlers.
-3. **Brainprint bridge** — `Best subject: {category} {pct}%` (category kept on one line via
-   `.bp-subject`) with `Brainprint ↗`; when locked it shows `Brainprint` + `{answered}/30 answers`.
-4. **Endless stage** — compact and secondary: `ENDLESS MODE` + `3 LIVES`, 32 px mark inline with
-   `Redeem yourself` (when today's points ≤ 0) or `Want to keep going?`, `Best run: N`, and an
-   outlined brand `Play Endless` (44 px). It no longer fills the leftover height.
-5. **Install hint** (`#a2hs`) — only when streak ≥ 3, not standalone and
-   `knowit_a2hs_dismissed` is unset; uses the captured `beforeinstallprompt` when available, else
-   iOS/Android copy. Dismiss sets the key.
+1. **Today's Set receipt** (`#1F181C`, radius 16, padding 16), top to bottom: streak row + divider →
+   `TODAY'S SET · #N` → archetype as the card headline (32/800) → optional insight line → stat row
+   (score / `c/10` / `Xm Ys`, 24/800 with 12 px labels; only the minus sign of a negative score is
+   crimson) → `Bets n/m`, or `No bets placed. A bet doubles the points, win or lose.` when no bet
+   was placed and `stats.played <= 10` → percentile → 24 px ten-tile strip (check / X / bolt; misses
+   carry `data-idx`) → filled **Challenge a Friend** + square copy button → `Review answers` text
+   link (44 px tap area, underline on hover/focus). `currentSharePayload()` feeds both the results
+   and hub challenge/copy handlers.
+2. **Brainprint bridge** — `Best subject: {category} {pct}%` (category kept on one line via
+   `.bp-subject`) with `Brainprint ↗`; locked shows `Brainprint` + `{answered}/30 answers`.
+3. **Endless stage** — compact: `ENDLESS MODE` + `3 LIVES`, 32 px mark inline with
+   `Redeem yourself` (points ≤ 0) or `Want to keep going?`, `Best run: N`, outlined brand
+   `Play Endless`.
+4. **Install hint** (`#a2hs`) — streak ≥ 3, not standalone, `knowit_a2hs_dismissed` unset.
 
-Percentile: `loadHubAggregate()` reuses the payload `loadAggregates()` cached (`LAST_AGG`) and
-otherwise does one 2 s `GET /agg` per session, rendered through the same `renderAggregates()` gate.
+Percentile copy (`percentileCopy()`, server value = share of players beaten): `p >= 50` →
+`Top {100-p}% today` (min 1); `10 <= p < 50` → `Beat {p}% of players`; `p < 10` → nothing. The share
+header only gains `· Top X%` when `p >= 50`. `loadHubAggregate()` reuses the cached `LAST_AGG` and
+otherwise does one 2 s `GET /agg` per session.
 
 **Results**: brand header → eyebrow (`TODAY'S SET` / `ENDLESS MODE` / `REPLAY #n`) → hero score and
 verdict → optional duel card → scorecard (tile grid, `SCORE / CORRECT / TIME`, `#agg-line`
@@ -375,6 +375,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`HOMEv3` in-card streak row, archetype-first order, percentile wording, Review link, bets nudge
 `6b138d0` home: challenge-first receipt, labelled stats, tappable misses, compact Endless, install hint
 `5127669` daily completion routes to a 4-zone post-completion home (habit bar, receipt, bridge, Endless)
 `8de74a5` +300 evergreen questions (1,105 bank), correct answers balanced 75/75/75/75

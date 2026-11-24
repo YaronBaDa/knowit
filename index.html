@@ -221,7 +221,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .daily-locked b { color: var(--ink); font-size: 16px; }
 
 /* ---- Completed-day hub: 4-zone hierarchy (habit bar → receipt → bridge → endless) ---- */
-.hub-head, .hub-cards, .habit-bar { display: none; }
+.hub-head, .hub-cards { display: none; }
 #screen-landing.is-completed .landing-body {
   flex: 1; min-height: 0;
   display: flex; flex-direction: column; align-items: center;
@@ -242,16 +242,6 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .hub-brand { display: flex; align-items: center; gap: 8px; }
 .hub-wordmark { font-size: 16px; color: var(--text-primary); }
 
-/* Zone 1 — unified habit bar */
-#screen-landing.is-completed .habit-bar {
-  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
-  align-self: center; flex-shrink: 0;
-  padding: 6px 14px; border-radius: 999px;
-  background: #1F181C; border: 1px solid rgba(255, 255, 255, 0.08);
-  font-family: var(--font-sans); font-size: 12px; line-height: 16px;
-  color: var(--text-secondary); white-space: nowrap; font-variant-numeric: tabular-nums;
-}
-.habit-fire { font-size: 12px; line-height: 16px; }
 
 /* Stack — receipts keep natural height, the Endless stage takes the rest */
 #screen-landing.is-completed .hub-cards {
@@ -267,20 +257,27 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   border-radius: 16px; padding: 16px; text-align: left;
   flex: 0 0 auto; display: flex; flex-direction: column;
 }
+/* Streak + countdown inside the card, then the hairline divider */
+.tc-streak-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; font-family: var(--font-sans); font-size: 14px; line-height: 16px; color: var(--text-secondary); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.tc-streak { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+.tc-flame { display: inline-flex; }
+.tc-flame svg { width: 14px; height: 14px; display: block; }
+.tc-next { margin-left: auto; }
+.tc-divider { height: 0; border-top: 1px solid var(--border); margin: 12px 0; }
 .tc-eyebrow { font-family: var(--font-sans); font-size: 12px; line-height: 16px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); font-weight: 600; }
+/* Archetype is the card's headline */
+.tc-rank { margin-top: 8px; min-height: 36px; font-family: var(--font-sans); font-size: 32px; font-weight: 800; line-height: 36px; letter-spacing: -0.01em; color: #F3F4F6; }
+.tc-insight { margin-top: 4px; font-family: var(--font-sans); font-size: 13px; line-height: 16px; color: var(--text-secondary); }
 /* Labelled stat row: score / correct / time */
-.tc-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+.tc-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
 .tc-stat { min-width: 0; }
-.tc-stat b { display: block; font-family: var(--font-sans); font-size: 20px; font-weight: 800; line-height: 24px; letter-spacing: -0.01em; color: #F3F4F6; font-variant-numeric: tabular-nums; }
-.tc-stat b.is-negative { color: #F22933; }
+.tc-stat b { display: block; font-family: var(--font-sans); font-size: 24px; font-weight: 800; line-height: 28px; letter-spacing: -0.01em; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+.tc-stat b .neg-sign { color: var(--wrong); }
 .tc-stat span { display: block; margin-top: 2px; font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); }
 .tc-bets { margin-top: 8px; font-family: var(--font-sans); font-size: 13px; line-height: 16px; color: var(--text-secondary); }
 .tc-agg { margin-top: 8px; font-family: var(--font-sans); font-size: 13px; line-height: 16px; font-weight: 600; color: var(--brand-pink); }
-.tc-rank { margin-top: 8px; min-height: 24px; font-family: var(--font-sans); font-size: 20px; font-weight: 700; line-height: 24px; color: #F3F4F6; }
-.tc-insight { margin-top: 4px; font-family: var(--font-sans); font-size: 13px; line-height: 16px; color: var(--text-secondary); }
 .tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 12px; padding: 0; }
 .tc-grid .rubric-tile[data-idx] { cursor: pointer; }
-.tc-hint { margin-top: 8px; font-family: var(--font-sans); font-size: 12px; line-height: 16px; color: var(--text-secondary); }
 .tc-cta-row { display: flex; align-items: stretch; gap: 8px; margin-top: 12px; }
 .tc-cta-row .btn-primary {
   flex: 1 1 auto; width: auto; max-width: none; height: 44px; padding: 0 16px; border-radius: 12px;
@@ -288,8 +285,14 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 .tc-cta-row .copy-btn { flex: 0 0 44px; width: 44px; height: 44px; padding: 0; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; }
 .tc-cta-row .copy-btn svg { width: 16px; height: 16px; display: block; }
-.hub-review { width: 100%; max-width: none; height: 44px; margin-top: 8px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-.hub-review svg { width: 14px; height: 14px; }
+.tc-review-link {
+  width: 100%; min-height: 44px; margin-top: 4px; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: none; border: none; cursor: pointer;
+  font-family: var(--font-sans); font-size: 14px; font-weight: 600;
+  color: var(--text-secondary); text-decoration: none; text-underline-offset: 2px;
+}
+.tc-review-link:hover, .tc-review-link:focus-visible { text-decoration: underline; color: var(--text-primary); }
 
 /* Zone 3 — career Brainprint bridge bar */
 .bp-bridge {
@@ -1156,12 +1159,6 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
         </div>
       </div>
 
-      <!-- Zone 1 · unified habit bar: streak + next-set countdown in one pill -->
-      <div class="habit-bar" id="habit-bar" role="status" aria-live="polite">
-        <span class="habit-fire" aria-hidden="true">🔥</span>
-        <span id="habit-text">0-day Streak · Next set in --</span>
-      </div>
-
       <!-- pre-completion hero -->
       <div class="logo-mark" aria-hidden="true">
         <svg viewBox="0 0 48 48" role="img" aria-label="KNOWIT" preserveAspectRatio="xMidYMid meet"><use href="#knowit-symbol"></use></svg>
@@ -1178,7 +1175,14 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
       <div class="hub-cards completed-stack" id="hub-cards">
         <!-- Zone 2 · TODAY'S SET receipt -->
         <div class="trophy-card" id="trophy-card">
+          <div class="tc-streak-row">
+            <span class="tc-streak" id="hub-streak"><span class="tc-flame" id="hub-flame" aria-hidden="true"></span><span id="hub-streak-text"></span></span>
+            <span class="tc-next" id="hub-next">Next set in --</span>
+          </div>
+          <div class="tc-divider"></div>
           <div class="tc-eyebrow" id="trophy-eyebrow">TODAY'S SET · #1</div>
+          <div class="tc-rank" id="trophy-rank"></div>
+          <div class="tc-insight" id="hub-insight" style="display:none;"></div>
           <div class="tc-stats">
             <div class="tc-stat"><b id="hub-points">— pts</b><span>Score</span></div>
             <div class="tc-stat"><b id="hub-correct">0/10</b><span>Correct</span></div>
@@ -1186,15 +1190,12 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
           </div>
           <div class="tc-bets" id="hub-bets" style="display:none;"></div>
           <div class="tc-agg" id="hub-agg" style="display:none;"></div>
-          <div class="tc-rank" id="trophy-rank"></div>
-          <div class="tc-insight" id="hub-insight" style="display:none;"></div>
           <div class="tc-grid" id="trophy-grid"></div>
-          <div class="tc-hint" id="hub-grid-hint" style="display:none;">Tap a miss to see what got you.</div>
           <div class="tc-cta-row">
             <button class="btn-primary" id="btn-hub-challenge">Challenge a Friend</button>
             <button class="btn-secondary copy-btn" id="btn-hub-copy" aria-label="Copy result"></button>
           </div>
-          <button class="btn-secondary hub-review" id="btn-view-results"><span class="btn-label">Review</span></button>
+          <button class="tc-review-link" id="btn-view-results" type="button">Review answers</button>
         </div>
 
         <!-- Zone 3 · career Brainprint bridge -->
@@ -3795,20 +3796,27 @@ function renderLanding() {
 }
 // Completed-day hub: habit bar → receipt → Brainprint bridge → Endless stage → install hint
 function renderHub() {
-  // Zone 1 — one line that carries the habit: streak plus the rollover countdown
-  const habit = $('habit-text');
-  if (habit) {
-    const eff = Math.max(0, effectiveStreak(stats));
-    habit.textContent = `${eff}-day Streak · ${nextSetIn()}`;
+  // Card header: streak (left) and the rollover countdown (right) share one line
+  const eff = Math.max(0, effectiveStreak(stats));
+  const streakWrap = $('hub-streak');
+  if (eff > 0) {
+    streakWrap.style.display = 'inline-flex';
+    $('hub-flame').innerHTML = ICONS.flame;
+    $('hub-streak-text').textContent = `${eff}-day streak`;
+  } else {
+    streakWrap.style.display = 'none';
+    $('hub-flame').innerHTML = '';
+    $('hub-streak-text').textContent = '';
   }
+  $('hub-next').textContent = nextSetIn();
 
-  // Zone 2 — TODAY'S SET receipt
+  // TODAY'S SET receipt
   $('trophy-eyebrow').textContent = `TODAY'S SET · #${getDailyNum()}`;
   const savedRes = loadResult();
   const hasRes = !!(savedRes && savedRes.date === getToday() && Array.isArray(savedRes.answers));
   const ptsEl = $('hub-points'), corEl = $('hub-correct'), timeEl = $('hub-time');
   const betsEl = $('hub-bets'), rankEl = $('trophy-rank'), insEl = $('hub-insight');
-  const gridEl = $('trophy-grid'), hintEl = $('hub-grid-hint');
+  const gridEl = $('trophy-grid');
   gridEl.innerHTML = '';
   let points = 0;
 
@@ -3824,12 +3832,25 @@ function renderHub() {
     const betHit = answers.filter(a => a.bet && a.correct).length;
     const arch = getArchetype(correct, total, secs, betUsed, betHit, points);
 
-    ptsEl.textContent = fmtPts(points);
-    ptsEl.classList.toggle('is-negative', points < 0);
+    // Only the minus sign carries colour; the number itself stays in body colour
+    ptsEl.innerHTML = points < 0
+      ? `<span class="neg-sign">−</span>${Math.abs(points)} pts`
+      : `${points} pts`;
     corEl.textContent = `${correct}/${total}`;
     timeEl.textContent = fmtDuration(secs);
-    betsEl.style.display = betUsed > 0 ? 'block' : 'none';
-    betsEl.textContent = betUsed > 0 ? `Bets ${betHit}/${betUsed}` : '';
+
+    // Bets line, or a nudge for players who have not tried a bet yet
+    if (betUsed > 0) {
+      betsEl.style.display = 'block';
+      betsEl.textContent = `Bets ${betHit}/${betUsed}`;
+    } else if (stats.played <= 10) {
+      betsEl.style.display = 'block';
+      betsEl.textContent = 'No bets placed. A bet doubles the points, win or lose.';
+    } else {
+      betsEl.style.display = 'none';
+      betsEl.textContent = '';
+    }
+
     rankEl.textContent = arch.name;
 
     // One insight line only: a losing run where hard questions did most of the damage
@@ -3849,19 +3870,17 @@ function renderHub() {
       applyRubricTile(cell, a ? rubricStateFor(a, false) : 'upcoming', i);
       gridEl.appendChild(cell);
     }
-    hintEl.style.display = misses.length > 0 ? 'block' : 'none';
 
     loadHubAggregate(savedRes.puzzle || getDailyNum(), points);
   } else {
     ptsEl.textContent = '— pts';
-    ptsEl.classList.remove('is-negative');
     corEl.textContent = '—';
     timeEl.textContent = '—';
     betsEl.style.display = 'none';
+    betsEl.textContent = '';
     rankEl.textContent = "Today's set complete.";
     insEl.style.display = 'none';
     insEl.textContent = '';
-    hintEl.style.display = 'none';
     $('hub-agg').style.display = 'none';
     $('hub-agg').textContent = '';
   }
@@ -4816,21 +4835,30 @@ function loadHubAggregate(puzzleNum, points) {
     })
     .catch(() => {});
 }
+// Server percentile = share of players beaten (0-100). Wording depends on where it lands.
+function percentileCopy(pct) {
+  const p = Math.round(Number(pct));
+  if (!isFinite(p) || p < 10) return null;
+  if (p >= 50) return { text: `Top ${Math.max(1, 100 - p)}% today`, top: Math.max(1, 100 - p) };
+  return { text: `Beat ${p}% of players`, top: null };
+}
 function renderAggregates(d, puzzleNum, lineEl) {
   const n = Number(d.n) || 0;
   const line = lineEl || $('agg-line'), hard = lineEl ? null : $('agg-hardest');
-  const pct = Number(d.percentileFor);
-  if (n >= AGG_MIN_PERCENTILE && line && isFinite(pct)) {
-    const top = Math.max(1, Math.min(100, Math.round(100 - pct)));
-    line.textContent = `Top ${top}% today`;
+  const copy = percentileCopy(d.percentileFor);
+  if (n >= AGG_MIN_PERCENTILE && line && copy) {
+    line.textContent = copy.text;
     line.style.display = 'block';
     // The percentile only exists now, so refresh the share head (visual grid is unchanged)
-    if (!lineEl && state.mode === 'daily' && !state.replayDay) {
-      const payload = buildDailySharePayload(state.answers, puzzleNum, stats.streak, undefined, top);
+    if (!lineEl && copy.top && state.mode === 'daily' && !state.replayDay) {
+      const payload = buildDailySharePayload(state.answers, puzzleNum, stats.streak, undefined, copy.top);
       state.shareClean = payload.shareClean;
       state.shareFull = payload.shareFull;
       $('share-text').textContent = state.shareFull;
     }
+  } else if (line) {
+    line.style.display = 'none';
+    line.textContent = '';
   }
   const rates = Array.isArray(d.qRate) ? d.qRate.map(Number) : [];
   if (n >= AGG_MIN_HARDEST && hard && rates.length) {
@@ -5520,7 +5548,6 @@ $('btn-challenge').innerHTML = `${ICONS.swords}<span class="btn-label">Challenge
 $('btn-copy').innerHTML = ICONS.copy;
 $('btn-hub-challenge').innerHTML = `${ICONS.swords}<span class="btn-label">Challenge a Friend</span>`;
 $('btn-hub-copy').innerHTML = ICONS.copy;
-$('btn-view-results').innerHTML = `${ICONS.eye}<span class="btn-label">Review</span>`;
 $('btn-endless-result').innerHTML = `${ICONS.heart}<span class="btn-label">Play Endless</span>`;
 // Review modal: tap wrong grid cell → open; backdrop/close button → close
 $('share-visual').addEventListener('click', e => {
@@ -5613,8 +5640,8 @@ renderMuteBtn();
 // ---- Countdown ticker: keeps the next-set line fresh and unlocks a new day ----
 function tick() {
   if (stats.completedDaily === getToday()) {
-    const habit = $('habit-text');
-    if (habit) habit.textContent = `${Math.max(0, effectiveStreak(stats))}-day Streak · ${nextSetIn()}`;
+    const next = $('hub-next');
+    if (next) next.textContent = nextSetIn();
     const nsr = $('next-set-results');
     if (nsr && nsr.style.display === 'block') nsr.textContent = nextSetLine();
   }
