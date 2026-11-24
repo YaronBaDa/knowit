@@ -263,8 +263,9 @@ Two independent, optional systems; both are silent when unavailable.
    puzzle+player for 3 days, folded into `agg:<puzzle>` `{ n, pointsHist, qCorrect[10] }`;
    `GET /agg?puzzle=N&points=P` returns `{ n, qRate[10], percentileFor }`. 30 req/min per IP, CORS
    for the site origin only. `API_BASE` in `index.html` points at
-   `https://knowit-stats.ybachmandagan.workers.dev` — **confirm the worker is actually deployed and
-   the KV id in `wrangler.toml` is real** (it still reads `REPLACE_WITH_KV_NAMESPACE_ID`).
+   `https://knowit-stats.ybachmandagan.workers.dev`, which is **live and answering** (`/agg` returns
+   real aggregates). `wrangler.toml` carries a placeholder `id` — `node worker/kv-id.mjs` records the
+   real namespace id from the account, and `--check` reports whether it is set.
 
 Client behaviour: one POST + one GET per completed ranked daily, 2 s abort, no retry; “Top X% today”
 appears at `n ≥ 2`, “Hardest today” at `n ≥ 20`; the share head gains `· Top X%` once known.
@@ -326,8 +327,10 @@ nothing is summed, and `knowit_progress_v1` is never imported.
   tile. Drop the real 96×96 (or larger, transparent) PNG/WebP at the repo root to activate it.
 - **192/512 PWA icons missing** — needed for full Android install criteria.
 - **Plausible domain placeholder** — `data-domain="YOUR_DOMAIN_HERE"`, so analytics no-ops.
-- **Worker deployment unverified** — `API_BASE` is set; confirm the worker is deployed and
-  `wrangler.toml`’s KV id is real, otherwise the results simply never show the percentile lines.
+- **`wrangler.toml` KV id is a placeholder** — the worker is deployed and live, but the repo cannot
+  redeploy until the real STATS namespace id is recorded: `node worker/kv-id.mjs` (needs
+  `wrangler login` once), `node worker/kv-id.mjs --check` to see the current state. A missing
+  binding now answers `503 {"error":"not_configured"}` instead of an opaque CF 500.
 - **Service worker offline typography** — Google Fonts are cross-origin and deliberately not cached;
   self-hosting the two woff2 files would fix offline rendering if that matters.
 - **360×640 is tight** — the Brainprint page scrolls its middle (by design); the home receipt

@@ -61,12 +61,9 @@ in that case the game falls back to the computed set for those days (the id chec
 
 ## Anonymous score aggregation (optional)
 
-Turned off by default. `API_BASE` in `index.html` is empty, so nothing is sent and the results
-screen is exactly as it always was. Set it to the deployed Worker origin to enable it:
-
-```js
-const API_BASE = 'https://knowit-stats.<your-account>.workers.dev';   // no trailing slash
-```
+`API_BASE` in `index.html` points at the live worker
+(`https://knowit-stats.ybachmandagan.workers.dev`), so aggregation is **on**. Set it to `''` to turn
+it off completely — nothing is sent and the results screen is exactly as it always was.
 
 ### What is collected
 
@@ -87,17 +84,25 @@ the per-minute rate limit). The Worker keeps one aggregate per puzzle — a coun
 histogram, and how many players got each position right — plus a 3-day de-dupe key that stops the
 same device counting twice for one puzzle.
 
-What you see back: “Top X% today” under the stat bar and “Hardest today: Q9 (48% got it)” under the
-grid, both only once at least **20** players have submitted that puzzle. If the API is slow,
-missing or erroring, both lines are simply absent — the game is unchanged.
+What you see back: “Top X% today” under the stat bar from **2** submitted players (a percentile
+needs a second player to mean anything) and “Hardest today: Q9 (48% got it)” under the grid from
+**20**. If the API is slow, missing or erroring, both lines are simply absent — the game is unchanged.
 
 ### Deploying the Worker
 
+The worker is already deployed and its KV namespace already holds data, so a redeploy must reuse
+that namespace. Running `wrangler kv namespace create STATS` a second time creates a new, empty
+namespace and the percentile lines silently reset to nothing.
+
 ```bash
-cd worker
-wrangler kv namespace create STATS     # copy the id into wrangler.toml
-wrangler deploy                        # note the printed https origin
+node worker/kv-id.mjs          # records the existing STATS namespace id in worker/wrangler.toml
+node worker/kv-id.mjs --check  # exit 1 while the id is still a placeholder
+cd worker && wrangler deploy   # note the printed https origin
 ```
+
+On a brand-new account with no namespace yet, create it once (`wrangler kv namespace create STATS`)
+and then run `node worker/kv-id.mjs`. Both commands need `npx wrangler login` once, on the machine
+that will deploy.
 
 Then set `API_BASE` in `index.html` to that origin and commit. The Worker only answers CORS for
 `https://yaronbada.github.io` (plus local dev origins), and accepts puzzle numbers for today or

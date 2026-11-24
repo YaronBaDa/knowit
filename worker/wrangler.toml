@@ -1,6 +1,15 @@
 # KNOWIT anonymous score aggregation worker
-#   wrangler kv namespace create STATS   -> paste the id below
-#   wrangler deploy
+#
+# The live worker (https://knowit-stats.ybachmandagan.workers.dev) is ALREADY deployed and holds
+# real aggregates. Reuse the same KV namespace — creating a second one silently splits the stats
+# and the results screen stops showing the percentile lines it used to.
+#
+#   node kv-id.mjs          # reads the existing STATS namespace id from your Cloudflare account
+#                           # and writes it into `id` below (needs `wrangler login` once)
+#   node kv-id.mjs --check  # reports whether `id` is real, changes nothing (exit 1 if not)
+#
+# Only if the namespace genuinely does not exist yet:
+#   npx wrangler kv namespace create STATS     -> then run `node kv-id.mjs` to record the id
 name = "knowit-stats"
 main = "index.js"
 compatibility_date = "2026-11-01"
@@ -8,4 +17,4 @@ compatibility_date = "2026-11-01"
 # KV is eventually consistent; a lost increment just nudges a percentage. Fine here.
 [[kv_namespaces]]
 binding = "STATS"
-id = "REPLACE_WITH_KV_NAMESPACE_ID"
+id = "PASTE_KV_NAMESPACE_ID"   # 32 hex chars, from `node kv-id.mjs` — NOT the account id

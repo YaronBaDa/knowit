@@ -12,8 +12,8 @@
  * read-modify-write can lose a single increment. For a "you beat X% of players"
  * banner that is completely fine, and it keeps this free to run.
  *
- * Deploy:  wrangler kv namespace create STATS   → paste the id into wrangler.toml
- *          wrangler deploy
+ * Deploy:  node kv-id.mjs  → records the existing STATS namespace id in wrangler.toml
+ *          wrangler deploy → (do NOT run `kv namespace create` again; it would orphan the live data)
  */
 
 const LAUNCH_UTC = Date.UTC(2026, 10, 18);   // puzzle #1 = 2026-11-18 UTC
@@ -83,6 +83,13 @@ export default {
 
     if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: headers(origin) });
+    }
+
+    // Config drift guard: a deploy whose wrangler.toml still carries the placeholder id, or a
+    // binding dropped by hand, would throw on the first KV call and answer an opaque CF 500.
+    // Fail loudly-but-cleanly instead; the client already ignores any non-ok response.
+    if (!env || !env.STATS || typeof env.STATS.get !== 'function') {
+      return json({ error: 'not_configured' }, 503, origin);
     }
 
     const minute = Math.floor(Date.now() / 60000);
