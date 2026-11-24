@@ -147,6 +147,7 @@ Keys (never rename or reshape the first four; new keys are additive only):
 | `knowit_seen_bet_intro` | `'1'` once the first-run bet explainer has been seen |
 | `knowit_pid` | random UUID for anonymous aggregation |
 | `knowit_schedule_v1` | `{ v: 1, days }` — last good `schedule.json`, used only when the fetch is slow or fails |
+| `knowit_a2hs_dismissed` | `'1'` once the add-to-home-screen hint is dismissed |
 
 `categories` is keyed by the **six umbrella names** and each bucket is
 `{ answered, correct, betsWon, betsLost }`. `loadStats()` migrates older saves in place (bets
@@ -234,22 +235,27 @@ replays; `finishGame()` decides with `toHub` and `viewTodaysResults()`/Review fo
 
 **Post-completion home** (`.is-completed`), four zones on a 12 px rhythm:
 
-1. **Header + habit bar** — brand mark + Zetta wordmark only (no right-side streak pill), then a
-   centred pill (`6px 14px`, radius 999, `#1F181C`, hairline border) reading
-   `🔥 {streak}-day Streak · Next set in {countdown}`; `tick()` refreshes it.
-2. **Today's Set receipt** (`#1F181C`, radius 16, padding 16): `TODAY'S SET · #N` 12/16/`0.06em`
-   → 32/800 points (Crimson under zero, bone above) opposite `(c/10) · Xm Ys` 14/600 → rank title
-   20/700 → 24 px ten-tile strip → 2-up `Review` / `Share` (40 px, radius 12). No lifetime line.
-3. **Brainprint bridge** — slim bar (padding `12px 16px`, radius 12) with `Top: {category} ({pct}%)`
-   (or `Career accuracy: {pct}%`) left and `Brainprint ↗` right; the row opens the page.
-4. **Endless stage** (flex 1, radial pink→orchid wash, `rgba(244,84,176,.32)` border, padding 16):
-   `ENDLESS MODE` eyebrow + `3 LIVES` pill → 96×96 mascot slot (falls back to 🧠 until
-   `/brain-mascot.webp` exists) beside `Want to keep going?` 20/700 and
-   `Best run: {n}` / `3 lives · See how far you can go.` → full-width 48 px gradient
-   `Play Endless`.
+1. **Header + habit bar** — brand mark + Zetta wordmark only, then a centred pill
+   (`6px 14px`, radius 999) reading `🔥 {streak}-day Streak · Next set in {countdown}`; `tick()`
+   refreshes it.
+2. **Today's Set receipt** (`#1F181C`, radius 16, padding 16): `TODAY'S SET · #N` → labelled stat row
+   (score / `c/10` correct / `Xm Ys`, values 20/800, crimson under zero) → optional `Bets n/m` →
+   optional `Top X% today` → rank title → optional insight (`N of M misses were hard questions.`,
+   only on a losing run where hard questions were at least half the misses) → 24 px ten-tile strip
+   (check on correct, X on miss, bolt kept on bets; misses carry `data-idx`) → `Tap a miss to see
+   what got you.` when there is a miss → filled **Challenge a Friend** + square copy button →
+   outline `Review`. `currentSharePayload()` feeds both the results and hub challenge/copy handlers.
+3. **Brainprint bridge** — `Best subject: {category} {pct}%` (category kept on one line via
+   `.bp-subject`) with `Brainprint ↗`; when locked it shows `Brainprint` + `{answered}/30 answers`.
+4. **Endless stage** — compact and secondary: `ENDLESS MODE` + `3 LIVES`, 32 px mark inline with
+   `Redeem yourself` (when today's points ≤ 0) or `Want to keep going?`, `Best run: N`, and an
+   outlined brand `Play Endless` (44 px). It no longer fills the leftover height.
+5. **Install hint** (`#a2hs`) — only when streak ≥ 3, not standalone and
+   `knowit_a2hs_dismissed` is unset; uses the captured `beforeinstallprompt` when available, else
+   iOS/Android copy. Dismiss sets the key.
 
-The receipt reads `durationSec` from `knowit_result_v1`, so the run time stays correct after a
-reload; `fmtDuration()` renders `5m 47s` / `47s`.
+Percentile: `loadHubAggregate()` reuses the payload `loadAggregates()` cached (`LAST_AGG`) and
+otherwise does one 2 s `GET /agg` per session, rendered through the same `renderAggregates()` gate.
 
 **Results**: brand header → eyebrow (`TODAY'S SET` / `ENDLESS MODE` / `REPLAY #n`) → hero score and
 verdict → optional duel card → scorecard (tile grid, `SCORE / CORRECT / TIME`, `#agg-line`
@@ -369,6 +375,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`HOMEv2` home: challenge-first receipt, labelled stats, tappable misses, compact Endless, install hint
 `5127669` daily completion routes to a 4-zone post-completion home (habit bar, receipt, bridge, Endless)
 `8de74a5` +300 evergreen questions (1,105 bank), correct answers balanced 75/75/75/75
 `0eeff68` +300 evergreen questions (805 bank), Endless difficulty weighting, schedule to day 150

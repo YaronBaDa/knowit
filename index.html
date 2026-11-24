@@ -268,36 +268,46 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   flex: 0 0 auto; display: flex; flex-direction: column;
 }
 .tc-eyebrow { font-family: var(--font-sans); font-size: 12px; line-height: 16px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); font-weight: 600; }
-.tc-score-row { margin-top: 8px; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
-.tc-points { font-family: var(--font-sans); font-size: 32px; font-weight: 800; line-height: 36px; letter-spacing: -0.02em; color: #F3F4F6; font-variant-numeric: tabular-nums; }
-.tc-points.is-negative { color: #F22933; }
-.tc-meta { font-family: var(--font-sans); font-size: 14px; font-weight: 600; line-height: 20px; color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.tc-rank { margin-top: 4px; min-height: 24px; font-family: var(--font-sans); font-size: 20px; font-weight: 700; line-height: 24px; color: #F3F4F6; }
+/* Labelled stat row: score / correct / time */
+.tc-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+.tc-stat { min-width: 0; }
+.tc-stat b { display: block; font-family: var(--font-sans); font-size: 20px; font-weight: 800; line-height: 24px; letter-spacing: -0.01em; color: #F3F4F6; font-variant-numeric: tabular-nums; }
+.tc-stat b.is-negative { color: #F22933; }
+.tc-stat span { display: block; margin-top: 2px; font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); }
+.tc-bets { margin-top: 8px; font-family: var(--font-sans); font-size: 13px; line-height: 16px; color: var(--text-secondary); }
+.tc-agg { margin-top: 8px; font-family: var(--font-sans); font-size: 13px; line-height: 16px; font-weight: 600; color: var(--brand-pink); }
+.tc-rank { margin-top: 8px; min-height: 24px; font-family: var(--font-sans); font-size: 20px; font-weight: 700; line-height: 24px; color: #F3F4F6; }
+.tc-insight { margin-top: 4px; font-family: var(--font-sans); font-size: 13px; line-height: 16px; color: var(--text-secondary); }
 .tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 12px; padding: 0; }
-.tc-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; width: 100%; }
-.tc-actions > * { min-width: 0; }
-.tc-actions .btn-secondary {
-  width: 100%; max-width: none; height: 40px; padding: 0 12px; border-radius: 12px;
-  font-size: 16px; font-weight: 600; white-space: nowrap;
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+.tc-grid .rubric-tile[data-idx] { cursor: pointer; }
+.tc-hint { margin-top: 8px; font-family: var(--font-sans); font-size: 12px; line-height: 16px; color: var(--text-secondary); }
+.tc-cta-row { display: flex; align-items: stretch; gap: 8px; margin-top: 12px; }
+.tc-cta-row .btn-primary {
+  flex: 1 1 auto; width: auto; max-width: none; height: 44px; padding: 0 16px; border-radius: 12px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap;
 }
+.tc-cta-row .copy-btn { flex: 0 0 44px; width: 44px; height: 44px; padding: 0; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; }
+.tc-cta-row .copy-btn svg { width: 16px; height: 16px; display: block; }
+.hub-review { width: 100%; max-width: none; height: 44px; margin-top: 8px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.hub-review svg { width: 14px; height: 14px; }
 
 /* Zone 3 — career Brainprint bridge bar */
 .bp-bridge {
-  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px;
   padding: 12px 16px; border-radius: 12px; background: #1F181C;
   border: 1px solid rgba(255, 255, 255, 0.08); cursor: pointer; text-align: left;
   font-family: var(--font-sans); flex: 0 0 auto; transition: transform .12s;
 }
 .bp-bridge:active { transform: scale(0.99); }
-.bp-bridge-label { font-size: 13px; line-height: 16px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bp-bridge-label { font-size: 13px; line-height: 16px; color: var(--text-secondary); min-width: 0; flex: 1 1 auto; }
+.bp-subject { white-space: nowrap; }
 .bp-bridge-cta { font-size: 13px; line-height: 16px; font-weight: 600; color: #F3F4F6; white-space: nowrap; }
 
-/* Zone 4 — Endless hero stage */
+/* Zone 4 — Endless stage, compact and secondary */
 .endless-teaser {
   width: 100%; max-width: none; text-align: left;
-  flex: 1 1 auto; min-height: 0;
-  display: flex; flex-direction: column; justify-content: space-between;
+  flex: 0 0 auto; min-height: 0;
+  display: flex; flex-direction: column;
   padding: 16px; border-radius: 16px;
   background: radial-gradient(circle at 50% 0%, rgba(244, 84, 176, 0.14) 0%, rgba(168, 85, 247, 0.06) 45%, #1F181C 85%);
   border: 1px solid rgba(244, 84, 176, 0.32);
@@ -305,20 +315,37 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .et-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; flex-shrink: 0; }
 .et-eyebrow { font-family: var(--font-sans); font-size: 12px; font-weight: 700; line-height: 16px; letter-spacing: 0.08em; color: #F454B0; }
 .et-lives { font-family: var(--font-sans); font-size: 12px; font-weight: 600; line-height: 16px; padding: 4px 8px; border-radius: 999px; background: #140F12; border: 1px solid rgba(255, 255, 255, 0.08); color: var(--text-secondary); }
-.et-row { display: flex; align-items: center; gap: 16px; margin: 12px 0; width: 100%; flex-shrink: 0; }
-.et-mascot { width: 96px; height: 96px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-.et-mascot img { width: 96px; height: 96px; object-fit: contain; filter: drop-shadow(0 0 14px rgba(255, 92, 184, 0.35)); }
-.et-mascot img, .et-mascot.is-missing::after { box-sizing: border-box; }
-.et-mascot.is-missing img { display: none; }
-.et-mascot.is-missing::after {
-  content: '🧠'; width: 96px; height: 96px; display: flex; align-items: center; justify-content: center;
-  font-size: 44px; line-height: 1; border-radius: 24px;
-  background: rgba(255, 92, 184, 0.12); border: 1px dashed rgba(255, 92, 184, 0.35);
-}
+.et-mid { display: flex; align-items: center; gap: 12px; margin: 12px 0; width: 100%; min-width: 0; }
+.et-mark { flex: 0 0 32px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
+.et-mark svg { width: 32px; height: 32px; display: block; }
 .et-copy { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; text-align: left; }
-.et-headline { font-family: var(--font-sans); font-size: 20px; font-weight: 700; line-height: 24px; color: #F3F4F6; text-wrap: balance; }
+.et-headline { font-family: var(--font-sans); font-size: 20px; font-weight: 700; line-height: 24px; color: #F3F4F6; }
 .et-sub { font-family: var(--font-sans); font-size: 13px; line-height: 16px; font-weight: 400; color: var(--text-secondary); margin-top: 4px; }
-.endless-teaser .btn-primary { width: 100%; max-width: none; height: 48px; border-radius: 12px; color: #140C12; flex-shrink: 0; }
+.btn-outline-brand {
+  width: 100%; height: 44px; border-radius: 12px; border: 1px solid var(--brand-pink);
+  background: transparent; color: var(--brand-pink);
+  font-family: var(--font-sans); font-size: 16px; font-weight: 700; cursor: pointer;
+  transition: transform .12s, background .12s;
+}
+.btn-outline-brand:active { transform: scale(0.97); background: rgba(244, 84, 176, 0.08); }
+
+/* Retention — add-to-home-screen hint */
+.a2hs {
+  display: flex; align-items: flex-start; gap: 8px; width: 100%; box-sizing: border-box;
+  padding: 12px; border-radius: 12px; background: #1F181C; border: 1px solid rgba(255, 255, 255, 0.08);
+  flex: 0 0 auto; margin-top: auto;
+}
+.a2hs-copy { flex: 1 1 auto; min-width: 0; text-align: left; }
+.a2hs-text { font-family: var(--font-sans); font-size: 12px; line-height: 16px; color: var(--text-secondary); }
+.a2hs-install {
+  margin-top: 8px; height: 32px; padding: 0 12px; border-radius: 8px;
+  border: 1px solid var(--brand-pink); background: transparent; color: var(--brand-pink);
+  font-family: var(--font-sans); font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.a2hs-x {
+  flex: 0 0 24px; width: 24px; height: 24px; border: none; background: transparent;
+  color: var(--text-secondary); font-size: 14px; line-height: 1; cursor: pointer; padding: 0;
+}
 
 /* ---- Unified rubric tile: ONE design for in-game, home and results ---- */
 .rubric-tile {
@@ -1152,40 +1179,53 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
         <!-- Zone 2 · TODAY'S SET receipt -->
         <div class="trophy-card" id="trophy-card">
           <div class="tc-eyebrow" id="trophy-eyebrow">TODAY'S SET · #1</div>
-          <div class="tc-score-row">
-            <div class="tc-points" id="trophy-score">— pts</div>
-            <div class="tc-meta" id="trophy-meta">(0/10) · 0s</div>
+          <div class="tc-stats">
+            <div class="tc-stat"><b id="hub-points">— pts</b><span>Score</span></div>
+            <div class="tc-stat"><b id="hub-correct">0/10</b><span>Correct</span></div>
+            <div class="tc-stat"><b id="hub-time">0s</b><span>Time</span></div>
           </div>
+          <div class="tc-bets" id="hub-bets" style="display:none;"></div>
+          <div class="tc-agg" id="hub-agg" style="display:none;"></div>
           <div class="tc-rank" id="trophy-rank"></div>
-          <div class="tc-grid" id="trophy-grid" aria-hidden="true"></div>
-          <div class="tc-actions">
-            <button class="btn-secondary" id="btn-view-results"><span class="btn-label">Review</span></button>
-            <button class="btn-secondary" id="btn-quick-share"><span class="btn-label">Share</span></button>
+          <div class="tc-insight" id="hub-insight" style="display:none;"></div>
+          <div class="tc-grid" id="trophy-grid"></div>
+          <div class="tc-hint" id="hub-grid-hint" style="display:none;">Tap a miss to see what got you.</div>
+          <div class="tc-cta-row">
+            <button class="btn-primary" id="btn-hub-challenge">Challenge a Friend</button>
+            <button class="btn-secondary copy-btn" id="btn-hub-copy" aria-label="Copy result"></button>
           </div>
+          <button class="btn-secondary hub-review" id="btn-view-results"><span class="btn-label">Review</span></button>
         </div>
 
         <!-- Zone 3 · career Brainprint bridge -->
         <button class="bp-bridge" id="bp-bridge" type="button">
-          <span class="bp-bridge-label" id="bp-bridge-label">Career accuracy: 0%</span>
-          <span class="bp-bridge-cta">Brainprint ↗</span>
+          <span class="bp-bridge-label" id="bp-bridge-label">Best subject: —</span>
+          <span class="bp-bridge-cta" id="bp-bridge-cta">Brainprint ↗</span>
         </button>
 
-        <!-- Zone 4 · Endless hero stage -->
+        <!-- Zone 4 · Endless stage (compact, secondary) -->
         <div class="endless-teaser" id="endless-teaser" style="display:none;">
           <div class="et-top">
             <span class="et-eyebrow">ENDLESS MODE</span>
             <span class="et-lives">3 LIVES</span>
           </div>
-          <div class="et-row">
-            <div class="et-mascot" id="et-mascot">
-              <img src="/brain-mascot.webp" alt="Knowit mascot" width="96" height="96">
-            </div>
+          <div class="et-mid">
+            <span class="et-mark" aria-hidden="true"><svg viewBox="0 0 48 48" preserveAspectRatio="xMidYMid meet"><use href="#knowit-symbol"></use></svg></span>
             <div class="et-copy">
-              <div class="et-headline">Want to keep going?</div>
-              <div class="et-sub" id="gt-line">3 lives · See how far you can go.</div>
+              <div class="et-headline" id="et-headline">Want to keep going?</div>
+              <div class="et-sub" id="gt-line">Best run: 0</div>
             </div>
           </div>
-          <button class="btn-primary" id="btn-endless">Play Endless</button>
+          <button class="btn-outline-brand" id="btn-endless">Play Endless</button>
+        </div>
+
+        <!-- Retention: add-to-home-screen hint (streak >= 3, not installed, not dismissed) -->
+        <div class="a2hs" id="a2hs" style="display:none;">
+          <div class="a2hs-copy">
+            <div class="a2hs-text" id="a2hs-text"></div>
+            <button class="a2hs-install" id="a2hs-install" type="button" style="display:none;">Install</button>
+          </div>
+          <button class="a2hs-x" id="a2hs-x" type="button" aria-label="Dismiss install hint">✕</button>
         </div>
       </div>
 
@@ -3631,6 +3671,8 @@ const ICONS = {
   shareUp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="m8 8 4-4 4 4"/><path d="M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>',
   // Rubric glyphs — same geometry as the HUD (#bet-pips bolt, .endless-hud heart), 12x12 dark ink
   boltInk: '<svg width="12" height="12" viewBox="0 0 24 24" fill="#140F12" stroke="none" aria-hidden="true"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>',
+  checkInk12: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#140F12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 12 6 6L20 6"/></svg>',
+  xInk12: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#140F12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
   heartBroken: '<svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path fill="#140F12" stroke="none" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/><path d="M12 5 L10.5 10 L13.5 13 L11.5 19" stroke="#F22933" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>',
   flame: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
   swords: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"/><line x1="5" x2="9" y1="14" y2="18"/><line x1="7" x2="4" y1="17" y2="20"/><line x1="3" x2="5" y1="19" y2="21"/></svg>',
@@ -3650,6 +3692,8 @@ const ICONS = {
 
 // ---- Shared rubric renderer: in-game strip, home strip, daily + endless results ----
 const RUBRIC_ICON = {
+  'correct': 'checkInk12',
+  'incorrect': 'xInk12',
   'correct-bet': 'boltInk',
   'incorrect-bet': 'boltInk',
   'endless-incorrect': 'heartBroken',
@@ -3749,7 +3793,7 @@ function renderLanding() {
 
   lastRenderedDay = getToday();
 }
-// Completed-day hub: habit bar → receipt → Brainprint bridge → Endless stage
+// Completed-day hub: habit bar → receipt → Brainprint bridge → Endless stage → install hint
 function renderHub() {
   // Zone 1 — one line that carries the habit: streak plus the rollover countdown
   const habit = $('habit-text');
@@ -3762,51 +3806,114 @@ function renderHub() {
   $('trophy-eyebrow').textContent = `TODAY'S SET · #${getDailyNum()}`;
   const savedRes = loadResult();
   const hasRes = !!(savedRes && savedRes.date === getToday() && Array.isArray(savedRes.answers));
-  const pointsEl = $('trophy-score'), metaEl = $('trophy-meta'), rankEl = $('trophy-rank'), gridEl = $('trophy-grid');
+  const ptsEl = $('hub-points'), corEl = $('hub-correct'), timeEl = $('hub-time');
+  const betsEl = $('hub-bets'), rankEl = $('trophy-rank'), insEl = $('hub-insight');
+  const gridEl = $('trophy-grid'), hintEl = $('hub-grid-hint');
   gridEl.innerHTML = '';
+  let points = 0;
+
   if (hasRes) {
     const answers = savedRes.answers;
-    const totalPoints = sumPoints(answers);
+    points = sumPoints(answers);
     const correct = answers.filter(a => a.correct).length;
     const total = answers.length || 10;
-    const durationSec = Number.isFinite(savedRes.durationSec)
+    const secs = Number.isFinite(savedRes.durationSec)
       ? savedRes.durationSec
       : answers.reduce((s, a) => s + (a.time || 0), 0) / 1000;
     const betUsed = answers.filter(a => a.bet).length;
     const betHit = answers.filter(a => a.bet && a.correct).length;
-    const arch = getArchetype(correct, total, durationSec, betUsed, betHit, totalPoints);
-    pointsEl.textContent = fmtPts(totalPoints);
-    pointsEl.classList.toggle('is-negative', totalPoints < 0);
-    metaEl.textContent = `(${correct}/${total}) · ${fmtDuration(durationSec)}`;
+    const arch = getArchetype(correct, total, secs, betUsed, betHit, points);
+
+    ptsEl.textContent = fmtPts(points);
+    ptsEl.classList.toggle('is-negative', points < 0);
+    corEl.textContent = `${correct}/${total}`;
+    timeEl.textContent = fmtDuration(secs);
+    betsEl.style.display = betUsed > 0 ? 'block' : 'none';
+    betsEl.textContent = betUsed > 0 ? `Bets ${betHit}/${betUsed}` : '';
     rankEl.textContent = arch.name;
+
+    // One insight line only: a losing run where hard questions did most of the damage
+    const byId = new Map(QUESTIONS.map(q => [q.id, q]));
+    const misses = answers.filter(a => !a.correct);
+    const hardMisses = misses.filter(a => {
+      const q = a.q || byId.get(a.id);
+      return q && q.difficulty === 'hard';
+    }).length;
+    const showInsight = points <= 0 && misses.length > 0 && hardMisses >= Math.ceil(misses.length / 2);
+    insEl.style.display = showInsight ? 'block' : 'none';
+    insEl.textContent = showInsight ? `${hardMisses} of ${misses.length} misses were hard questions.` : '';
+
     for (let i = 0; i < 10; i++) {
       const cell = document.createElement('div');
       const a = answers[i];
-      applyRubricTile(cell, a ? rubricStateFor(a, false) : 'upcoming');
+      applyRubricTile(cell, a ? rubricStateFor(a, false) : 'upcoming', i);
       gridEl.appendChild(cell);
     }
+    hintEl.style.display = misses.length > 0 ? 'block' : 'none';
+
+    loadHubAggregate(savedRes.puzzle || getDailyNum(), points);
   } else {
-    pointsEl.textContent = '— pts';
-    pointsEl.classList.remove('is-negative');
-    metaEl.textContent = '';
+    ptsEl.textContent = '— pts';
+    ptsEl.classList.remove('is-negative');
+    corEl.textContent = '—';
+    timeEl.textContent = '—';
+    betsEl.style.display = 'none';
     rankEl.textContent = "Today's set complete.";
+    insEl.style.display = 'none';
+    insEl.textContent = '';
+    hintEl.style.display = 'none';
+    $('hub-agg').style.display = 'none';
+    $('hub-agg').textContent = '';
   }
 
   // Zone 3 — career Brainprint bridge
   const bp = brainprintData();
-  const bridgeLabel = $('bp-bridge-label');
-  if (bridgeLabel) {
-    bridgeLabel.textContent = bp.strongest
-      ? `Top: ${bp.strongest.category} (${bp.strongest.accuracy}%)`
-      : `Career accuracy: ${bp.overallAccuracy}%`;
+  const bLabel = $('bp-bridge-label'), bCta = $('bp-bridge-cta');
+  if (bp.unlocked && bp.strongest) {
+    bLabel.innerHTML = `Best subject: <span class="bp-subject">${escapeHtml(bp.strongest.category)} ${bp.strongest.accuracy}%</span>`;
+    bCta.textContent = 'Brainprint ↗';
+  } else {
+    // Same progress copy the locked trigger uses elsewhere
+    bLabel.textContent = 'Brainprint';
+    bCta.textContent = `${bp.totalAnswered}/${BP_MIN_ANSWERED} answers`;
   }
 
-  // Zone 4 — Endless stage subtitle
+  // Zone 4 — Endless stage: redeem a losing day, otherwise the usual invitation
+  $('et-headline').textContent = (!hasRes || points <= 0) ? 'Redeem yourself' : 'Want to keep going?';
   const bestRun = stats.bestEndless || 0;
-  // The zero-state line is two balanced lines on a 360 px card, so break it after "far"
-  $('gt-line').innerHTML = bestRun > 0 ? `Best run: ${bestRun}` : '3 lives · See how far<br>you can go.';
-  initMascotFallback();
+  $('gt-line').textContent = `Best run: ${bestRun}`;
+
+  // Housekeeping: seed the install hint (streak >= 3, not installed, not dismissed)
+  renderInstallHint();
 }
+
+// ---- Add-to-home-screen hint (retention) ----
+let deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+});
+function isAppInstalled() {
+  const standalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+  return !!(standalone || navigator.standalone === true);
+}
+function isIOSDevice() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent);
+}
+function renderInstallHint() {
+  const card = $('a2hs');
+  if (!card) return;
+  let dismissed = false;
+  try { dismissed = localStorage.getItem('knowit_a2hs_dismissed') === '1'; } catch (e) {}
+  const show = effectiveStreak(stats) >= 3 && !isAppInstalled() && !dismissed;
+  card.style.display = show ? 'flex' : 'none';
+  if (!show) return;
+  $('a2hs-text').textContent = deferredInstallPrompt || !isIOSDevice()
+    ? 'Add KNOWIT to your home screen for a daily reminder-free shortcut.'
+    : 'Tap Share, then Add to Home Screen.';
+  $('a2hs-install').style.display = deferredInstallPrompt ? 'inline-flex' : 'none';
+}
+
 function renderLandingStats() {
   const el = $('landing-stats');
   if (stats.completedDaily === getToday()) {
@@ -4681,19 +4788,44 @@ function loadAggregates(answers, puzzleNum) {
     .catch(() => null)
     .then(() => fetchWithTimeout(API_BASE + '/agg?puzzle=' + puzzleNum + '&points=' + points, {}, 2000))
     .then(r => (r && r.ok ? r.json() : null))
-    .then(d => { if (d) renderAggregates(d, puzzleNum); })
+    .then(d => { if (d) { LAST_AGG = { puzzle: puzzleNum, points, data: d }; renderAggregates(d, puzzleNum); } })
     .catch(() => {});
 }
-function renderAggregates(d, puzzleNum) {
+// Shared with the home receipt: the results run already fetched this, so reuse it and only
+// fall back to one 2 s GET (never a second submit, never a retry).
+let LAST_AGG = null;
+let HUB_AGG_TRIED = false;
+function loadHubAggregate(puzzleNum, points) {
+  const line = $('hub-agg');
+  if (!line) return;
+  if (!API_BASE) { line.style.display = 'none'; return; }
+  if (LAST_AGG && LAST_AGG.puzzle === puzzleNum && LAST_AGG.points === points) {
+    renderAggregates(LAST_AGG.data, puzzleNum, line);
+    return;
+  }
+  line.style.display = 'none';
+  line.textContent = '';
+  if (HUB_AGG_TRIED) return;
+  HUB_AGG_TRIED = true;
+  fetchWithTimeout(API_BASE + '/agg?puzzle=' + puzzleNum + '&points=' + points, {}, 2000)
+    .then(r => (r && r.ok ? r.json() : null))
+    .then(d => {
+      if (!d) return;
+      LAST_AGG = { puzzle: puzzleNum, points, data: d };
+      renderAggregates(d, puzzleNum, line);
+    })
+    .catch(() => {});
+}
+function renderAggregates(d, puzzleNum, lineEl) {
   const n = Number(d.n) || 0;
-  const line = $('agg-line'), hard = $('agg-hardest');
+  const line = lineEl || $('agg-line'), hard = lineEl ? null : $('agg-hardest');
   const pct = Number(d.percentileFor);
   if (n >= AGG_MIN_PERCENTILE && line && isFinite(pct)) {
     const top = Math.max(1, Math.min(100, Math.round(100 - pct)));
     line.textContent = `Top ${top}% today`;
     line.style.display = 'block';
     // The percentile only exists now, so refresh the share head (visual grid is unchanged)
-    if (state.mode === 'daily' && !state.replayDay) {
+    if (!lineEl && state.mode === 'daily' && !state.replayDay) {
       const payload = buildDailySharePayload(state.answers, puzzleNum, stats.streak, undefined, top);
       state.shareClean = payload.shareClean;
       state.shareFull = payload.shareFull;
@@ -5267,24 +5399,34 @@ $('btn-daily').onclick = ()=>{ audio.click(); startDaily(); };
 $('btn-endless').onclick = ()=>{ audio.click(); startEndless(); };
 $('btn-endless-result').onclick = ()=>{ audio.click(); startEndless(); };
 $('btn-practice').onclick = ()=>{ audio.click(); startDaily(); };
-$('btn-view-results').innerHTML = `${ICONS.eye}<span class="btn-label">Review</span>`;
 $('btn-view-results').onclick = ()=>{ audio.click(); viewTodaysResults(); };
-$('btn-quick-share').innerHTML = `${ICONS.shareUp}<span class="btn-label">Share</span>`;
 // Bridge bar: the whole row is the Brainprint affordance
 $('bp-bridge').onclick = () => { audio.click(); openBrainprint(); };
-// Landing card: share today's result (same payload finishGame produced)
-$('btn-quick-share').onclick = ()=>{
-  audio.click();
-  const r = loadResult();
-  if (!r || r.date !== getToday() || !Array.isArray(r.answers)) return;
-  const payload = buildDailySharePayload(r.answers, r.puzzle || getDailyNum(), stats.streak, 'h');
-  track('share_tap', { type: 'quick', method: navigator.share ? 'native' : 'clipboard' });
-  const btn = $('btn-quick-share');
-  if (navigator.share) {
-    navigator.share({ title: 'KNOWIT', text: payload.shareFull }).catch(()=>{});
-  } else {
-    copyText(payload.shareFull, btn, 'Share');
+// Home grid: a miss opens that question's review, a correct square does nothing
+function hubOpenReview(idx) {
+  if (!state.answers.length) {
+    const r = loadResult();
+    if (!r || r.date !== getToday() || !Array.isArray(r.answers)) return;
+    state.questions = getDailyQuestions();
+    state.answers = r.answers.map((a, i) => ({ ...a, q: (state.questions[i] && state.questions[i].id === a.id) ? state.questions[i] : null }));
   }
+  openReview(idx);
+}
+$('trophy-grid').addEventListener('click', e => {
+  const cell = e.target.closest('.rubric-tile[data-idx]');
+  if (cell && cell.dataset.idx !== undefined) { audio.click(); hubOpenReview(parseInt(cell.dataset.idx)); }
+});
+// Install hint buttons
+$('a2hs-x').onclick = () => {
+  try { localStorage.setItem('knowit_a2hs_dismissed', '1'); } catch (e) {}
+  $('a2hs').style.display = 'none';
+};
+$('a2hs-install').onclick = async () => {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  try { await deferredInstallPrompt.userChoice; } catch (e) {}
+  deferredInstallPrompt = null;
+  renderInstallHint();
 };
 $('bet-toggle').onclick = () => {
   if (state.waiting || state.mode !== 'daily' || state.betsLeft <= 0) return;
@@ -5320,12 +5462,22 @@ function copyText(text, btn, label) {
     } catch(e){}
   }
 }
-// Challenge a Friend — duel payload (native share sheet when available)
-$('btn-challenge').onclick = ()=>{
+// One payload for results AND the home receipt: live state first, saved result after a reload
+function currentSharePayload() {
+  if (state.shareFull && state.shareClean) return { shareClean: state.shareClean, shareFull: state.shareFull };
+  const r = loadResult();
+  if (r && r.date === getToday() && Array.isArray(r.answers)) {
+    return buildDailySharePayload(r.answers, r.puzzle || getDailyNum(), stats.streak);
+  }
+  return { shareClean: '', shareFull: '' };
+}
+// Challenge a Friend — duel payload (native share sheet when available). Shared button logic.
+function shareChallenge(btn) {
   audio.click();
   track('share_tap', { type: 'challenge', method: navigator.share ? 'native' : 'clipboard' });
-  const btn = $('btn-challenge');
-  const text = state.shareFull || state.shareClean || $('share-text').textContent;
+  const p = currentSharePayload();
+  const text = p.shareFull || p.shareClean;
+  if (!text) return;
   if (navigator.share) {
     navigator.share({ title: 'KNOWIT', text }).then(()=>{
       setBtnLabel(btn, 'Shared! ✓'); setTimeout(()=>setBtnLabel(btn, 'Challenge a Friend'), 1500);
@@ -5333,10 +5485,12 @@ $('btn-challenge').onclick = ()=>{
   } else {
     copyText(text, btn, 'Challenge a Friend');
   }
-};
+}
+$('btn-challenge').onclick = ()=> shareChallenge($('btn-challenge'));
+$('btn-hub-challenge').onclick = ()=> shareChallenge($('btn-hub-challenge'));
 // Copy Result — clean emoji blocks for Reddit/Discord/group chats
 function copyGridOnly(btn) {
-  const text = state.shareClean || $('share-text').textContent;
+  const text = currentSharePayload().shareClean || $('share-text').textContent;
   const done = () => {
     const prev = btn.innerHTML;
     btn.classList.add('btn-copied');
@@ -5354,14 +5508,19 @@ function copyGridOnly(btn) {
     } catch(e){}
   }
 }
-$('btn-copy').onclick = ()=>{
+function copyResult(btn) {
   audio.click();
   track('share_tap', { type: 'copy', method: 'clipboard' });
-  copyGridOnly($('btn-copy'));
-};
+  copyGridOnly(btn);
+}
+$('btn-copy').onclick = ()=> copyResult($('btn-copy'));
+$('btn-hub-copy').onclick = ()=> copyResult($('btn-hub-copy'));
 // Inject inline SVG icons into action buttons (monochrome, matches core UI)
 $('btn-challenge').innerHTML = `${ICONS.swords}<span class="btn-label">Challenge a Friend</span>`;
 $('btn-copy').innerHTML = ICONS.copy;
+$('btn-hub-challenge').innerHTML = `${ICONS.swords}<span class="btn-label">Challenge a Friend</span>`;
+$('btn-hub-copy').innerHTML = ICONS.copy;
+$('btn-view-results').innerHTML = `${ICONS.eye}<span class="btn-label">Review</span>`;
 $('btn-endless-result').innerHTML = `${ICONS.heart}<span class="btn-label">Play Endless</span>`;
 // Review modal: tap wrong grid cell → open; backdrop/close button → close
 $('share-visual').addEventListener('click', e => {
