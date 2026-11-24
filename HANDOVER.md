@@ -379,7 +379,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
-`POLISHv2` score line replaces stat labels, nudge under grid, accent flame, tighter Review spacing
+`0199837` score line replaces stat labels, nudge under grid, accent flame, tighter Review spacing
 `28667a2` in-card streak row, archetype-first order, percentile wording, Review link, bets nudge
 `6b138d0` home: challenge-first receipt, labelled stats, tappable misses, compact Endless, install hint
 `5127669` daily completion routes to a 4-zone post-completion home (habit bar, receipt, bridge, Endless)
