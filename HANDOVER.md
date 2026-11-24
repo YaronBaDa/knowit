@@ -28,8 +28,11 @@ and there is an Endless mode with three lives. Everything ships as **one self-co
 `index.html`** (inline CSS + JS, no framework, no build step, no npm) on GitHub Pages, plus a few
 small support files (service worker, manifest, frozen schedule, analytics worker, tooling).
 
-Current numbers: **505 questions** (250 easy / 174 medium / 81 hard) across 16 raw category tags
-that normalize into 6 umbrella categories; `schedule.json` frozen through **day #120** (2027-03-17).
+Current numbers: **805 questions** (340 easy / 294 medium / 171 hard) across 16 raw category tags
+that normalize into 6 umbrella categories; `schedule.json` frozen through **day #150** (2027-04-16).
+The 300 newest entries are clean evergreen additions (50 per umbrella, 15 easy / 20 medium /
+15 hard) with ids `sn/gg/hs/sl/pc/al` — appended after the original 505 so the frozen days and the
+Endless pool kept their existing behaviour.
 
 - Repo: `github.com/YaronBaDa/knowit` (branch `main`, owner is the sole visible contributor)
 - Live: `https://yaronbada.github.io/knowit/`
@@ -47,7 +50,7 @@ that normalize into 6 umbrella categories; `schedule.json` frozen through **day 
 index.html                 3.5 MB / ~4,770 lines — the entire game (HTML + <style> + <script>)
 sw.js                      98 lines — service worker, ONE cache constant at the top
 manifest.webmanifest       PWA manifest (standalone, #140F12, icons 64 + 180)
-schedule.json              505-id bank frozen per day, days 1–120 (append-only)
+schedule.json              805-id bank frozen per day, days 1–150 (append-only)
 tools/freeze-schedule.js   Node, zero deps — regenerates/extends schedule.json from index.html
 worker/index.js            Cloudflare Worker: anonymous score aggregation (KV)
 worker/wrangler.toml       Worker config (KV binding named STATS — id still a placeholder)
@@ -141,6 +144,7 @@ Keys (never rename or reshape the first four; new keys are additive only):
 | `knowit_name` | optional 16-char player name used in challenge links |
 | `knowit_seen_bet_intro` | `'1'` once the first-run bet explainer has been seen |
 | `knowit_pid` | random UUID for anonymous aggregation |
+| `knowit_schedule_v1` | `{ v: 1, days }` — last good `schedule.json`, used only when the fetch is slow or fails |
 
 `categories` is keyed by the **six umbrella names** and each bucket is
 `{ answered, correct, betsWon, betsLost }`. `loadStats()` migrates older saves in place (bets
@@ -158,14 +162,21 @@ Two layers:
    reorders the **already picked** ten with `seededShuffle(ids, n*9973+17+attempt)` from day
    `TIER_SHUFFLE_FROM = 8`, constrained so Q1 is easy/medium and no three hards are adjacent
    (50 attempts, then raw order).
-2. **Frozen** — `schedule.json` stores the **final** play order per day. At startup the client
-   fetches it (max 1.5 s, `scheduleReady`), validates that every id still exists in `QUESTIONS`, and
+2. **Frozen** — `schedule.json` stores the **final** play order per day (150 days). At startup the
+   client fetches it (max 1.5 s, `scheduleReady`), caches the last good copy in
+   `knowit_schedule_v1`, validates that every id still exists in `QUESTIONS`, and
    `getDailySetIds`/`orderedDailyIds` prefer the stored day verbatim. Missing/broken → computed.
 
 `tools/freeze-schedule.js` re-derives days from the scheduling code inside `index.html` (it slices
 the real source, runs it in a `vm` with inert stubs) and **only appends** days beyond the highest
 stored one. It warns (never rewrites) when a published day no longer recomputes identically.
 `--days N` extends, `--check` reports only.
+
+**Known consequence of growing the bank:** the per-tier queues are seeded by pool position, so any
+added question changes what the generator would pick for *every* day — the tool now warns on all
+120 originally frozen days even though the stored days are untouched. `schedule.json` is the
+authority; the computed path is only a fallback, and `knowit_schedule_v1` keeps that fallback on the
+published set instead of quietly serving a different ten from every other player.
 
 **Never edit past or current days by hand.** Adding questions is: add to `QUESTIONS` → run the tool →
 commit `index.html` + `schedule.json` together. Editing text/options is safe (ids are what is frozen);
@@ -185,7 +196,9 @@ renaming/removing an id makes those days fall back to computed and the tool will
   A gap of exactly 2 days consumes one and keeps the streak; 3+ resets. `effectiveStreak()` keeps a
   1-day-gap streak alive while a freeze is banked and the streak line shows ❄ “Freeze ready”.
 - **Endless**: `GAUNTLET_LIVES = 3`; `endlessTimeLimit()` 12 s → 10 s → 8 s; RUN = questions lasted
-  (0-correct guard); pace pill at Q6/Q11; last heart pulses crimson.
+  (0-correct guard); pace pill at Q6/Q11; last heart pulses crimson. The draw is weighted by run
+  length (`endlessWeights`): 0–4 easy/medium, 5–9 medium/hard, 10+ hard, and `endlessPoolBase()`
+  removes today's Daily ten so Endless can never spoil the set.
 - **Feedback dwell**: `FEEDBACK_MS_CORRECT = 1500`, `FEEDBACK_MS_WRONG = 3500` (misses and timeouts,
   Endless included). The strip carries a 2 px countdown rail in the dwell's colour and is itself a
   skip target; every pending advance is `state.advanceTimer`, cleared by `cancelFeedback()`.
@@ -345,6 +358,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`ADD` +300 evergreen questions (805 bank), Endless difficulty weighting, schedule to day 150
 `be68019` feedback dwell 1500/3500ms + 2px countdown rail, tap-to-skip
 `76f47f9` worker config: `kv-id.mjs`, 503 on a missing KV binding, docs corrected
 `4c8ea68` restore the receipt layout (big points, boxed Brainprint row, 2-up actions)

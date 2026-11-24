@@ -41,7 +41,7 @@ puzzles use — and breaks every old challenge link, replay and saved result tha
    `category` from `UMBRELLA_CATEGORIES`, `options`, `correctIndex`, `didYouKnow`).
 2. Run the freeze script:
    ```bash
-   node tools/freeze-schedule.js            # append missing days up to #120
+   node tools/freeze-schedule.js            # append missing days up to #150
    node tools/freeze-schedule.js --days 365 # extend further out
    node tools/freeze-schedule.js --check    # report missing days / drift, write nothing
    ```
