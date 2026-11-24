@@ -28,11 +28,13 @@ and there is an Endless mode with three lives. Everything ships as **one self-co
 `index.html`** (inline CSS + JS, no framework, no build step, no npm) on GitHub Pages, plus a few
 small support files (service worker, manifest, frozen schedule, analytics worker, tooling).
 
-Current numbers: **805 questions** (340 easy / 294 medium / 171 hard) across 16 raw category tags
+Current numbers: **1,105 questions** (430 easy / 414 medium / 261 hard) across 16 raw category tags
 that normalize into 6 umbrella categories; `schedule.json` frozen through **day #150** (2027-04-16).
-The 300 newest entries are clean evergreen additions (50 per umbrella, 15 easy / 20 medium /
-15 hard) with ids `sn/gg/hs/sl/pc/al` — appended after the original 505 so the frozen days and the
-Endless pool kept their existing behaviour.
+Two evergreen batches are appended after the original 505: `sn/gg/hs/sl/pc/al` (batch 1) and
+`zs/zg/zh/zl/zp/za` (batch 2), each 50 per umbrella at 15 easy / 20 medium / 15 hard, so frozen days
+and the Endless pool kept their existing behaviour. Batch 2 also balances the correct answer index
+at exactly 75 per position 0-3. Bank additions do not enter Daily play until the schedule is
+extended past day 150 with the freeze tool.
 
 - Repo: `github.com/YaronBaDa/knowit` (branch `main`, owner is the sole visible contributor)
 - Live: `https://yaronbada.github.io/knowit/`
@@ -50,7 +52,7 @@ Endless pool kept their existing behaviour.
 index.html                 3.5 MB / ~4,770 lines — the entire game (HTML + <style> + <script>)
 sw.js                      98 lines — service worker, ONE cache constant at the top
 manifest.webmanifest       PWA manifest (standalone, #140F12, icons 64 + 180)
-schedule.json              805-id bank frozen per day, days 1–150 (append-only)
+schedule.json              1,105-id bank frozen per day, days 1–150 (append-only)
 tools/freeze-schedule.js   Node, zero deps — regenerates/extends schedule.json from index.html
 worker/index.js            Cloudflare Worker: anonymous score aggregation (KV)
 worker/wrangler.toml       Worker config (KV binding named STATS — id still a placeholder)
@@ -358,6 +360,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`BATCH2` +300 evergreen questions (1,105 bank), correct answers balanced 75/75/75/75
 `0eeff68` +300 evergreen questions (805 bank), Endless difficulty weighting, schedule to day 150
 `be68019` feedback dwell 1500/3500ms + 2px countdown rail, tap-to-skip
 `76f47f9` worker config: `kv-id.mjs`, 503 on a missing KV binding, docs corrected
