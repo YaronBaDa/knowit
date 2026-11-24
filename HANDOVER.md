@@ -186,6 +186,9 @@ renaming/removing an id makes those days fall back to computed and the tool will
   1-day-gap streak alive while a freeze is banked and the streak line shows ❄ “Freeze ready”.
 - **Endless**: `GAUNTLET_LIVES = 3`; `endlessTimeLimit()` 12 s → 10 s → 8 s; RUN = questions lasted
   (0-correct guard); pace pill at Q6/Q11; last heart pulses crimson.
+- **Feedback dwell**: `FEEDBACK_MS_CORRECT = 1500`, `FEEDBACK_MS_WRONG = 3500` (misses and timeouts,
+  Endless included). The strip carries a 2 px countdown rail in the dwell's colour and is itself a
+  skip target; every pending advance is `state.advanceTimer`, cleared by `cancelFeedback()`.
 
 ---
 
@@ -342,6 +345,8 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`d7a67fa` feedback dwell 1500/3500ms + 2px countdown rail, tap-to-skip
+`76f47f9` worker config: `kv-id.mjs`, 503 on a missing KV binding, docs corrected
 `4c8ea68` restore the receipt layout (big points, boxed Brainprint row, 2-up actions)
 `721039b` quiz copy + mascot Endless hero + `Keep Playing` CTA
 `b33df51` equal 50/50 receipt and hero

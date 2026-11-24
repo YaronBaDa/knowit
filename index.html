@@ -576,7 +576,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   position: static; width: 100%; box-sizing: border-box;
   margin: 8px 0 0; padding: 12px 16px; border-radius: 12px;
   background: var(--bg-surface); border: 1px solid var(--border-subtle);
-  text-align: left; pointer-events: none; z-index: 5;
+  text-align: left; pointer-events: auto; cursor: pointer; z-index: 5;
   display: none; flex-direction: column; align-items: stretch; justify-content: center; gap: 4px;
   height: auto; min-height: 64px; max-height: none; overflow: visible; flex-shrink: 0;
 }
@@ -594,6 +594,17 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   color: #E5E7EB; margin: 0; word-wrap: break-word; overflow-wrap: anywhere;
   display: block; overflow: visible; -webkit-line-clamp: none; -webkit-box-orient: initial;
 }
+/* Dwell countdown: a 2px rail that drains over the exact auto-advance delay. */
+.fb-dwell {
+  height: 2px; border-radius: 2px; overflow: hidden; margin-top: 8px;
+  background: rgba(255, 255, 255, 0.08); flex: 0 0 auto; width: 100%;
+}
+.fb-dwell i {
+  display: block; height: 100%; width: 100%; border-radius: 2px;
+  background: var(--correct); transform: scaleX(0); transform-origin: left center;
+}
+.fb-dwell.run i { animation-name: fb-dwell; animation-timing-function: linear; animation-fill-mode: forwards; }
+@keyframes fb-dwell { from { transform: scaleX(1); } to { transform: scaleX(0); } }
 
 /* Share / results */
 .results-body { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; text-align: center; gap: 12px; min-height: 0; overflow-y: auto; padding-bottom: 16px; }
@@ -1080,6 +1091,14 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   .question-stage { padding-bottom: 4px; }
 }
 
+/* Short phones: the 10px dwell rail must not eat a line of the question.
+   Same 4px grid, just tighter — below 700px height the strip sits closer to the stage and its
+   bottom padding gives the rail its clearance instead of adding to it. */
+@media (max-height: 700px) {
+  .feedback-strip { margin-top: 4px; padding: 8px 16px 4px; }
+  .question-stage { padding-top: 4px; padding-bottom: 4px; }
+}
+
 /* landing tagline: Lexend 16px body weight, secondary */
 #screen-landing:not(.is-completed) .landing-body p.landing-tagline {
   font-family: var(--font-sans); font-size: 16px; font-weight: 400; line-height: 1.45; color: var(--text-secondary);
@@ -1238,6 +1257,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
       <div id="feedback-strip" class="feedback-strip" role="status" aria-live="polite">
         <div class="fb-result" id="fb-result"></div>
         <div class="fb-insight" id="fb-insight"></div>
+        <div class="fb-dwell" id="fb-dwell" aria-hidden="true"><i id="fb-dwell-fill"></i></div>
       </div>
     </div>
 
@@ -2085,8 +2105,10 @@ const AGG_MIN_HARDEST = 20;     // the "Hardest today" line waits for a real sam
 const HOLD_IDS = new Set(['p11','p23','p32','sp13','g36']);   // time-sensitive answers, excluded until reviewed
 const NO_SAME_DAY = [['n5','n27'],['s20','s46']];            // near-duplicate pairs
 const FAST_TIME_SEC = 55;
-const FEEDBACK_MS_CORRECT = 1800;
-const FEEDBACK_MS_WRONG = 3200;
+// Post-answer dwell, asymmetric on purpose: a correct answer only needs a glance, a miss needs
+// time to read the explanation. The feedback strip carries a countdown bar for the exact duration.
+const FEEDBACK_MS_CORRECT = 1500;
+const FEEDBACK_MS_WRONG = 3500;
 const GAUNTLET_LIVES = 3;
 const FREEZE_MAX = 2;      // banked streak freezes — earned only, never bought
 const FREEZE_EVERY = 7;    // one freeze for every 7 consecutive days
@@ -3050,6 +3072,7 @@ function rubricStateFor(answer, endless) {
   return endless ? 'endless-incorrect' : (answer.bet ? 'incorrect-bet' : 'incorrect');
 }
 function showScreen(name) {
+  if (name !== 'playing') cancelFeedback();   // never let a reveal timer fire on another screen
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   $('screen-'+name).classList.add('active');
   state.screen = name;
@@ -3663,6 +3686,7 @@ function stopQTimer() {
 // ---- Game logic ----
 function startDaily() {
   if (stats.completedDaily === getToday()) return;
+  cancelFeedback();
   state.replayDay = null;
   state.mode = 'daily';
   state.currentQ = 0;
@@ -3716,6 +3740,7 @@ function renderDuelBanner() {
 }
 // Unranked replay of an older puzzle: no stats, no result, no progress writes
 function startDailyReplay(dayNum, duel) {
+  cancelFeedback();
   state.mode = 'daily';
   state.replayDay = dayNum;
   state.currentQ = 0;
@@ -3737,6 +3762,7 @@ function startDailyReplay(dayNum, duel) {
   renderQuestion();
 }
 function startEndless() {
+  cancelFeedback();
   state.replayDay = null;
   state.mode = 'endless';
   track('endless_start');
@@ -3776,11 +3802,34 @@ function dismissBetIntro() {
   try { localStorage.setItem('knowit_seen_bet_intro', '1'); } catch(e){}
 }
 
+// Countdown rail on the feedback strip — mirrors the active dwell so the hold never feels frozen.
+function stopFeedbackDwell() {
+  const bar = $('fb-dwell'), fill = $('fb-dwell-fill');
+  if (!bar || !fill) return;
+  bar.classList.remove('run');
+  fill.style.animationDuration = '';
+  fill.style.background = '';
+}
+function startFeedbackDwell(ms, tone) {
+  const bar = $('fb-dwell'), fill = $('fb-dwell-fill');
+  if (!bar || !fill) return;
+  stopFeedbackDwell();
+  fill.style.background = tone === 'correct' ? 'var(--correct)' : 'var(--accent-incorrect)';
+  fill.style.animationDuration = ms + 'ms';
+  void fill.offsetWidth;                       // restart from scaleX(1) every question
+  bar.classList.add('run');
+}
+// Cancel any pending auto-advance (quit mid-reveal, manual skip, new run)
+function cancelFeedback() {
+  if (state.advanceTimer) { clearTimeout(state.advanceTimer); state.advanceTimer = null; }
+  stopFeedbackDwell();
+}
+
 // Single code path for leaving the post-answer feedback (timer or skip)
 function advanceAfterFeedback() {
   if (!state.waiting) return;
   state.waiting = false;
-  if (state.advanceTimer) { clearTimeout(state.advanceTimer); state.advanceTimer = null; }
+  cancelFeedback();
   const fb = $('feedback-strip');
   fb.classList.remove('show');
   if (state.mode === 'endless' && state.endlessLives <= 0) { finishGame(); return; }
@@ -3801,6 +3850,8 @@ document.addEventListener('pointerdown', maybeSkipFeedback, true);
 document.addEventListener('keydown', e => {
   if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowRight') maybeSkipFeedback();
 });
+// The strip itself is an explicit skip target; same path as the global tap, so no double-advance.
+$('feedback-strip').addEventListener('click', maybeSkipFeedback);
 
 function handleTimeout() {
   if (state.waiting) return;
@@ -3842,6 +3893,7 @@ function handleTimeout() {
 
   state.feedbackAt = performance.now();
   state.advanceTimer = setTimeout(advanceAfterFeedback, FEEDBACK_MS_WRONG);
+  startFeedbackDwell(FEEDBACK_MS_WRONG, 'wrong');
 }
 
 function handleAnswer(idx) {
@@ -3924,7 +3976,9 @@ function handleAnswer(idx) {
     }
 
     state.feedbackAt = performance.now();
-    state.advanceTimer = setTimeout(advanceAfterFeedback, correct ? FEEDBACK_MS_CORRECT : FEEDBACK_MS_WRONG);
+    const dwell = correct ? FEEDBACK_MS_CORRECT : FEEDBACK_MS_WRONG;
+    state.advanceTimer = setTimeout(advanceAfterFeedback, dwell);
+    startFeedbackDwell(dwell, correct ? 'correct' : 'wrong');
   };
 
   if (bet) setTimeout(commit, 180);
