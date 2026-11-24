@@ -234,17 +234,21 @@ purpose — it stays dark in every theme. `?s=b` is appended to the URL line.
 replays; `finishGame()` decides with `toHub` and `viewTodaysResults()`/Review forces results.
 
 **Post-completion home** (`.is-completed`), four zones on a 12 px rhythm. The streak and countdown
-live inside the receipt (no floating pill): a 14 px row with the flame + `N-day streak` on the left
-and `Next set in Xh Ym` on the right, then a 1 px `--border` divider.
+live inside the receipt (no floating pill): a 14 px row with the pink flame + `N-day streak`
+(number at 600) on the left and muted `Next set in Xh Ym` on the right, then a 1 px `--border`
+divider.
 
-1. **Today's Set receipt** (`#1F181C`, radius 16, padding 16), top to bottom: streak row + divider →
-   `TODAY'S SET · #N` → archetype as the card headline (32/800) → optional insight line → stat row
-   (score / `c/10` / `Xm Ys`, 24/800 with 12 px labels; only the minus sign of a negative score is
-   crimson) → `Bets n/m`, or `No bets placed. A bet doubles the points, win or lose.` when no bet
-   was placed and `stats.played <= 10` → percentile → 24 px ten-tile strip (check / X / bolt; misses
-   carry `data-idx`) → filled **Challenge a Friend** + square copy button → `Review answers` text
-   link (44 px tap area, underline on hover/focus). `currentSharePayload()` feeds both the results
-   and hub challenge/copy handlers.
+1. **Today's Set receipt** (`#1F181C`, radius 16, padding 16), strictly in this order: streak row +
+   divider → `TODAY'S SET · #N` → archetype as the card headline (32/800) → score line (28/800,
+   `nowrap`; only the minus of a negative is crimson) → muted `c/10 correct · Xm Ys` (15 px,
+   `nowrap`) → percentile (4 px gap, nothing in between) → `Bets n/m` (only when a bet was placed) →
+   24 px ten-tile strip (check / X / bolt; misses carry `data-idx`) → optional bets nudge → filled
+   **Challenge a Friend** + square copy button → `Review answers` text link (44 px tap area,
+   `--text-primary`, underline on hover/focus, `margin-bottom: -12px` so the visual gap equals the
+   card's 16 px top padding).
+   The nudge reads `No bets placed. A bet on a sure answer scores double.` and shows only when no
+   bet was placed **and** `correct >= 6` **and** `stats.played <= 10`. `currentSharePayload()` feeds
+   both the results and hub challenge/copy handlers.
 2. **Brainprint bridge** — `Best subject: {category} {pct}%` (category kept on one line via
    `.bp-subject`) with `Brainprint ↗`; locked shows `Brainprint` + `{answered}/30 answers`.
 3. **Endless stage** — compact: `ENDLESS MODE` + `3 LIVES`, 32 px mark inline with
@@ -375,6 +379,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`POLISHv2` score line replaces stat labels, nudge under grid, accent flame, tighter Review spacing
 `28667a2` in-card streak row, archetype-first order, percentile wording, Review link, bets nudge
 `6b138d0` home: challenge-first receipt, labelled stats, tappable misses, compact Endless, install hint
 `5127669` daily completion routes to a 4-zone post-completion home (habit bar, receipt, bridge, Endless)

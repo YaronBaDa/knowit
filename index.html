@@ -260,24 +260,23 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* Streak + countdown inside the card, then the hairline divider */
 .tc-streak-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; font-family: var(--font-sans); font-size: 14px; line-height: 16px; color: var(--text-secondary); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .tc-streak { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
-.tc-flame { display: inline-flex; }
+.tc-flame { display: inline-flex; color: var(--brand-pink); }
 .tc-flame svg { width: 14px; height: 14px; display: block; }
+.tc-streak-num { font-weight: 600; }
 .tc-next { margin-left: auto; }
 .tc-divider { height: 0; border-top: 1px solid var(--border); margin: 12px 0; }
 .tc-eyebrow { font-family: var(--font-sans); font-size: 12px; line-height: 16px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); font-weight: 600; }
 /* Archetype is the card's headline */
 .tc-rank { margin-top: 8px; min-height: 36px; font-family: var(--font-sans); font-size: 32px; font-weight: 800; line-height: 36px; letter-spacing: -0.01em; color: #F3F4F6; }
-.tc-insight { margin-top: 4px; font-family: var(--font-sans); font-size: 13px; line-height: 16px; color: var(--text-secondary); }
-/* Labelled stat row: score / correct / time */
-.tc-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
-.tc-stat { min-width: 0; }
-.tc-stat b { display: block; font-family: var(--font-sans); font-size: 24px; font-weight: 800; line-height: 28px; letter-spacing: -0.01em; color: var(--text-primary); font-variant-numeric: tabular-nums; }
-.tc-stat b .neg-sign { color: var(--wrong); }
-.tc-stat span { display: block; margin-top: 2px; font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); }
+/* Score, then one muted correct/time line, then the percentile — nothing between them */
+.tc-score { margin-top: 12px; font-family: var(--font-sans); font-size: 28px; font-weight: 800; line-height: 32px; letter-spacing: -0.01em; color: var(--text-primary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tc-score .neg-sign { color: var(--wrong); }
+.tc-subline { margin-top: 4px; font-family: var(--font-sans); font-size: 15px; line-height: 20px; color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tc-agg { margin-top: 4px; font-family: var(--font-sans); font-size: 13px; line-height: 16px; font-weight: 600; color: var(--brand-pink); }
 .tc-bets { margin-top: 8px; font-family: var(--font-sans); font-size: 13px; line-height: 16px; color: var(--text-secondary); }
-.tc-agg { margin-top: 8px; font-family: var(--font-sans); font-size: 13px; line-height: 16px; font-weight: 600; color: var(--brand-pink); }
 .tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 12px; padding: 0; }
 .tc-grid .rubric-tile[data-idx] { cursor: pointer; }
+.tc-nudge { margin-top: 8px; font-family: var(--font-sans); font-size: 12px; line-height: 16px; color: var(--text-secondary); }
 .tc-cta-row { display: flex; align-items: stretch; gap: 8px; margin-top: 12px; }
 .tc-cta-row .btn-primary {
   flex: 1 1 auto; width: auto; max-width: none; height: 44px; padding: 0 16px; border-radius: 12px;
@@ -286,11 +285,11 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .tc-cta-row .copy-btn { flex: 0 0 44px; width: 44px; height: 44px; padding: 0; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; }
 .tc-cta-row .copy-btn svg { width: 16px; height: 16px; display: block; }
 .tc-review-link {
-  width: 100%; min-height: 44px; margin-top: 4px; padding: 0;
+  width: 100%; min-height: 44px; margin: 0 0 -12px; padding: 0;
   display: inline-flex; align-items: center; justify-content: center;
   background: none; border: none; cursor: pointer;
   font-family: var(--font-sans); font-size: 14px; font-weight: 600;
-  color: var(--text-secondary); text-decoration: none; text-underline-offset: 2px;
+  color: var(--text-primary); text-decoration: none; text-underline-offset: 2px;
 }
 .tc-review-link:hover, .tc-review-link:focus-visible { text-decoration: underline; color: var(--text-primary); }
 
@@ -1182,15 +1181,12 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
           <div class="tc-divider"></div>
           <div class="tc-eyebrow" id="trophy-eyebrow">TODAY'S SET · #1</div>
           <div class="tc-rank" id="trophy-rank"></div>
-          <div class="tc-insight" id="hub-insight" style="display:none;"></div>
-          <div class="tc-stats">
-            <div class="tc-stat"><b id="hub-points">— pts</b><span>Score</span></div>
-            <div class="tc-stat"><b id="hub-correct">0/10</b><span>Correct</span></div>
-            <div class="tc-stat"><b id="hub-time">0s</b><span>Time</span></div>
-          </div>
-          <div class="tc-bets" id="hub-bets" style="display:none;"></div>
+          <div class="tc-score" id="hub-points">— pts</div>
+          <div class="tc-subline" id="hub-subline">—</div>
           <div class="tc-agg" id="hub-agg" style="display:none;"></div>
+          <div class="tc-bets" id="hub-bets" style="display:none;"></div>
           <div class="tc-grid" id="trophy-grid"></div>
+          <div class="tc-nudge" id="hub-nudge" style="display:none;">No bets placed. A bet on a sure answer scores double.</div>
           <div class="tc-cta-row">
             <button class="btn-primary" id="btn-hub-challenge">Challenge a Friend</button>
             <button class="btn-secondary copy-btn" id="btn-hub-copy" aria-label="Copy result"></button>
@@ -3802,7 +3798,7 @@ function renderHub() {
   if (eff > 0) {
     streakWrap.style.display = 'inline-flex';
     $('hub-flame').innerHTML = ICONS.flame;
-    $('hub-streak-text').textContent = `${eff}-day streak`;
+    $('hub-streak-text').innerHTML = `<span class="tc-streak-num">${eff}</span>-day streak`;
   } else {
     streakWrap.style.display = 'none';
     $('hub-flame').innerHTML = '';
@@ -3814,8 +3810,8 @@ function renderHub() {
   $('trophy-eyebrow').textContent = `TODAY'S SET · #${getDailyNum()}`;
   const savedRes = loadResult();
   const hasRes = !!(savedRes && savedRes.date === getToday() && Array.isArray(savedRes.answers));
-  const ptsEl = $('hub-points'), corEl = $('hub-correct'), timeEl = $('hub-time');
-  const betsEl = $('hub-bets'), rankEl = $('trophy-rank'), insEl = $('hub-insight');
+  const scoreEl = $('hub-points'), subEl = $('hub-subline');
+  const betsEl = $('hub-bets'), nudgeEl = $('hub-nudge'), rankEl = $('trophy-rank');
   const gridEl = $('trophy-grid');
   gridEl.innerHTML = '';
   let points = 0;
@@ -3833,36 +3829,22 @@ function renderHub() {
     const arch = getArchetype(correct, total, secs, betUsed, betHit, points);
 
     // Only the minus sign carries colour; the number itself stays in body colour
-    ptsEl.innerHTML = points < 0
+    scoreEl.innerHTML = points < 0
       ? `<span class="neg-sign">−</span>${Math.abs(points)} pts`
       : `${points} pts`;
-    corEl.textContent = `${correct}/${total}`;
-    timeEl.textContent = fmtDuration(secs);
+    subEl.textContent = `${correct}/${total} correct · ${fmtDuration(secs)}`;
+    rankEl.textContent = arch.name;
 
-    // Bets line, or a nudge for players who have not tried a bet yet
+    // Bets line once a bet was placed; otherwise the nudge has its own slot under the grid
     if (betUsed > 0) {
       betsEl.style.display = 'block';
       betsEl.textContent = `Bets ${betHit}/${betUsed}`;
-    } else if (stats.played <= 10) {
-      betsEl.style.display = 'block';
-      betsEl.textContent = 'No bets placed. A bet doubles the points, win or lose.';
     } else {
       betsEl.style.display = 'none';
       betsEl.textContent = '';
     }
-
-    rankEl.textContent = arch.name;
-
-    // One insight line only: a losing run where hard questions did most of the damage
-    const byId = new Map(QUESTIONS.map(q => [q.id, q]));
-    const misses = answers.filter(a => !a.correct);
-    const hardMisses = misses.filter(a => {
-      const q = a.q || byId.get(a.id);
-      return q && q.difficulty === 'hard';
-    }).length;
-    const showInsight = points <= 0 && misses.length > 0 && hardMisses >= Math.ceil(misses.length / 2);
-    insEl.style.display = showInsight ? 'block' : 'none';
-    insEl.textContent = showInsight ? `${hardMisses} of ${misses.length} misses were hard questions.` : '';
+    const showNudge = betUsed === 0 && correct >= 6 && stats.played <= 10;
+    nudgeEl.style.display = showNudge ? 'block' : 'none';
 
     for (let i = 0; i < 10; i++) {
       const cell = document.createElement('div');
@@ -3873,14 +3855,12 @@ function renderHub() {
 
     loadHubAggregate(savedRes.puzzle || getDailyNum(), points);
   } else {
-    ptsEl.textContent = '— pts';
-    corEl.textContent = '—';
-    timeEl.textContent = '—';
+    scoreEl.textContent = '— pts';
+    subEl.textContent = '—';
     betsEl.style.display = 'none';
     betsEl.textContent = '';
+    nudgeEl.style.display = 'none';
     rankEl.textContent = "Today's set complete.";
-    insEl.style.display = 'none';
-    insEl.textContent = '';
     $('hub-agg').style.display = 'none';
     $('hub-agg').textContent = '';
   }
