@@ -127,8 +127,8 @@ lastHeartFrom, betsLeft, armed, duel, pendingDuel, replayDay, … }`.
 
 ### Main flow
 `renderLanding()` → `startDaily()` → `renderQuestion()` → `handleAnswer()` / `handleTimeout()` →
-`advanceAfterFeedback()` → `finishGame()` → `showScreen('results')` → `viewTodaysResults()` /
-`openReview()`. Endless: `startEndless()` reuses the same question renderer with its own HUD.
+`advanceAfterFeedback()` → `finishGame()` → post-completion home (ranked Daily) or
+`showScreen('results')` (Endless, duels, replays) → `viewTodaysResults()` / `openReview()`. Endless: `startEndless()` reuses the same question renderer with its own HUD.
 
 ---
 
@@ -228,20 +228,28 @@ purpose — it stays dark in every theme. `?s=b` is appended to the URL line.
 
 ## 9. Current home + results UI
 
-**Post-completion home** (`.is-completed`): header row (mark + Zetta wordmark + streak pill) →
-`.completed-stack` (grid, `1fr 1fr`, gap 16; `auto 1fr` under `max-height: 700px` so the receipt
-never spills) →
+**Routing**: a ranked Daily run now lands on the post-completion home directly (Q10 → `landing`).
+`#screen-results` stays for Endless run-overs, `?vs=` ghost duels (head-to-head card) and unranked
+replays; `finishGame()` decides with `toHub` and `viewTodaysResults()`/Review forces results.
 
-- **Daily receipt** (`#1F181C`, radius 16, padding 16, `space-between`): `TODAY'S RUN · #N` +
-  clock/`Next set in …` → 44/800 points alone on its line with `(6/10) · Smug-ish.` 16/600 under it
-  → 24 px ten-tile strip → `N played · Best Xd` → **boxed Brainprint row** (48 px, radius 12, trophy
-  + `Top: …` left / `Brainprint ↗` right, whole row opens the page, locked shows `n/30 answers`) →
-  2-up `Review` / `Share` (44 px, radius 12, eye + share icons).
-- **Endless hero** (radial pink→plum gradient, `rgba(244,84,176,.28)` border, padding 20, centred):
-  96×96 mascot slot (`/brain-mascot.webp`, falls back to a dashed pink tile with 🧠 until the asset
-  exists — see `initMascotFallback()`) + `Want to keep going?` 24/700 over
-  `Beat your record of {bestEndless} • 🏆 3 Lives` 14/`#B8A6B2`, then full-width 48 px
-  **`Keep Playing`** (radius 16, `#140C12` ink) which calls `startEndless()`.
+**Post-completion home** (`.is-completed`), four zones on a 12 px rhythm:
+
+1. **Header + habit bar** — brand mark + Zetta wordmark only (no right-side streak pill), then a
+   centred pill (`6px 14px`, radius 999, `#1F181C`, hairline border) reading
+   `🔥 {streak}-day Streak · Next set in {countdown}`; `tick()` refreshes it.
+2. **Today's Set receipt** (`#1F181C`, radius 16, padding 16): `TODAY'S SET · #N` 12/16/`0.06em`
+   → 32/800 points (Crimson under zero, bone above) opposite `(c/10) · Xm Ys` 14/600 → rank title
+   20/700 → 24 px ten-tile strip → 2-up `Review` / `Share` (40 px, radius 12). No lifetime line.
+3. **Brainprint bridge** — slim bar (padding `12px 16px`, radius 12) with `Top: {category} ({pct}%)`
+   (or `Career accuracy: {pct}%`) left and `Brainprint ↗` right; the row opens the page.
+4. **Endless stage** (flex 1, radial pink→orchid wash, `rgba(244,84,176,.32)` border, padding 16):
+   `ENDLESS MODE` eyebrow + `3 LIVES` pill → 96×96 mascot slot (falls back to 🧠 until
+   `/brain-mascot.webp` exists) beside `Want to keep going?` 20/700 and
+   `Best run: {n}` / `3 lives · See how far you can go.` → full-width 48 px gradient
+   `Play Endless`.
+
+The receipt reads `durationSec` from `knowit_result_v1`, so the run time stays correct after a
+reload; `fmtDuration()` renders `5m 47s` / `47s`.
 
 **Results**: brand header → eyebrow (`TODAY'S SET` / `ENDLESS MODE` / `REPLAY #n`) → hero score and
 verdict → optional duel card → scorecard (tile grid, `SCORE / CORRECT / TIME`, `#agg-line`
@@ -312,7 +320,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
   **JetBrains Mono** (`--font-telemetry`) only for the Endless run badge. `--font-mono` is still an
   alias of Lexend for legacy bits.
 - Strict 4 px grid (1/2 px borders exempt). Interactive secondary buttons are 12 px radius / 40 px
-  (or 44 px in the receipt); `9999px` pills are reserved for non-interactive status/category badges.
+  everywhere, including the receipt; `9999px` pills are reserved for non-interactive status/category badges.
 - Rubric tiles: 24 px tall, radius 4, 4 px gaps; one renderer (`applyRubricTile`) for all four
   surfaces; bolt/heart icons reuse the HUD geometry byte-for-byte.
 - Category pills (gameplay, review) are text pills with a 12 px icon; the Brainprint page uses
@@ -351,8 +359,9 @@ nothing is summed, and `knowit_progress_v1` is never imported.
   binding now answers `503 {"error":"not_configured"}` instead of an opaque CF 500.
 - **Service worker offline typography** — Google Fonts are cross-origin and deliberately not cached;
   self-hosting the two woff2 files would fix offline rendering if that matters.
-- **360×640 is tight** — the Brainprint page scrolls its middle (by design); the home receipt
-  switches to `auto 1fr` below 700 px height to avoid spilling.
+- **360×640 is tight** — the Brainprint page scrolls its middle (by design). The hub now fits all
+  four zones at 360×640 (endless stage measures 240 px there and 444 px at 390×844); keep new hub
+  copy to one line or re-measure.
 - `index.html.bak` is a stale, untracked Oct backup — delete it or ignore it; never ship it.
 - `GAME_STATE.md` is early, largely superseded notes.
 
@@ -360,6 +369,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`HUB` daily completion routes to a 4-zone post-completion home (habit bar, receipt, bridge, Endless)
 `8de74a5` +300 evergreen questions (1,105 bank), correct answers balanced 75/75/75/75
 `0eeff68` +300 evergreen questions (805 bank), Endless difficulty weighting, schedule to day 150
 `be68019` feedback dwell 1500/3500ms + 2px countdown rail, tap-to-skip

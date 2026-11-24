@@ -220,37 +220,13 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 .daily-locked b { color: var(--ink); font-size: 16px; }
 
-/* Endless teaser */
-/* Hero Endless stage — the primary post-completion destination */
-.endless-teaser {
-  max-width: 340px; width: 100%; text-align: left;
-  border-radius: 16px; padding: 20px;
-  background: radial-gradient(circle at 50% 0%, rgba(244, 84, 176, 0.14) 0%, rgba(168, 85, 247, 0.06) 45%, #1F181C 85%);
-  border: 1px solid rgba(244, 84, 176, 0.28);
-  flex: 1 1 0; min-height: 0;
-  display: flex; flex-direction: column; justify-content: center; gap: 0;
-}
-.et-row { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; width: 100%; }
-.et-mascot { width: 96px; height: 96px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-.et-mascot img { width: 96px; height: 96px; object-fit: contain; filter: drop-shadow(0 0 14px rgba(255, 92, 184, 0.35)); }
-.et-mascot img, .et-mascot.is-missing::after { box-sizing: border-box; }
-.et-mascot.is-missing img { display: none; }
-.et-mascot.is-missing::after {
-  content: '🧠'; width: 96px; height: 96px; display: flex; align-items: center; justify-content: center;
-  font-size: 44px; line-height: 1; border-radius: 24px;
-  background: rgba(255, 92, 184, 0.12); border: 1px dashed rgba(255, 92, 184, 0.35);
-}
-.et-copy { display: flex; flex-direction: column; min-width: 0; text-align: left; }
-.et-headline { font-family: var(--font-sans); font-size: 24px; font-weight: 700; line-height: 1.2; color: #FFFFFF; }
-.et-sub { font-family: var(--font-sans); font-size: 14px; font-weight: 400; line-height: 1.45; color: #B8A6B2; margin-top: 8px; }
-.endless-teaser .btn-primary { width: 100%; max-width: none; height: 48px; border-radius: 16px; color: #140C12; flex-shrink: 0; }
-
-/* ---- Completed-day hub: bottom-anchored 2-card stack ---- */
-.hub-head, .hub-cards { display: none; }
+/* ---- Completed-day hub: 4-zone hierarchy (habit bar → receipt → bridge → endless) ---- */
+.hub-head, .hub-cards, .habit-bar { display: none; }
 #screen-landing.is-completed .landing-body {
   flex: 1; min-height: 0;
-  display: flex; flex-direction: column; justify-content: space-between;
-  gap: 16px; padding-top: 12px; padding-bottom: 0;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: flex-start; gap: 12px;
+  padding-top: 12px; padding-bottom: 16px;
 }
 #screen-landing.is-completed .landing-body::before,
 #screen-landing.is-completed .landing-body::after { content: none; }
@@ -262,65 +238,87 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 #screen-landing.is-completed #daily-lock,
 #screen-landing.is-completed #streak-bar,
 #screen-landing.is-completed #btn-practice { display: none !important; }
-#screen-landing.is-completed .hub-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; max-width: 340px; flex-shrink: 0; }
-/* Completed body: header row, then a full-height stack that fills the rest */
-#screen-landing.is-completed .hub-cards {
-  display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 340px;
-  flex: 1 1 auto; min-height: 0;
-}
-#screen-landing.is-completed .completed-stack {
-  flex: 1 1 auto; min-height: 0; margin-top: 0;
-  display: grid; grid-template-rows: 1fr 1fr; gap: 16px;
-  padding-bottom: max(20px, env(safe-area-inset-bottom));
-}
-#screen-landing.is-completed .landing-footer { display: none; }
-/* Short screens: the receipt needs its natural height, so it stops forcing an equal split */
-@media (max-height: 700px) {
-  #screen-landing.is-completed .completed-stack { grid-template-rows: auto 1fr; }
-}
+#screen-landing.is-completed .hub-head { display: flex; align-items: center; gap: 8px; width: 100%; max-width: 340px; flex-shrink: 0; }
 .hub-brand { display: flex; align-items: center; gap: 8px; }
 .hub-wordmark { font-size: 16px; color: var(--text-primary); }
-.streak-pill { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 9999px; border: 1px solid rgba(244, 84, 176, 0.28); background: var(--accent-brand-tint); color: var(--brand-pink); font-family: var(--font-mono); font-size: 12px; font-weight: 600; }
-.streak-pill .fire { display: inline-flex; }
-.streak-pill svg { width: 12px; height: 12px; }
-/* Compact daily receipt — the top, content-sized card */
+
+/* Zone 1 — unified habit bar */
+#screen-landing.is-completed .habit-bar {
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  align-self: center; flex-shrink: 0;
+  padding: 6px 14px; border-radius: 999px;
+  background: #1F181C; border: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: var(--font-sans); font-size: 12px; line-height: 16px;
+  color: var(--text-secondary); white-space: nowrap; font-variant-numeric: tabular-nums;
+}
+.habit-fire { font-size: 12px; line-height: 16px; }
+
+/* Stack — receipts keep natural height, the Endless stage takes the rest */
+#screen-landing.is-completed .hub-cards {
+  display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 340px;
+  flex: 1 1 auto; min-height: 0;
+}
+#screen-landing.is-completed .completed-stack { display: flex; flex-direction: column; gap: 12px; flex: 1 1 auto; min-height: 0; margin-top: 0; }
+#screen-landing.is-completed .landing-footer { display: none; }
+
+/* Zone 2 — TODAY'S SET receipt */
 .trophy-card {
-  width: 100%; max-width: 340px; background: #1F181C; border: 1px solid rgba(255, 255, 255, 0.06);
+  width: 100%; background: #1F181C; border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 16px; padding: 16px; text-align: left;
-  flex: 1 1 0; min-height: 0;
-  display: flex; flex-direction: column; justify-content: space-between;
+  flex: 0 0 auto; display: flex; flex-direction: column;
 }
-.tc-result { font-family: var(--font-sans); font-size: 16px; font-weight: 600; line-height: 20px; color: var(--text-secondary); text-align: left; margin-top: 4px; }
-.tc-top, .tc-mid, .tc-bottom { display: flex; flex-direction: column; width: 100%; }
-/* one data block (top) and one interaction block (bottom); a single flexible gap between them */
-.tc-top { gap: 8px; align-items: stretch; flex: 0 0 auto; }
-.tc-mid { gap: 4px; align-items: stretch; flex: 0 0 auto; }
-.tc-bottom { gap: 12px; flex: 0 0 auto; justify-content: flex-end; }
-/* header row: run label left, countdown right */
-.tc-head-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
-.tc-countdown { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-sans); font-size: 12px; line-height: 16px; color: var(--text-secondary); white-space: nowrap; }
-.tc-clock { display: inline-flex; }
-.tc-clock svg { width: 12px; height: 12px; display: block; opacity: .8; }
-.tc-eyebrow { display: block; font-family: var(--font-sans); font-size: 12px; line-height: 16px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); font-weight: 600; margin: 0; }
-.tc-score { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; width: 100%; color: var(--text-primary); }
-.tc-points {
-  display: block; width: 100%; margin-top: 4px;
-  font-family: var(--font-sans); font-size: 44px; font-weight: 800; line-height: 48px;
-  letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: #F3F4F6;
-}
-.tc-sub {
-  display: block; width: 100%;
-  font-family: var(--font-sans); font-size: 16px; font-weight: 600; line-height: 20px;
-  color: var(--text-secondary);
-}
+.tc-eyebrow { font-family: var(--font-sans); font-size: 12px; line-height: 16px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); font-weight: 600; }
+.tc-score-row { margin-top: 8px; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.tc-points { font-family: var(--font-sans); font-size: 32px; font-weight: 800; line-height: 36px; letter-spacing: -0.02em; color: #F3F4F6; font-variant-numeric: tabular-nums; }
+.tc-points.is-negative { color: #F22933; }
+.tc-meta { font-family: var(--font-sans); font-size: 14px; font-weight: 600; line-height: 20px; color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tc-rank { margin-top: 4px; min-height: 24px; font-family: var(--font-sans); font-size: 20px; font-weight: 700; line-height: 24px; color: #F3F4F6; }
 .tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 12px; padding: 0; }
 .tc-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; width: 100%; }
 .tc-actions > * { min-width: 0; }
 .tc-actions .btn-secondary {
-  width: 100%; max-width: none; height: 44px; padding: 0 12px; border-radius: 12px;
+  width: 100%; max-width: none; height: 40px; padding: 0 12px; border-radius: 12px;
   font-size: 16px; font-weight: 600; white-space: nowrap;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
 }
+
+/* Zone 3 — career Brainprint bridge bar */
+.bp-bridge {
+  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 16px; border-radius: 12px; background: #1F181C;
+  border: 1px solid rgba(255, 255, 255, 0.08); cursor: pointer; text-align: left;
+  font-family: var(--font-sans); flex: 0 0 auto; transition: transform .12s;
+}
+.bp-bridge:active { transform: scale(0.99); }
+.bp-bridge-label { font-size: 13px; line-height: 16px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bp-bridge-cta { font-size: 13px; line-height: 16px; font-weight: 600; color: #F3F4F6; white-space: nowrap; }
+
+/* Zone 4 — Endless hero stage */
+.endless-teaser {
+  width: 100%; max-width: none; text-align: left;
+  flex: 1 1 auto; min-height: 0;
+  display: flex; flex-direction: column; justify-content: space-between;
+  padding: 16px; border-radius: 16px;
+  background: radial-gradient(circle at 50% 0%, rgba(244, 84, 176, 0.14) 0%, rgba(168, 85, 247, 0.06) 45%, #1F181C 85%);
+  border: 1px solid rgba(244, 84, 176, 0.32);
+}
+.et-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; flex-shrink: 0; }
+.et-eyebrow { font-family: var(--font-sans); font-size: 12px; font-weight: 700; line-height: 16px; letter-spacing: 0.08em; color: #F454B0; }
+.et-lives { font-family: var(--font-sans); font-size: 12px; font-weight: 600; line-height: 16px; padding: 4px 8px; border-radius: 999px; background: #140F12; border: 1px solid rgba(255, 255, 255, 0.08); color: var(--text-secondary); }
+.et-row { display: flex; align-items: center; gap: 16px; margin: 12px 0; width: 100%; flex-shrink: 0; }
+.et-mascot { width: 96px; height: 96px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.et-mascot img { width: 96px; height: 96px; object-fit: contain; filter: drop-shadow(0 0 14px rgba(255, 92, 184, 0.35)); }
+.et-mascot img, .et-mascot.is-missing::after { box-sizing: border-box; }
+.et-mascot.is-missing img { display: none; }
+.et-mascot.is-missing::after {
+  content: '🧠'; width: 96px; height: 96px; display: flex; align-items: center; justify-content: center;
+  font-size: 44px; line-height: 1; border-radius: 24px;
+  background: rgba(255, 92, 184, 0.12); border: 1px dashed rgba(255, 92, 184, 0.35);
+}
+.et-copy { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; text-align: left; }
+.et-headline { font-family: var(--font-sans); font-size: 20px; font-weight: 700; line-height: 24px; color: #F3F4F6; text-wrap: balance; }
+.et-sub { font-family: var(--font-sans); font-size: 13px; line-height: 16px; font-weight: 400; color: var(--text-secondary); margin-top: 4px; }
+.endless-teaser .btn-primary { width: 100%; max-width: none; height: 48px; border-radius: 12px; color: #140C12; flex-shrink: 0; }
 
 /* ---- Unified rubric tile: ONE design for in-game, home and results ---- */
 .rubric-tile {
@@ -337,12 +335,6 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .rubric-incorrect, .rubric-incorrect-bet, .rubric-endless-incorrect { background: #F22933; border: none; cursor: pointer; }
 /* the home strip is a summary, not a control */
 .tc-grid .rubric-tile { cursor: default; }
-#next-set-line, .tc-count { font-family: var(--font-sans); font-size: 12px; line-height: 16px; color: var(--text-secondary); white-space: nowrap; margin-top: 8px; }
-/* Completed hub: countdown + lifetime line reads as body copy, never a mono counter */
-#screen-landing.is-completed .tc-count {
-  font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 1.35;
-  letter-spacing: 0; color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: normal;
-}
 .tc-actions .btn-secondary {
   display: inline-flex; align-items: center; justify-content: center; gap: 4px;
   background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.14); color: var(--text-primary);
@@ -1129,13 +1121,18 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   <!-- LANDING -->
   <div id="screen-landing" class="screen active">
     <div class="landing-body">
-      <!-- completed-day header row -->
+      <!-- completed-day header row: brand only -->
       <div class="hub-head" id="hub-head">
         <div class="hub-brand">
           <span class="logo-mark-sm" aria-hidden="true"><svg viewBox="0 0 48 48" preserveAspectRatio="xMidYMid meet"><use href="#knowit-symbol"></use></svg></span>
           <span class="hub-wordmark">KNOWIT</span>
         </div>
-        <span class="streak-pill" id="streak-pill" style="display:none;"><span class="fire" id="streak-pill-fire"></span><span id="streak-pill-text"></span><span class="freeze-tag" id="streak-pill-freeze" style="display:none;" aria-label="Freeze ready"></span></span>
+      </div>
+
+      <!-- Zone 1 · unified habit bar: streak + next-set countdown in one pill -->
+      <div class="habit-bar" id="habit-bar" role="status" aria-live="polite">
+        <span class="habit-fire" aria-hidden="true">🔥</span>
+        <span id="habit-text">0-day Streak · Next set in --</span>
       </div>
 
       <!-- pre-completion hero -->
@@ -1150,35 +1147,45 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
         <b>Today's set complete.</b>
       </div>
 
-      <!-- completed-day cards: one bottom-anchored stack -->
+      <!-- completed-day zones: receipt, brainprint bridge, endless hero -->
       <div class="hub-cards completed-stack" id="hub-cards">
+        <!-- Zone 2 · TODAY'S SET receipt -->
         <div class="trophy-card" id="trophy-card">
-          <div class="tc-head-row">
-            <div class="tc-eyebrow" id="trophy-eyebrow">TODAY'S RUN</div>
-            <div class="tc-countdown"><span class="tc-clock" id="tc-clock" aria-hidden="true"></span><span id="next-set-in"></span></div>
+          <div class="tc-eyebrow" id="trophy-eyebrow">TODAY'S SET · #1</div>
+          <div class="tc-score-row">
+            <div class="tc-points" id="trophy-score">— pts</div>
+            <div class="tc-meta" id="trophy-meta">(0/10) · 0s</div>
           </div>
-          <div class="tc-score" id="trophy-score"><span class="tc-sub">Today's set complete.</span></div>
-          <div class="tc-result" id="trophy-result"></div>
-          <div class="tc-grid" id="trophy-grid"></div>
-          <div class="tc-count" id="next-set-line"></div>
-          <div class="bp-trigger-wrap" id="bp-trigger-hub"></div>
+          <div class="tc-rank" id="trophy-rank"></div>
+          <div class="tc-grid" id="trophy-grid" aria-hidden="true"></div>
           <div class="tc-actions">
-            <button class="btn-secondary" id="btn-view-results" style="display:none;"><span class="btn-label">Review</span></button>
-            <button class="btn-secondary" id="btn-quick-share" style="display:none;"><span class="btn-label">Share</span></button>
+            <button class="btn-secondary" id="btn-view-results"><span class="btn-label">Review</span></button>
+            <button class="btn-secondary" id="btn-quick-share"><span class="btn-label">Share</span></button>
           </div>
         </div>
 
+        <!-- Zone 3 · career Brainprint bridge -->
+        <button class="bp-bridge" id="bp-bridge" type="button">
+          <span class="bp-bridge-label" id="bp-bridge-label">Career accuracy: 0%</span>
+          <span class="bp-bridge-cta">Brainprint ↗</span>
+        </button>
+
+        <!-- Zone 4 · Endless hero stage -->
         <div class="endless-teaser" id="endless-teaser" style="display:none;">
+          <div class="et-top">
+            <span class="et-eyebrow">ENDLESS MODE</span>
+            <span class="et-lives">3 LIVES</span>
+          </div>
           <div class="et-row">
             <div class="et-mascot" id="et-mascot">
               <img src="/brain-mascot.webp" alt="Knowit mascot" width="96" height="96">
             </div>
             <div class="et-copy">
               <div class="et-headline">Want to keep going?</div>
-              <div class="et-sub" id="gt-line">Set your first record • 🏆 3 Lives</div>
+              <div class="et-sub" id="gt-line">3 lives · See how far you can go.</div>
             </div>
           </div>
-          <button class="btn-primary" id="btn-endless">Keep Playing</button>
+          <button class="btn-primary" id="btn-endless">Play Endless</button>
         </div>
       </div>
 
@@ -3132,7 +3139,6 @@ function fitBrainprintLabels(svg, w = 300, h = w) {
 }
 function renderBrainprintTriggers() {
   renderBrainprintTrigger($('bp-trigger-results'));
-  renderBrainprintTrigger($('bp-trigger-hub'), { compact: true });
 }
 function renderBrainprintTrigger(host, opts = {}) {
   if (!host) return;
@@ -3502,6 +3508,9 @@ function saveResult() {
       ids: state.questions.map(q => q.id),
       answers: state.answers.map(compactAnswer),
       duel: state.duel || null,
+      // Elapsed run time, persisted so the receipt reads correctly after a reload
+      durationSec: Math.round(state.answers.reduce((sum, a) => sum + (a.time || 0), 0) / 1000),
+      completedAt: Date.now(),
     }));
   } catch(e){}
 }
@@ -3563,9 +3572,6 @@ function nextSetLine(now = new Date()) {
 function nextSetIn(now = new Date()) {
   const nextMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1);
   return `Next set in ${fmtCountdown(nextMs - now.getTime())}`;
-}
-function careerLine() {
-  return `${stats.played} played · Best ${stats.maxStreak}d`;
 }
 
 // ---- Ghost Duel ----
@@ -3737,77 +3743,69 @@ function renderLanding() {
 
   // Endless card: only after the daily is done
   $('endless-teaser').style.display = completedToday ? 'flex' : 'none';
-  {
-    const bestRun = stats.bestEndless || 0;
-    $('gt-line').textContent = bestRun > 0
-      ? `Beat your record of ${bestRun} • 🏆 3 Lives`
-      : 'Set your first record • 🏆 3 Lives';
-    initMascotFallback();
-  }
+  if (completedToday) initMascotFallback();
 
   if (completedToday) renderHub();
 
   lastRenderedDay = getToday();
 }
-// Completed-day retention hub: header pill, trophy card, footer
+// Completed-day hub: habit bar → receipt → Brainprint bridge → Endless stage
 function renderHub() {
-  // streak pill
-  const eff = effectiveStreak(stats);
-  const pill = $('streak-pill');
-  if (eff > 0) {
-    pill.style.display = 'inline-flex';
-    $('streak-pill-fire').innerHTML = ICONS.flame;
-    $('streak-pill-text').textContent = `${eff}-day Streak`;
-  } else {
-    pill.style.display = 'none';
-  }
-  const pillFreeze = $('streak-pill-freeze');
-  if (pillFreeze) {
-    if (eff > 0 && stats.freezes > 0) {
-      pillFreeze.innerHTML = ICONS.snowflake + '<span>Freeze ready</span>';
-      pillFreeze.style.display = 'inline-flex';
-    } else {
-      pillFreeze.innerHTML = '';
-      pillFreeze.style.display = 'none';
-    }
+  // Zone 1 — one line that carries the habit: streak plus the rollover countdown
+  const habit = $('habit-text');
+  if (habit) {
+    const eff = Math.max(0, effectiveStreak(stats));
+    habit.textContent = `${eff}-day Streak · ${nextSetIn()}`;
   }
 
-  // trophy card
-  $('trophy-eyebrow').textContent = `TODAY'S RUN · #${getDailyNum()}`;
-  $('next-set-in').textContent = nextSetIn();
-  $('next-set-line').textContent = careerLine();
+  // Zone 2 — TODAY'S SET receipt
+  $('trophy-eyebrow').textContent = `TODAY'S SET · #${getDailyNum()}`;
   const savedRes = loadResult();
-  const hasRes = !!(savedRes && savedRes.date === getToday());
-  const scoreEl = $('trophy-score');
-  const gridEl = $('trophy-grid');
+  const hasRes = !!(savedRes && savedRes.date === getToday() && Array.isArray(savedRes.answers));
+  const pointsEl = $('trophy-score'), metaEl = $('trophy-meta'), rankEl = $('trophy-rank'), gridEl = $('trophy-grid');
   gridEl.innerHTML = '';
-  if (hasRes && Array.isArray(savedRes.answers)) {
+  if (hasRes) {
     const answers = savedRes.answers;
     const totalPoints = sumPoints(answers);
     const correct = answers.filter(a => a.correct).length;
-    const total = answers.length;
-    const totalTimeSec = answers.reduce((s, a) => s + (a.time || 0), 0) / 1000;
+    const total = answers.length || 10;
+    const durationSec = Number.isFinite(savedRes.durationSec)
+      ? savedRes.durationSec
+      : answers.reduce((s, a) => s + (a.time || 0), 0) / 1000;
     const betUsed = answers.filter(a => a.bet).length;
     const betHit = answers.filter(a => a.bet && a.correct).length;
-    const arch = getArchetype(correct, total, totalTimeSec, betUsed, betHit, totalPoints);
-    scoreEl.innerHTML = `<span class="tc-points">${fmtPts(totalPoints)}</span>`;
-    $('trophy-result').textContent = `(${correct}/${total}) · ${arch.name}`;
+    const arch = getArchetype(correct, total, durationSec, betUsed, betHit, totalPoints);
+    pointsEl.textContent = fmtPts(totalPoints);
+    pointsEl.classList.toggle('is-negative', totalPoints < 0);
+    metaEl.textContent = `(${correct}/${total}) · ${fmtDuration(durationSec)}`;
+    rankEl.textContent = arch.name;
     for (let i = 0; i < 10; i++) {
       const cell = document.createElement('div');
       const a = answers[i];
       applyRubricTile(cell, a ? rubricStateFor(a, false) : 'upcoming');
       gridEl.appendChild(cell);
     }
-    $('btn-view-results').style.display = 'flex';
-    $('btn-quick-share').style.display = 'flex';
   } else {
-    scoreEl.innerHTML = '<span class="tc-points">—</span>';
-    $('trophy-result').textContent = 'Today’s set complete.';
-    $('btn-view-results').style.display = 'none';
-    $('btn-quick-share').style.display = 'none';
+    pointsEl.textContent = '— pts';
+    pointsEl.classList.remove('is-negative');
+    metaEl.textContent = '';
+    rankEl.textContent = "Today's set complete.";
   }
 
-  renderBrainprintTrigger($('bp-trigger-hub'), { compact: true });
+  // Zone 3 — career Brainprint bridge
+  const bp = brainprintData();
+  const bridgeLabel = $('bp-bridge-label');
+  if (bridgeLabel) {
+    bridgeLabel.textContent = bp.strongest
+      ? `Top: ${bp.strongest.category} (${bp.strongest.accuracy}%)`
+      : `Career accuracy: ${bp.overallAccuracy}%`;
+  }
+
+  // Zone 4 — Endless stage subtitle
+  const bestRun = stats.bestEndless || 0;
+  // The zero-state line is two balanced lines on a 360 px card, so break it after "far"
+  $('gt-line').innerHTML = bestRun > 0 ? `Best run: ${bestRun}` : '3 lives · See how far<br>you can go.';
+  initMascotFallback();
 }
 function renderLandingStats() {
   const el = $('landing-stats');
@@ -5004,6 +5002,11 @@ function finishGame(opts = {}) {
 
   // Confetti for perfect daily
   if (!unranked && state.mode === 'daily' && correct === total) launchConfetti();
+
+  // Ranked Daily lands on the post-completion hub. Results stays for Endless, for ?vs= duels
+  // (the head-to-head card) and for unranked replays, which never write a result to open the hub.
+  const toHub = state.mode === 'daily' && !state.duel && !state.replayDay && !unranked && !opts.forceResults;
+  if (toHub) { showScreen('landing'); renderLanding(); }
 }
 
 // Re-render today's saved results (no stats, no confetti, no storage writes)
@@ -5193,6 +5196,12 @@ function fmtPts(n) {
   const v = Number(n) || 0;
   return `${v < 0 ? '−' : ''}${Math.abs(v)} pts`;
 }
+// Receipt duration: "5m 47s" past a minute, "47s" below it
+function fmtDuration(sec) {
+  const t = Math.max(0, Math.round(Number(sec) || 0));
+  const m = Math.floor(t / 60), r = t % 60;
+  return m > 0 ? `${m}m ${r}s` : `${r}s`;
+}
 function fmtClock(s) {
   const m = Math.floor(s / 60);
   const r = s - m * 60;
@@ -5261,7 +5270,8 @@ $('btn-practice').onclick = ()=>{ audio.click(); startDaily(); };
 $('btn-view-results').innerHTML = `${ICONS.eye}<span class="btn-label">Review</span>`;
 $('btn-view-results').onclick = ()=>{ audio.click(); viewTodaysResults(); };
 $('btn-quick-share').innerHTML = `${ICONS.shareUp}<span class="btn-label">Share</span>`;
-$('tc-clock').innerHTML = ICONS.clock;
+// Bridge bar: the whole row is the Brainprint affordance
+$('bp-bridge').onclick = () => { audio.click(); openBrainprint(); };
 // Landing card: share today's result (same payload finishGame produced)
 $('btn-quick-share').onclick = ()=>{
   audio.click();
@@ -5444,10 +5454,11 @@ renderMuteBtn();
 // ---- Countdown ticker: keeps the next-set line fresh and unlocks a new day ----
 function tick() {
   if (stats.completedDaily === getToday()) {
-    $('next-set-in').textContent = nextSetIn();
-    $('next-set-line').textContent = careerLine();
+    const habit = $('habit-text');
+    if (habit) habit.textContent = `${Math.max(0, effectiveStreak(stats))}-day Streak · ${nextSetIn()}`;
+    const nsr = $('next-set-results');
+    if (nsr && nsr.style.display === 'block') nsr.textContent = nextSetLine();
   }
-  if ($('next-set-results').style.display === 'block') $('next-set-results').textContent = nextSetLine();
   if (state.screen === 'landing' && getToday() !== lastRenderedDay) renderLanding();
 }
 // Console-only dev helper: __debugDay(8) → [{pos, id, difficulty}] in the FINAL play order
