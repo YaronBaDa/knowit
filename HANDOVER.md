@@ -345,7 +345,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
-`d7a67fa` feedback dwell 1500/3500ms + 2px countdown rail, tap-to-skip
+`be68019` feedback dwell 1500/3500ms + 2px countdown rail, tap-to-skip
 `76f47f9` worker config: `kv-id.mjs`, 503 on a missing KV binding, docs corrected
 `4c8ea68` restore the receipt layout (big points, boxed Brainprint row, 2-up actions)
 `721039b` quiz copy + mascot Endless hero + `Keep Playing` CTA
