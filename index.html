@@ -270,9 +270,15 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .tc-rank { margin-top: 8px; min-height: 36px; font-family: var(--font-sans); font-size: 32px; font-weight: 800; line-height: 36px; letter-spacing: -0.01em; color: #F3F4F6; }
 /* Score, then one muted correct/time line, then the percentile — nothing between them */
 .tc-score { margin-top: 12px; font-family: var(--font-sans); font-size: 28px; font-weight: 800; line-height: 32px; letter-spacing: -0.01em; color: var(--text-primary); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.tc-score .neg-sign { color: var(--wrong); }
-.tc-subline { margin-top: 4px; font-family: var(--font-sans); font-size: 15px; line-height: 20px; color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.tc-agg { margin-top: 4px; font-family: var(--font-sans); font-size: 13px; line-height: 16px; font-weight: 600; color: var(--brand-pink); }
+.tc-score .neg-sign {
+  /* Drawn bar instead of the glyph: Lexend's minus falls back to a hairline when
+     Google Fonts are unavailable, which read as a detached stroke. */
+  display: inline-block; width: 13px; height: 4px; margin-right: 2px;
+  background: var(--wrong); border-radius: 1px;
+  vertical-align: 0.29em; text-indent: -9999px; overflow: hidden;
+}
+.tc-subline { margin-top: 8px; font-family: var(--font-sans); font-size: 15px; line-height: 20px; color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tc-agg { margin-top: 8px; font-family: var(--font-sans); font-size: 13px; line-height: 16px; font-weight: 600; color: var(--brand-pink); }
 .tc-bets { margin-top: 8px; font-family: var(--font-sans); font-size: 13px; line-height: 16px; color: var(--text-secondary); }
 .tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 12px; padding: 0; }
 .tc-grid .rubric-tile[data-idx] { cursor: pointer; }
