@@ -1,6 +1,18 @@
 # KNOWIT — Handover Brief
 
-_Last updated: 2026-11-23 · commit `4c8ea68` · live at <https://yaronbada.github.io/knowit/>_
+_Last updated: 2026-11-23 · commit `371ca6c` · live at <https://yaronbada.github.io/knowit/>_
+
+## 0. Start here (next agent)
+
+```bash
+git clone https://github.com/YaronBaDa/knowit.git && cd knowit
+```
+Then read, in this order: **this file** → `README.md` (deploy + schedule tooling) →
+`worker/index.js` (analytics API) → `sw.js` (caching contract). Only `index.html` matters for
+day-to-day work; it is the whole game. Brand assets (`*.png`, `*.ico`, `knowit-brain.svg`) are in the
+repo and already wired up — no need to recreate them.
+
+Nothing else needs to be transferred: the repo is the single source of truth and is public.
 
 This is the entry point for anyone (human or agent) taking over KNOWIT. It supersedes nothing —
 `KNOWIT_HANDOFF.md` is the long-form design spec/history written earlier in the project; this file
