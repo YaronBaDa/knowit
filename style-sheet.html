@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KNOWIT · Style Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&family=Lexend+Zetta:wght@600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-canvas:#140F12; --bg-surface:#1F181C; --bg-surface-subtle:#2B2227;
+  --text-primary:#F3F4F6; --text-secondary:#B2A4AC; --border-subtle:rgba(255,255,255,0.10);
+  --accent-correct:#21C868; --accent-incorrect:#F22933; --accent-bet:#F59E0B;
+  --accent-brand:#F454B0; --brand-glow:#FF6EB4; --brand-orchid:#A855F7;
+  --brand-grad:linear-gradient(135deg,#FF6EB4 0%,#F454B0 50%,#A855F7 100%);
+  --font-sans:'Lexend',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-display:'Lexend Zetta',sans-serif;
+  --font-telemetry:'JetBrains Mono',ui-monospace,monospace;
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg-canvas); color:var(--text-primary); font-family:var(--font-sans);
+  -webkit-font-smoothing:antialiased; padding:40px 32px 64px; }
+h1 { font-family:var(--font-display); font-size:30px; font-weight:700; letter-spacing:0.02em; margin:0; }
+h2 { font-size:13px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--text-secondary); margin:48px 0 16px; padding-bottom:8px; border-bottom:1px solid var(--border-subtle); }
+h3 { font-size:15px; font-weight:600; margin:24px 0 10px; color:var(--text-primary); }
+.sub { color:var(--text-secondary); font-size:13px; line-height:20px; margin-top:8px; }
+header { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap;
+  padding-bottom:24px; border-bottom:1px solid var(--border-subtle); }
+.mark { display:flex; align-items:center; gap:12px; }
+.mark i { width:44px; height:44px; border-radius:12px; background:var(--brand-grad); display:block; }
+code { font-family:var(--font-telemetry); font-size:11px; color:#7DD3FC; }
+.sw-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(232px,1fr)); gap:12px; }
+.sw { display:flex; gap:12px; align-items:center; background:var(--bg-surface); border:1px solid var(--border-subtle);
+  border-radius:12px; padding:12px; }
+.chip { width:44px; height:44px; border-radius:10px; flex:0 0 auto; border:1px solid rgba(255,255,255,.12); }
+.chip.sm { width:60px; height:20px; border-radius:6px; }
+.sw-b { display:flex; flex-direction:column; gap:2px; min-width:0; }
+.sw-b code { font-size:10px; }
+.sw-b b { font-size:13px; font-weight:600; }
+.sw-b span { font-size:11px; color:var(--text-secondary); }
+.sw-b i { font-size:11px; color:var(--text-secondary); font-style:normal; opacity:.7; }
+table { width:100%; border-collapse:collapse; font-size:12px; }
+th { text-align:left; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary);
+  font-weight:600; padding:8px 10px; border-bottom:1px solid var(--border-subtle); }
+td { padding:10px; border-bottom:1px solid rgba(255,255,255,.05); vertical-align:middle; }
+.grad-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:12px; }
+.grad { background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:12px; padding:12px; }
+.grad-bar { height:56px; border-radius:8px; margin-bottom:10px; }
+.grad span { display:block; font-family:var(--font-telemetry); font-size:10px; color:var(--text-secondary); margin-top:4px; }
+.shadow-demo { width:120px; height:28px; border-radius:8px; background:var(--bg-surface-subtle); }
+.sample { white-space:nowrap; }
+td.spec { width:44%; }
+td.meta { font-family:var(--font-telemetry); font-size:10px; color:#B2A4AC; white-space:nowrap; }
+td.sels code { display:inline-block; margin:2px 4px 2px 0; color:#8E96A8; }
+.more { font-size:10px; color:var(--text-secondary); }
+.cc { display:inline-block; width:12px; height:12px; border-radius:3px; border:1px solid rgba(255,255,255,.2); margin-right:3px; }
+.fonts { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:12px; }
+.font { background:var(--bg-surface); border:1px solid var(--border-subtle); border-radius:12px; padding:16px; }
+.font b { display:block; font-size:22px; font-weight:700; margin-bottom:4px; }
+.font span { font-size:11px; color:var(--text-secondary); }
+.on-surface { display:flex; gap:8px; flex-wrap:wrap; }
+.pill { padding:6px 12px; border-radius:9999px; font-size:12px; font-weight:600; }
+</style></head>
+<body>
+<header>
+  <div class="mark"><i></i>
+    <div><h1>KNOWIT — STYLE SHEET</h1>
+      <div class="sub">Generated from <code>index.html</code> · commit <code>905f3ec</code> · 2026-11-25<br>
+      16 colour tokens · 4 gradients · 75 distinct text styles · 75 sized rules</div>
+    </div>
+  </div>
+  <div class="sub" style="text-align:right">Dark plum palette<br>Lexend · Lexend Zetta · JetBrains Mono</div>
+</header>
+
+<h2>1 · Core palette</h2>
+<div class="sub" style="margin:-4px 0 12px">“Uses” counts <code>var(--token)</code> references across the stylesheet and markup. A 0 means the token is only reached through a gradient stop or a canvas fill.</div>
+<div class="sw-grid">
+      <div class="sw">
+        <div class="chip" style="background:#140F12"></div>
+        <div class="sw-b"><code>--bg-canvas</code><b>#140F12</b>
+        <span>app background</span><i>20 uses</i></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#1F181C"></div>
+        <div class="sw-b"><code>--bg-surface</code><b>#1F181C</b>
+        <span>cards, sheets</span><i>12 uses</i></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#2B2227"></div>
+        <div class="sw-b"><code>--bg-surface-subtle</code><b>#2B2227</b>
+        <span>recessed wells</span><i>12 uses</i></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#F3F4F6"></div>
+        <div class="sw-b"><code>--text-primary</code><b>#F3F4F6</b>
+        <span>body ink</span><i>48 uses</i></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#B2A4AC"></div>
+        <div class="sw-b"><code>--text-secondary</code><b>#B2A4AC</b>
+        <span>labels, meta</span><i>88 uses</i></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#140F12"></div>
+        <div class="sw-b"><code>--on-brand</code><b>#140F12</b>
+        <span>ink on pink</span><i>0 uses</i></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#21C868"></div>
+        <div class="sw-b"><code>--accent-correct</code><b>#21C868</b>
+        <span>correct / success</span><i>4 uses</i></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#F22933"></div>
+        <div class="sw-b"><code>--accent-incorrect</code><b>#F22933</b>
+        <span>wrong / loss</span><i>5 uses</i></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#FF5C63"></div>
+        <div class="sw-b"><code>--accent-incorrect-text</code><b>#FF5C63</b>
+        <span>wrong, as text</span><i>4 uses</i></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#F59E0B"></div>
+        <div class="sw-b"><code>--accent-bet</code><b>#F59E0B</b>
+        <span>bets only</span><i>33 uses</i></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#F454B0"></div>
+        <div class="sw-b"><code>--accent-brand</code><b>#F454B0</b>
+        <span>primary brand</span><i>26 uses</i></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#FF7BC8"></div>
+        <div class="sw-b"><code>--accent-indigo</code><b>#FF7BC8</b>
+        <span>gradient stop</span><i>0 uses</i></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#7DD3FC"></div>
+        <div class="sw-b"><code>--accent-ice</code><b>#7DD3FC</b>
+        <span>endless telemetry</span><i>2 uses</i></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#F454B0"></div>
+        <div class="sw-b"><code>--brand-pink</code><b>#F454B0</b>
+        <span>brand alias</span><i>14 uses</i></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#FF6EB4"></div>
+        <div class="sw-b"><code>--brand-glow</code><b>#FF6EB4</b>
+        <span>glow / hover</span><i>0 uses</i></div>
+      </div>
+      <div class="sw">
+        <div class="chip" style="background:#A855F7"></div>
+        <div class="sw-b"><code>--brand-orchid</code><b>#A855F7</b>
+        <span>gradient stop</span><i>0 uses</i></div>
+      </div></div>
+
+<h2>2 · Tints, hairlines and shadows</h2>
+<table><thead><tr><th>Token</th><th>Value</th><th></th><th>Uses</th></tr></thead><tbody><tr><td><code>--border-subtle</code></td><td><code>rgba(255, 255, 255, 0.10)</code></td><td><div class="chip sm" style="background:rgba(255, 255, 255, 0.10)"></div></td><td>18</td></tr><tr><td><code>--accent-correct-tint</code></td><td><code>rgba(33, 200, 104, 0.14)</code></td><td><div class="chip sm" style="background:rgba(33, 200, 104, 0.14)"></div></td><td>0</td></tr><tr><td><code>--accent-incorrect-tint</code></td><td><code>rgba(242, 41, 51, 0.16)</code></td><td><div class="chip sm" style="background:rgba(242, 41, 51, 0.16)"></div></td><td>2</td></tr><tr><td><code>--accent-bet-tint</code></td><td><code>rgba(245, 158, 11, 0.14)</code></td><td><div class="chip sm" style="background:rgba(245, 158, 11, 0.14)"></div></td><td>2</td></tr><tr><td><code>--accent-brand-tint</code></td><td><code>rgba(244, 84, 176, 0.14)</code></td><td><div class="chip sm" style="background:rgba(244, 84, 176, 0.14)"></div></td><td>4</td></tr><tr><td><code>--shadow</code></td><td><code>0 4px 4px rgba(0,0,0,0.35), 0 4px 16px rgba(0,0,0,0.18)</code></td><td><div class="shadow-demo" style="box-shadow:0 4px 4px rgba(0,0,0,0.35), 0 4px 16px rgba(0,0,0,0.18)"></div></td><td>6</td></tr><tr><td><code>--shadow-sm</code></td><td><code>0 4px 4px rgba(0,0,0,0.25)</code></td><td><div class="shadow-demo" style="box-shadow:0 4px 4px rgba(0,0,0,0.25)"></div></td><td>2</td></tr></tbody></table>
+
+<h2>3 · Gradients</h2>
+<div class="grad-grid">
+      <div class="grad">
+        <div class="grad-bar" style="background:linear-gradient(135deg, #FF6EB4 0%, #F454B0 50%, #A855F7 100%)"></div>
+        <code>--brand-grad</code><span>linear-gradient(135deg, #FF6EB4 0%, #F454B0 50%, #A855F7 100%)</span>
+      </div>
+      <div class="grad">
+        <div class="grad-bar" style="background:linear-gradient(90deg, #FF6EB4 0%, #F454B0 50%, #A855F7 100%)"></div>
+        <code>--brand-grad-h</code><span>linear-gradient(90deg, #FF6EB4 0%, #F454B0 50%, #A855F7 100%)</span>
+      </div>
+      <div class="grad">
+        <div class="grad-bar" style="background:linear-gradient(135deg, #FF63B1 0%, #E13C9D 100%)"></div>
+        <code>--brand-cta-grad</code><span>linear-gradient(135deg, #FF63B1 0%, #E13C9D 100%)</span>
+      </div>
+      <div class="grad">
+        <div class="grad-bar" style="background:linear-gradient(90deg, #F454B0, #21C868)"></div>
+        <code>--aurora</code><span>linear-gradient(90deg, #F454B0, #21C868)</span>
+      </div></div>
+
+<h2>4 · Typefaces</h2>
+<div class="fonts">
+  <div class="font"><b style="font-family:var(--font-display);letter-spacing:.02em">KNOWIT</b><code>--font-display · Lexend Zetta</code><br><span>Wordmark only — brand header and Brainprint top bar.</span></div>
+  <div class="font"><b style="font-family:var(--font-sans);font-weight:400">Smug-ish. 6 pts</b><code>--font-sans · Lexend</code><br><span>Everything else: body, questions, buttons, numbers.</span></div>
+  <div class="font"><b style="font-family:var(--font-telemetry);font-weight:600;font-size:19px">RUN 12 · 0:08</b><code>--font-telemetry · JetBrains Mono</code><br><span>Endless telemetry only (run badge, clocks).</span></div>
+</div>
+
+<h2>5 · Text styles — every distinct rule</h2>
+<div class="sub" style="margin-bottom:12px">Each row renders its own declared style. Meta = size · weight · line-height · tracking · family; chips are the colours those rules use.</div>
+<table><thead><tr><th>Specimen</th><th>Spec</th><th>Selectors</th><th>Colour</th></tr></thead><tbody>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:32px;font-weight:800;line-height:36px;
+            letter-spacing:-0.01em;text-transform:none;color:#F3F4F6">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">32px · w800 · lh 36px · ls -0.01em · var(--font-sans)</td>
+        <td class="sels"><code>/* Archetype is the card&#x27;s headline */ .tc-rank</code></td>
+        <td class="ccs"><span class="cc" style="background:#F3F4F6" title="#F3F4F6"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:32px;font-weight:700;line-height:normal;
+            letter-spacing:normal;text-transform:none;color:var(--ink-dim)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">32px · w700 · var(--font-sans)</td>
+        <td class="sels"><code>.hero-score .of</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--ink-dim)" title="var(--ink-dim)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:28px;font-weight:800;line-height:32px;
+            letter-spacing:-0.01em;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">28px · w800 · lh 32px · ls -0.01em · var(--font-sans)</td>
+        <td class="sels"><code>/* Score, then one muted correct/time line, then the percentile — nothing between them */ .tc-score</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-primary)" title="var(--text-primary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:24px;font-weight:700;line-height:normal;
+            letter-spacing:normal;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">24px · w700 · var(--font-mono)</td>
+        <td class="sels"><code>.duel-card .duel-side .d-score</code></td>
+        <td class="ccs"></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:20px;font-weight:700;line-height:1.15;
+            letter-spacing:normal;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">20px · w700 · lh 1.15 · var(--font-sans)</td>
+        <td class="sels"><code>.bp-summary b</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-primary)" title="var(--text-primary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:20px;font-weight:700;line-height:1.25;
+            letter-spacing:normal;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">20px · w700 · lh 1.25 · var(--font-sans)</td>
+        <td class="sels"><code>.duel-modal-vs</code> <code>.tc-score-fallback</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-primary)" title="var(--text-primary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:20px;font-weight:700;line-height:1.25;
+            letter-spacing:-0.01em;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">20px · w700 · lh 1.25 · ls -0.01em · var(--font-sans)</td>
+        <td class="sels"><code>.duel-card .duel-outcome</code> <code>.type-title</code> <code>/* .type-title */ .game-header h1, .et-title, .modal-card .mq</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-primary)" title="var(--text-primary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:20px;font-weight:700;line-height:24px;
+            letter-spacing:normal;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">20px · w700 · lh 24px · var(--font-display)</td>
+        <td class="sels"><code>/* Backup modal */ .backup-title</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-primary)" title="var(--text-primary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:20px;font-weight:700;line-height:24px;
+            letter-spacing:normal;text-transform:none;color:#F3F4F6">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">20px · w700 · lh 24px · var(--font-sans)</td>
+        <td class="sels"><code>.et-headline</code></td>
+        <td class="ccs"><span class="cc" style="background:#F3F4F6" title="#F3F4F6"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:20px;font-weight:700;line-height:24px;
+            letter-spacing:0.04em;text-transform:none;color:#F3F4F6">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">20px · w700 · lh 24px · ls 0.04em · var(--font-sans)</td>
+        <td class="sels"><code>.bp-type</code></td>
+        <td class="ccs"><span class="cc" style="background:#F3F4F6" title="#F3F4F6"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:20px;font-weight:400;line-height:normal;
+            letter-spacing:4px;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">20px · w400 · ls 4px · var(--font-sans)</td>
+        <td class="sels"><code>.endless-hud .lives</code></td>
+        <td class="ccs"></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:20px;font-weight:400;line-height:1;
+            letter-spacing:normal;text-transform:none;color:var(--text-secondary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">20px · w400 · lh 1 · var(--font-sans)</td>
+        <td class="sels"><code>.bp-close</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:16px;font-weight:700;line-height:normal;
+            letter-spacing:normal;text-transform:none;color:#140F12">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">16px · w700 · var(--font-sans)</td>
+        <td class="sels"><code>.btn-primary</code> <code>.btn-outline-brand</code> <code>/* Buttons — brand palette */ .btn-emerald</code></td>
+        <td class="ccs"><span class="cc" style="background:#140F12" title="#140F12"></span> <span class="cc" style="background:var(--brand-pink)" title="var(--brand-pink)"></span> <span class="cc" style="background:var(--bg-canvas)" title="var(--bg-canvas)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:16px;font-weight:700;line-height:normal;
+            letter-spacing:0.04em;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">16px · w700 · ls 0.04em · var(--font-display)</td>
+        <td class="sels"><code>/* Brand stays Zetta even though it is an h1 inside .game-header */ #screen-results .hub-wordmark</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-primary)" title="var(--text-primary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:16px;font-weight:700;line-height:1;
+            letter-spacing:normal;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">16px · w700 · lh 1 · var(--font-sans)</td>
+        <td class="sels"><code>.copy-ok</code></td>
+        <td class="ccs"></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:16px;font-weight:700;line-height:1.4;
+            letter-spacing:normal;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">16px · w700 · lh 1.4 · var(--font-sans)</td>
+        <td class="sels"><code>.modal-card .mq</code></td>
+        <td class="ccs"></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:16px;font-weight:700;line-height:20px;
+            letter-spacing:0;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">16px · w700 · lh 20px · ls 0 · var(--font-sans)</td>
+        <td class="sels"><code>.feedback-strip .fb-result</code></td>
+        <td class="ccs"></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:16px;font-weight:700;line-height:20px;
+            letter-spacing:normal;text-transform:none;color:#FFFFFF">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">16px · w700 · lh 20px · var(--font-sans)</td>
+        <td class="sels"><code>.bp-list-meta</code></td>
+        <td class="ccs"><span class="cc" style="background:#FFFFFF" title="#FFFFFF"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:16px;font-weight:600;line-height:normal;
+            letter-spacing:normal;text-transform:none;color:var(--ink)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">16px · w600 · var(--font-sans)</td>
+        <td class="sels"><code>.icon-btn</code> <code>.btn-secondary</code> <code>.option-btn</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--ink)" title="var(--ink)"></span> <span class="cc" style="background:var(--text-primary)" title="var(--text-primary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:16px;font-weight:600;line-height:1.35;
+            letter-spacing:0.01em;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">16px · w600 · lh 1.35 · ls 0.01em · var(--font-sans)</td>
+        <td class="sels"><code>.type-subtitle</code> <code>/* .type-subtitle — answer cards, buttons, verdict line */ .option-btn, .btn-primary, .btn-secondary, .btn-emerald, #btn-endless, .feedback-strip .fb-result</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-primary)" title="var(--text-primary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:16px;font-weight:600;line-height:20px;
+            letter-spacing:0;text-transform:none;color:#F3F4F6">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">16px · w600 · lh 20px · ls 0 · none · var(--font-sans)</td>
+        <td class="sels"><code>.bp-cat-name</code></td>
+        <td class="ccs"><span class="cc" style="background:#F3F4F6" title="#F3F4F6"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:16px;font-weight:400;line-height:normal;
+            letter-spacing:normal;text-transform:none;color:var(--ink)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">16px · w400 · var(--font-sans)</td>
+        <td class="sels"><code>.daily-locked b</code> <code>.hub-wordmark</code> <code>.bp-wordmark</code> <span class="more">+3</span></td>
+        <td class="ccs"><span class="cc" style="background:var(--ink)" title="var(--ink)"></span> <span class="cc" style="background:var(--text-primary)" title="var(--text-primary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:16px;font-weight:400;line-height:1.28;
+            letter-spacing:normal;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">16px · w400 · lh 1.28 · var(--font-sans)</td>
+        <td class="sels"><code>.question-text</code></td>
+        <td class="ccs"></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:16px;font-weight:400;line-height:1.45;
+            letter-spacing:normal;text-transform:none;color:var(--text-secondary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">16px · w400 · lh 1.45 · var(--font-sans)</td>
+        <td class="sels"><code>/* landing tagline: Lexend 16px body weight, secondary */ #screen-landing:not(.is-completed) .landing-body p.landing-tagline</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:16px;font-weight:400;line-height:1.5;
+            letter-spacing:normal;text-transform:none;color:var(--ink-faint)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">16px · w400 · lh 1.5 · var(--font-sans)</td>
+        <td class="sels"><code>.landing-body p</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--ink-faint)" title="var(--ink-faint)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:16px;font-weight:400;line-height:20px;
+            letter-spacing:normal;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">16px · w400 · lh 20px · var(--font-sans)</td>
+        <td class="sels"><code>/* Feedback box owns its own type scale (16/20 verdict, 12/16 body) */ .feedback-strip .fb-result</code></td>
+        <td class="ccs"></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:15px;font-weight:400;line-height:20px;
+            letter-spacing:normal;text-transform:none;color:var(--text-secondary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">15px · w400 · lh 20px · var(--font-sans)</td>
+        <td class="sels"><code>.tc-subline</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:14px;font-weight:600;line-height:normal;
+            letter-spacing:normal;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">14px · w600 · var(--font-sans)</td>
+        <td class="sels"><code>.tc-review-link</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-primary)" title="var(--text-primary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:14px;font-weight:400;line-height:1;
+            letter-spacing:normal;text-transform:none;color:var(--text-secondary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">14px · w400 · lh 1 · var(--font-sans)</td>
+        <td class="sels"><code>.a2hs-x</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:14px;font-weight:400;line-height:16px;
+            letter-spacing:normal;text-transform:none;color:var(--text-secondary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">14px · w400 · lh 16px · var(--font-sans)</td>
+        <td class="sels"><code>/* Streak + countdown inside the card, then the hairline divider */ .tc-streak-row</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:13px;font-weight:600;line-height:normal;
+            letter-spacing:normal;text-transform:none;color:var(--brand-pink)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">13px · w600 · var(--font-sans)</td>
+        <td class="sels"><code>.a2hs-install</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--brand-pink)" title="var(--brand-pink)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:13px;font-weight:600;line-height:16px;
+            letter-spacing:normal;text-transform:none;color:var(--brand-pink)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">13px · w600 · lh 16px · var(--font-sans)</td>
+        <td class="sels"><code>.tc-agg</code> <code>.bp-bridge-cta</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--brand-pink)" title="var(--brand-pink)"></span> <span class="cc" style="background:#F3F4F6" title="#F3F4F6"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:13px;font-weight:400;line-height:16px;
+            letter-spacing:normal;text-transform:none;color:var(--text-secondary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">13px · w400 · lh 16px · var(--font-sans)</td>
+        <td class="sels"><code>.tc-bets</code> <code>.bp-bridge-label</code> <code>.et-sub</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:700;line-height:normal;
+            letter-spacing:normal;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w700 · var(--font-mono)</td>
+        <td class="sels"><code>/* Point-delta badge: right-aligned, never wraps, colour + glyph carry the meaning */ .opt-badge</code></td>
+        <td class="ccs"></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:700;line-height:normal;
+            letter-spacing:normal;text-transform:none;color:#F22933">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w700 · var(--font-sans)</td>
+        <td class="sels"><code>.heart-loss-badge</code></td>
+        <td class="ccs"><span class="cc" style="background:#F22933" title="#F22933"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:700;line-height:16px;
+            letter-spacing:0.08em;text-transform:none;color:#F454B0">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w700 · lh 16px · ls 0.08em · var(--font-sans)</td>
+        <td class="sels"><code>.et-eyebrow</code></td>
+        <td class="ccs"><span class="cc" style="background:#F454B0" title="#F454B0"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:600;line-height:normal;
+            letter-spacing:0.08em;text-transform:uppercase;color:var(--text-secondary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w600 · ls 0.08em · uppercase · var(--font-sans)</td>
+        <td class="sels"><code>.backup-label</code> <code>.pace-pill</code> <code>/* Results: mode eyebrow under the brand header, 8px above the hero */ .results-eyebrow</code> <span class="more">+1</span></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span> <span class="cc" style="background:#F59E0B" title="#F59E0B"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:600;line-height:normal;
+            letter-spacing:normal;text-transform:none;color:var(--ink-faint)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w600 · var(--font-mono)</td>
+        <td class="sels"><code>.stat-chip</code> <code>/* Duel banner */ .duel-banner</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--ink-faint)" title="var(--ink-faint)"></span> <span class="cc" style="background:var(--accent-brand)" title="var(--accent-brand)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:600;line-height:normal;
+            letter-spacing:0.03em;text-transform:none;color:var(--ink-faint)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w600 · ls 0.03em · var(--font-mono)</td>
+        <td class="sels"><code>.option-btn .key-hint</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--ink-faint)" title="var(--ink-faint)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:600;line-height:normal;
+            letter-spacing:0.07em;text-transform:none;color:var(--ink-dim)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w600 · ls 0.07em · var(--font-sans)</td>
+        <td class="sels"><code>.option-btn .bet-reveal .br-label</code> <code>.duel-card .duel-divider</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--ink-dim)" title="var(--ink-dim)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:600;line-height:normal;
+            letter-spacing:normal;text-transform:none;color:var(--text-secondary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w600 · var(--font-sans)</td>
+        <td class="sels"><code>.option-btn .bet-reveal .br-sub</code> <code>.duel-name-label</code> <code>.toast</code> <span class="more">+1</span></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span> <span class="cc" style="background:var(--ink)" title="var(--ink)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:600;line-height:normal;
+            letter-spacing:0.04em;text-transform:none;color:var(--text-secondary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w600 · ls 0.04em · var(--font-sans)</td>
+        <td class="sels"><code>.sc-meta</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:600;line-height:normal;
+            letter-spacing:0.06em;text-transform:uppercase;color:var(--text-secondary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w600 · ls 0.06em · uppercase · var(--font-sans)</td>
+        <td class="sels"><code>.bp-summary span</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:600;line-height:normal;
+            letter-spacing:0.07em;text-transform:uppercase;color:var(--text-secondary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w600 · ls 0.07em · uppercase · var(--font-sans)</td>
+        <td class="sels"><code>.duel-card .duel-side .d-name</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:600;line-height:1;
+            letter-spacing:normal;text-transform:none;color:var(--accent-ice)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w600 · lh 1 · var(--font-sans)</td>
+        <td class="sels"><code>.freeze-tag</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--accent-ice)" title="var(--accent-ice)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:600;line-height:1;
+            letter-spacing:0.04em;text-transform:uppercase;color:#B2A4AC">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w600 · lh 1 · ls 0.04em · uppercase · var(--font-sans)</td>
+        <td class="sels"><code>.category-pill</code></td>
+        <td class="ccs"><span class="cc" style="background:#B2A4AC" title="#B2A4AC"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:600;line-height:1;
+            letter-spacing:0.08em;text-transform:uppercase;color:var(--text-secondary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w600 · lh 1 · ls 0.08em · uppercase · var(--font-sans)</td>
+        <td class="sels"><code>.sc-stat span</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:600;line-height:1;
+            letter-spacing:0.01em;text-transform:none;color:#F3F4F6">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w600 · lh 1 · ls 0.01em · var(--font-sans)</td>
+        <td class="sels"><code>/* ONE clickable container for the hub: trophy + top category ← → Brainprint ↗ */ .bp-trigger-btn</code></td>
+        <td class="ccs"><span class="cc" style="background:#F3F4F6" title="#F3F4F6"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:600;line-height:1.2;
+            letter-spacing:0.07em;text-transform:uppercase;color:var(--text-secondary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w600 · lh 1.2 · ls 0.07em · uppercase · var(--font-sans)</td>
+        <td class="sels"><code>.type-eyebrow</code> <code>/* .type-eyebrow */ .tc-eyebrow, .sc-stat span, .modal-card .mlabel, .modal-card .mdyk-label</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:600;line-height:16px;
+            letter-spacing:normal;text-transform:none;color:var(--accent-brand)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w600 · lh 16px · var(--font-sans)</td>
+        <td class="sels"><code>.agg-line</code> <code>.et-lives</code> <code>.near-miss</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--accent-brand)" title="var(--accent-brand)"></span> <span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span> <span class="cc" style="background:var(--accent-bet)" title="var(--accent-bet)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:600;line-height:16px;
+            letter-spacing:0.06em;text-transform:uppercase;color:var(--text-secondary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w600 · lh 16px · ls 0.06em · uppercase · var(--font-sans)</td>
+        <td class="sels"><code>.tc-eyebrow</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:500;line-height:normal;
+            letter-spacing:normal;text-transform:none;color:var(--text-secondary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w500 · var(--font-sans)</td>
+        <td class="sels"><code>.backup-link</code> <code>.bp-trigger-locked</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:500;line-height:normal;
+            letter-spacing:0.04em;text-transform:none;color:rgba(243, 244, 246, 0.85)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w500 · ls 0.04em · var(--font-telemetry)</td>
+        <td class="sels"><code>.endless-hud .streak</code></td>
+        <td class="ccs"><span class="cc" style="background:rgba(243, 244, 246, 0.85)" title="rgba(243, 244, 246, 0.85)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:500;line-height:normal;
+            letter-spacing:0.02em;text-transform:none;color:var(--text-muted)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w500 · ls 0.02em · var(--font-mono)</td>
+        <td class="sels"><code>.q-timer-text</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-muted)" title="var(--text-muted)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:500;line-height:normal;
+            letter-spacing:0.03em;text-transform:none;color:var(--ink)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w500 · ls 0.03em · var(--font-sans)</td>
+        <td class="sels"><code>.streak-badge</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--ink)" title="var(--ink)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:500;line-height:1.2;
+            letter-spacing:0.03em;text-transform:none;color:var(--text-secondary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w500 · lh 1.2 · ls 0.03em · var(--font-sans)</td>
+        <td class="sels"><code>.type-hud</code> <code>/* .type-hud */ #header-meta, .game-header .meta, #landing-puzzle, .streak-pill, .stat-chip, #q-timer-text, .results-footer-meta</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:400;line-height:normal;
+            letter-spacing:normal;text-transform:none;color:var(--ink-faint)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w400 · var(--font-sans)</td>
+        <td class="sels"><code>.landing-streak-bar .fire</code> <code>/* Daily lock notice */ .daily-locked</code> <code>.bp-list-meta .muted</code> <span class="more">+1</span></td>
+        <td class="ccs"><span class="cc" style="background:var(--ink-faint)" title="var(--ink-faint)"></span> <span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:400;line-height:normal;
+            letter-spacing:normal;text-transform:none;color:var(--ink-faint)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w400 · var(--font-mono)</td>
+        <td class="sels"><code>.hero-sub</code> <code>.results-footer-meta</code> <code>.grid-hint</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--ink-faint)" title="var(--ink-faint)"></span> <span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span> <span class="cc" style="background:var(--ink-dim)" title="var(--ink-dim)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:400;line-height:normal;
+            letter-spacing:0;text-transform:none;color:var(--ink-dim)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w400 · ls 0 · var(--font-sans)</td>
+        <td class="sels"><code>.link-home</code> <code>.duel-card .duel-side .d-time</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--ink-dim)" title="var(--ink-dim)"></span> <span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:400;line-height:normal;
+            letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-dim)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w400 · ls 0.08em · uppercase · var(--font-mono)</td>
+        <td class="sels"><code>.modal-card .mlabel</code> <code>.modal-card .mdyk-label</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--ink-dim)" title="var(--ink-dim)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:400;line-height:1.3;
+            letter-spacing:normal;text-transform:none;color:var(--text-secondary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w400 · lh 1.3 · var(--font-sans)</td>
+        <td class="sels"><code>.bp-legend</code> <code>.bp-note</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:400;line-height:1.35;
+            letter-spacing:normal;text-transform:none;color:var(--text-secondary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w400 · lh 1.35 · var(--font-sans)</td>
+        <td class="sels"><code>.landing-streak-bar</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:400;line-height:1.35;
+            letter-spacing:0;text-transform:none;color:var(--text-secondary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w400 · lh 1.35 · ls 0 · var(--font-sans)</td>
+        <td class="sels"><code>#screen-landing:not(.is-completed) #streak-bar, #screen-landing:not(.is-completed) #landing-puzzle</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:400;line-height:1.45;
+            letter-spacing:normal;text-transform:none;color:var(--text-secondary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w400 · lh 1.45 · var(--font-sans)</td>
+        <td class="sels"><code>.duel-modal-line</code> <code>.type-body</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:400;line-height:1.45;
+            letter-spacing:0;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w400 · lh 1.45 · ls 0 · var(--font-sans)</td>
+        <td class="sels"><code>/* .type-body — secondary copy, feedback notes, hints */ #next-set-line, .bet-toggle, .feedback-strip .fb-insight, .hero-sub, .highlights, .modal-card .mdyk, .toast, .duel-card .d-time, #rm-picked, .grid-hint</code></td>
+        <td class="ccs"></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:400;line-height:1.5;
+            letter-spacing:normal;text-transform:none;color:var(--text-muted)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w400 · lh 1.5 · var(--font-sans)</td>
+        <td class="sels"><code>.modal-card .mdyk</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-muted)" title="var(--text-muted)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:400;line-height:1.6;
+            letter-spacing:normal;text-transform:none;color:var(--ink-faint)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w400 · lh 1.6 · var(--font-sans)</td>
+        <td class="sels"><code>/* Highlights (replaces pill cloud) */ .highlights</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--ink-faint)" title="var(--ink-faint)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:400;line-height:16px;
+            letter-spacing:normal;text-transform:none;color:var(--text-secondary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w400 · lh 16px · var(--font-sans)</td>
+        <td class="sels"><code>.backup-line</code> <code>.backup-hint</code> <code>/* Anonymous aggregate lines on the results card */ .agg-hardest</code> <span class="more">+7</span></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-secondary)" title="var(--text-secondary)"></span> <span class="cc" style="background:#E5E7EB" title="#E5E7EB"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:12px;font-weight:400;line-height:16px;
+            letter-spacing:normal;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">12px · w400 · lh 16px · var(--font-mono)</td>
+        <td class="sels"><code>.backup-code</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-primary)" title="var(--text-primary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:clamp(36px, 10vw, 44px);font-weight:700;line-height:1.05;
+            letter-spacing:-0.02em;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">clamp(36px, 10vw, 44px) · w700 · lh 1.05 · ls -0.02em · var(--font-sans)</td>
+        <td class="sels"><code>.type-hero</code> <code>/* .type-hero */ .hero-score</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-primary)" title="var(--text-primary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:clamp(28px, 8vw, 32px);font-weight:700;line-height:1.1;
+            letter-spacing:-0.02em;text-transform:none;color:#F3F4F6">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">clamp(28px, 8vw, 32px) · w700 · lh 1.1 · ls -0.02em · var(--font-sans)</td>
+        <td class="sels"><code>.sc-stat b</code></td>
+        <td class="ccs"><span class="cc" style="background:#F3F4F6" title="#F3F4F6"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:clamp(24px, 6.6vw, 28px);font-weight:700;line-height:1.15;
+            letter-spacing:-0.02em;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">clamp(24px, 6.6vw, 28px) · w700 · lh 1.15 · ls -0.02em · var(--font-sans)</td>
+        <td class="sels"><code>/* Results verdict: the emotional headline of the screen */ #hero-title</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-primary)" title="var(--text-primary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:clamp(20px, 5.6vw, 24px);font-weight:600;line-height:1.3;
+            letter-spacing:0;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">clamp(20px, 5.6vw, 24px) · w600 · lh 1.3 · ls 0 · var(--font-sans)</td>
+        <td class="sels"><code>/* .type-question */ .question-text</code></td>
+        <td class="ccs"></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:clamp(16px, 4.6vw, 20px);font-weight:600;line-height:1.35;
+            letter-spacing:normal;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">clamp(16px, 4.6vw, 20px) · w600 · lh 1.35 · var(--font-sans)</td>
+        <td class="sels"><code>.type-question</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-primary)" title="var(--text-primary)"></span></td>
+      </tr>
+      <tr>
+        <td class="spec"><div class="sample" style="font-family:var(--font-sans);
+            font-size:clamp(24px, 7vw, 32px);font-weight:400;line-height:normal;
+            letter-spacing:normal;text-transform:none;color:var(--text-primary)">Smug-ish. −6 pts · Top 32%</div></td>
+        <td class="meta">clamp(24px, 7vw, 32px) · w400 · var(--font-sans)</td>
+        <td class="sels"><code>/* + 4px footer gap = 8px above the CTA */ .landing-body h2</code></td>
+        <td class="ccs"><span class="cc" style="background:var(--text-primary)" title="var(--text-primary)"></span></td>
+      </tr></tbody></table>
+
+<h2>6 · Size scale</h2>
+<table style="max-width:420px"><thead><tr><th>font-size</th><th>rules</th></tr></thead><tbody><tr><td><b>12px</b></td><td>36</td></tr><tr><td><b>16px</b></td><td>14</td></tr><tr><td><b>20px</b></td><td>8</td></tr><tr><td><b>14px</b></td><td>3</td></tr><tr><td><b>13px</b></td><td>3</td></tr><tr><td><b>32px</b></td><td>2</td></tr><tr><td><b>clamp(24px, 7vw, 32px)</b></td><td>1</td></tr><tr><td><b>28px</b></td><td>1</td></tr><tr><td><b>15px</b></td><td>1</td></tr><tr><td><b>clamp(28px, 8vw, 32px)</b></td><td>1</td></tr><tr><td><b>24px</b></td><td>1</td></tr><tr><td><b>clamp(36px, 10vw, 44px)</b></td><td>1</td></tr><tr><td><b>clamp(16px, 4.6vw, 20px)</b></td><td>1</td></tr><tr><td><b>clamp(24px, 6.6vw, 28px)</b></td><td>1</td></tr><tr><td><b>clamp(20px, 5.6vw, 24px)</b></td><td>1</td></tr></tbody></table>
+
+<h2>7 · Legacy aliases</h2>
+<div class="sub" style="margin-bottom:12px">Older names still referenced in the sheet; each resolves to a token above.</div>
+<table style="max-width:620px"><thead><tr><th>Alias</th><th>Resolves to</th></tr></thead><tbody><tr><td><code>--bg</code></td><td><code>var(--bg-canvas)</code></td></tr><tr><td><code>--surface</code></td><td><code>var(--bg-surface)</code></td></tr><tr><td><code>--surface-2</code></td><td><code>var(--bg-surface-subtle)</code></td></tr><tr><td><code>--surface-3</code></td><td><code>var(--bg-surface-subtle)</code></td></tr><tr><td><code>--ink</code></td><td><code>var(--text-primary)</code></td></tr><tr><td><code>--ink-faint</code></td><td><code>var(--text-secondary)</code></td></tr><tr><td><code>--ink-dim</code></td><td><code>var(--text-secondary)</code></td></tr><tr><td><code>--text-muted</code></td><td><code>var(--text-secondary)</code></td></tr><tr><td><code>--border</code></td><td><code>var(--border-subtle)</code></td></tr><tr><td><code>--accent</code></td><td><code>var(--accent-brand)</code></td></tr><tr><td><code>--accent-warm</code></td><td><code>var(--accent-bet)</code></td></tr><tr><td><code>--correct</code></td><td><code>var(--accent-correct)</code></td></tr><tr><td><code>--wrong</code></td><td><code>var(--accent-incorrect)</code></td></tr><tr><td><code>--warning</code></td><td><code>var(--accent-bet)</code></td></tr><tr><td><code>--ice</code></td><td><code>var(--accent-brand)</code></td></tr><tr><td><code>--font-mono</code></td><td><code>var(--font-sans)</code></td></tr></tbody></table>
+
+<h2>8 · Radii</h2>
+<div class="on-surface">
+  <div class="pill" style="background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:16px">16px · cards</div>
+  <div class="pill" style="background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:12px">12px · buttons, bars</div>
+  <div class="pill" style="background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:9999px">9999px · status pills</div>
+</div>
+</body></html>
