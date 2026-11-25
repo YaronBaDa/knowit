@@ -501,7 +501,13 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
 /* Per-question timer */
 .q-timer-wrap { margin-bottom: 12px; }
-.q-timer-row { display: flex; align-items: center; gap: 12px; }
+.q-timer-row { display: flex; align-items: center; gap: 12px; transition: opacity .12s linear; }
+/* Answered state: the clock leaves the screen but keeps its box, so the question and the
+   answer cards never jump while the explanation is up. */
+#screen-playing.is-answered .q-timer-row { visibility: hidden; opacity: 0; }
+/* Answered: the bet control is spent, so its slot goes to the explanation instead of
+   squeezing the question. The stage keeps the stem's height and nothing jumps. */
+#screen-playing.is-answered .bet-toggle { display: none !important; }
 .q-timer-bar { flex: 1; height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; }
 .q-timer-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width .1s linear; }
 .q-timer-fill.urgent { background: var(--warning); }
@@ -617,18 +623,6 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   color: #E5E7EB; margin: 0; word-wrap: break-word; overflow-wrap: anywhere;
   display: block; overflow: visible; -webkit-line-clamp: none; -webkit-box-orient: initial;
 }
-/* Dwell countdown: a 2px rail that drains over the exact auto-advance delay. */
-.fb-dwell {
-  height: 2px; border-radius: 2px; overflow: hidden; margin-top: 8px;
-  background: rgba(255, 255, 255, 0.08); flex: 0 0 auto; width: 100%;
-}
-.fb-dwell i {
-  display: block; height: 100%; width: 100%; border-radius: 2px;
-  background: var(--correct); transform: scaleX(0); transform-origin: left center;
-}
-.fb-dwell.run i { animation-name: fb-dwell; animation-timing-function: linear; animation-fill-mode: forwards; }
-@keyframes fb-dwell { from { transform: scaleX(1); } to { transform: scaleX(0); } }
-
 /* Share / results */
 .results-body { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; text-align: center; gap: 12px; min-height: 0; overflow-y: auto; padding-bottom: 16px; }
 
@@ -1071,10 +1065,10 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* Results verdict: the emotional headline of the screen */
 #hero-title { font-family: var(--font-sans); font-size: 28px; font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; color: var(--text-primary); }
 
-/* .type-question */
+/* .type-question — one step above the 16px answer cards */
 .question-text {
-  font-family: var(--font-sans); font-size: 16px; font-weight: 700;
-  line-height: 1.4; letter-spacing: 0; text-wrap: balance;
+  font-family: var(--font-sans); font-size: 20px; font-weight: 700;
+  line-height: 1.2; letter-spacing: 0; text-wrap: balance;
 }
 
 /* .type-subtitle — answer cards, buttons, verdict line */
@@ -1110,19 +1104,21 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
 /* Short viewports keep the question on screen without scrolling */
 @media (max-height: 600px) {
-  .question-text { font-size: 16px; line-height: 1.4; }
+  .question-text { font-size: 20px; line-height: 1.2; }
   /* Extra-short phones: keep the pill tight to the question but reclaim clearance for the 505-question sweep */
   .progress-strip { margin-bottom: 12px; }
   .cat-row { margin-bottom: 8px; }
   .question-stage { padding-bottom: 4px; }
 }
 
-/* Short phones: the 10px dwell rail must not eat a line of the question.
-   Same 4px grid, just tighter — below 700px height the strip sits closer to the stage and its
-   bottom padding gives the rail its clearance instead of adding to it. */
+/* Short phones: the 20px stem needs the vertical room the answer dock used to keep in
+   reserve. Same 4px grid, just tighter — the options sit closer to the bottom edge and a
+   long explanation holds two lines so the question is never cut by the strip. */
 @media (max-height: 700px) {
   .feedback-strip { margin-top: 4px; padding: 8px 16px 4px; }
   .question-stage { padding-top: 4px; padding-bottom: 4px; }
+  .cat-row { margin-bottom: 8px; }
+  .options-grid { padding-bottom: max(8px, env(safe-area-inset-bottom)); }
 }
 
 /* landing tagline: Lexend 16px body weight, secondary */
@@ -1306,7 +1302,6 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
       <div id="feedback-strip" class="feedback-strip" role="status" aria-live="polite">
         <div class="fb-result" id="fb-result"></div>
         <div class="fb-insight" id="fb-insight"></div>
-        <div class="fb-dwell" id="fb-dwell" aria-hidden="true"><i id="fb-dwell-fill"></i></div>
       </div>
     </div>
 
@@ -4181,6 +4176,7 @@ function makeCategoryPill(rawCategory) {
 function renderQuestion() {
   const q = state.questions[state.currentQ];
   if (!q) return;
+  $('screen-playing').classList.remove('is-answered');
   // Header meta: daily number + question progress (mono tokens)
   $('header-meta').textContent = state.mode === 'daily'
     ? (state.replayDay ? `REPLAY #${state.replayDay}` : `Daily #${getDailyNum()}`)
@@ -4565,27 +4561,9 @@ function dismissBetIntro() {
   try { localStorage.setItem('knowit_seen_bet_intro', '1'); } catch(e){}
 }
 
-// Countdown rail on the feedback strip — mirrors the active dwell so the hold never feels frozen.
-function stopFeedbackDwell() {
-  const bar = $('fb-dwell'), fill = $('fb-dwell-fill');
-  if (!bar || !fill) return;
-  bar.classList.remove('run');
-  fill.style.animationDuration = '';
-  fill.style.background = '';
-}
-function startFeedbackDwell(ms, tone) {
-  const bar = $('fb-dwell'), fill = $('fb-dwell-fill');
-  if (!bar || !fill) return;
-  stopFeedbackDwell();
-  fill.style.background = tone === 'correct' ? 'var(--correct)' : 'var(--accent-incorrect)';
-  fill.style.animationDuration = ms + 'ms';
-  void fill.offsetWidth;                       // restart from scaleX(1) every question
-  bar.classList.add('run');
-}
 // Cancel any pending auto-advance (quit mid-reveal, manual skip, new run)
 function cancelFeedback() {
   if (state.advanceTimer) { clearTimeout(state.advanceTimer); state.advanceTimer = null; }
-  stopFeedbackDwell();
 }
 
 // Single code path for leaving the post-answer feedback (timer or skip)
@@ -4639,6 +4617,7 @@ function handleTimeout() {
   audio.thud();
 
   const fb = $('feedback-strip');
+  $('screen-playing').classList.add('is-answered');
   $('fb-result').textContent = 'Too slow.';
   $('fb-result').style.color = 'var(--warning)';
   $('fb-insight').textContent = q.didYouKnow;
@@ -4656,7 +4635,6 @@ function handleTimeout() {
 
   state.feedbackAt = performance.now();
   state.advanceTimer = setTimeout(advanceAfterFeedback, FEEDBACK_MS_WRONG);
-  startFeedbackDwell(FEEDBACK_MS_WRONG, 'wrong');
 }
 
 function handleAnswer(idx) {
@@ -4720,6 +4698,7 @@ function handleAnswer(idx) {
     }
     $('fb-insight').textContent = q.didYouKnow;
     fb.className = 'feedback-strip show ' + (correct ? 'correct' : 'wrong');
+    $('screen-playing').classList.add('is-answered');
 
     if (state.mode === 'daily') {
       updateBetUI();
@@ -4741,7 +4720,6 @@ function handleAnswer(idx) {
     state.feedbackAt = performance.now();
     const dwell = correct ? FEEDBACK_MS_CORRECT : FEEDBACK_MS_WRONG;
     state.advanceTimer = setTimeout(advanceAfterFeedback, dwell);
-    startFeedbackDwell(dwell, correct ? 'correct' : 'wrong');
   };
 
   if (bet) setTimeout(commit, 180);

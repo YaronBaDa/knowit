@@ -256,6 +256,13 @@ divider.
    `Play Endless`.
 4. **Install hint** (`#a2hs`) — streak ≥ 3, not standalone, `knowit_a2hs_dismissed` unset.
 
+**Playing screen answered state.** On answer or timeout `#screen-playing` gains `.is-answered`: the
+countdown row is hidden with `visibility: hidden; opacity: 0` (it keeps its box, so nothing jumps), the
+bet toggle is removed from the flow, and the explanation strip takes that space. `renderQuestion()`
+clears the class. The question stem is 20px/1.2 (one step above the 16px answer cards); below 700px
+height the options' bottom padding, the category row's margin and a 2-line explanation clamp keep a
+four-line stem readable above the strip. The old 2px auto-advance rail inside the feedback box is gone.
+
 Percentile copy (`percentileCopy()`, server value = share of players beaten): `p >= 50` →
 `Top {100-p}% today` (min 1); `10 <= p < 50` → `Beat {p}% of players`; `p < 10` → nothing. The share
 header only gains `· Top X%` when `p >= 50`. `loadHubAggregate()` reuses the cached `LAST_AGG` and
@@ -403,6 +410,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`Q20` 20px question stem, countdown hidden while the explanation shows, dwell rail removed
 `COLOR1` softened semantics (mint/coral/amber), neutral category styling, no hardcoded old hues
 `TYPO4` 3 line-heights (1/1.2/1.4) + 3 trackings (-0.01/0/0.04em), tighter uppercase labels
 `TYPO3` two-weight system: everything is 400 or 700 (51 CSS + 11 canvas/SVG weights)
