@@ -3,7 +3,7 @@
 // - Icons / manifest / og-image: cache-first, they never change between releases.
 // - Cross-origin requests (analytics, fonts, API) are left to the browser entirely.
 // BUMP `CACHE` ON EVERY RELEASE: activate deletes every cache that isn't this one.
-const CACHE = 'knowit-v28';
+const CACHE = 'knowit-v29';
 
 const SHELL = [
   './',

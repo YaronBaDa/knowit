@@ -323,7 +323,8 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 - Palette: canvas `#140F12`, card `#1F181C`, recessed `#1A1418`, primary `#F3F4F6`, secondary
   `#B2A4AC`; pink `#F454B0`, glow `#FF6EB4`, orchid `#A855F7`; amber `#F59E0B` (bets only), emerald
-  `#21C868`, crimson `#F22933`. `--accent-brand` is the only pink token (`--brand-pink` merged into
+  mint `#5CCB9D`, coral `#E8675E`, soft coral text `#F0918B`; amber `#E0A855` is bets-only.
+  Category pills are neutral (`#B2A4AC` on a 6% white wash) — no per-category hues. `--accent-brand` is the only pink token (`--brand-pink` merged into
   it); ice, indigo, glow, orchid and the unused correct-tint tokens were removed.
 - Brand gradient: `--brand-grad`, `--brand-cta-grad`; the SVG `#knowit-grad` lives in a **zero-size
   SVG** (paint servers inside a `display:none` subtree silently fail in Chrome).
@@ -402,6 +403,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`COLOR1` softened semantics (mint/coral/amber), neutral category styling, no hardcoded old hues
 `TYPO4` 3 line-heights (1/1.2/1.4) + 3 trackings (-0.01/0/0.04em), tighter uppercase labels
 `TYPO3` two-weight system: everything is 400 or 700 (51 CSS + 11 canvas/SVG weights)
 `TYPO2` 7-step type scale with a 14px floor (84 declarations remapped)

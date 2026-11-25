@@ -44,10 +44,10 @@
   --on-brand: #140F12;
 
   /* Semantic actions & feedback */
-  --accent-correct: #21C868;
-  --accent-incorrect: #F22933;
-  --accent-incorrect-text: #FF5C63;
-  --accent-bet: #F59E0B;
+  --accent-correct: #5CCB9D;
+  --accent-incorrect: #E8675E;
+  --accent-incorrect-text: #F0918B;
+  --accent-bet: #E0A855;
   --accent-brand: #F454B0;
 
   /* Brand gradient system — Brainy Pink → Orchid */
@@ -56,8 +56,8 @@
   --brand-cta-grad: linear-gradient(135deg, #FF63B1 0%, #E13C9D 100%);
 
   /* Soft glow / background-wash tints */
-  --accent-incorrect-tint: rgba(242, 41, 51, 0.16);
-  --accent-bet-tint: rgba(245, 158, 11, 0.14);
+  --accent-incorrect-tint: rgba(232, 103, 94, 0.16);
+  --accent-bet-tint: rgba(224, 168, 85, 0.14);
   --accent-brand-tint: rgba(244, 84, 176, 0.14);
 
   /* Elevation */
@@ -80,7 +80,7 @@
   --wrong: var(--accent-incorrect);
   --warning: var(--accent-bet);
   --ice: var(--accent-brand);
-  --aurora: linear-gradient(90deg, #F454B0, #21C868);
+  --aurora: linear-gradient(90deg, #F454B0, #5CCB9D);
   --radius: 16px;
   --radius-sm: 12px;
   --font-sans: 'Lexend', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -360,8 +360,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .rubric-current { background: #2B2227; border: 1.5px solid rgba(255, 255, 255, 0.45); }
 .rubric-upcoming { background: rgba(255, 255, 255, 0.06); border: none; }
 /* completed states — identical on every surface */
-.rubric-correct, .rubric-correct-bet, .rubric-endless-correct { background: #21C868; border: none; }
-.rubric-incorrect, .rubric-incorrect-bet, .rubric-endless-incorrect { background: #F22933; border: none; cursor: pointer; }
+.rubric-correct, .rubric-correct-bet, .rubric-endless-correct { background: var(--accent-correct); border: none; }
+.rubric-incorrect, .rubric-incorrect-bet, .rubric-endless-incorrect { background: var(--accent-incorrect); border: none; cursor: pointer; }
 /* the home strip is a summary, not a control */
 .tc-grid .rubric-tile { cursor: default; }
 .tc-actions .btn-secondary {
@@ -433,8 +433,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   white-space: nowrap;
 }
 .opt-badge svg { width: 12px; height: 12px; display: block; }
-.opt-badge.pos { color: #21C868; }
-.opt-badge.neg { color: #F22933; }
+.opt-badge.pos { color: var(--accent-correct); }
+.opt-badge.neg { color: var(--accent-incorrect); }
 .opt-badge.is-check svg { width: 16px; height: 16px; }
 .option-btn .key-hint {
   width: 28px; height: 28px; border-radius: 8px; background: var(--bg-surface); border: 1px solid var(--border-subtle);
@@ -450,14 +450,14 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .option-btn .bet-reveal svg { width: 20px; height: 20px; }
 .option-btn .bet-reveal .br-label { font-family: var(--font-sans); font-size: 14px; font-weight: 700; letter-spacing: 0; }
 .option-btn .bet-reveal .br-sub { font-family: var(--font-sans); font-size: 14px; font-weight: 700; opacity: .85; }
-.option-btn.correct { border: 2px solid #21C868; box-shadow: none; }
-.option-btn.correct .option-body { box-shadow: inset 0 0 0 9999px rgba(16,185,129,0.18); }
-.option-btn.wrong { border: 2px solid #F22933; box-shadow: none; animation: shake 0.4s ease-in-out; }
+.option-btn.correct { border: 2px solid var(--accent-correct); box-shadow: none; }
+.option-btn.correct .option-body { box-shadow: inset 0 0 0 9999px rgba(92,203,157,0.18); }
+.option-btn.wrong { border: 2px solid var(--accent-incorrect); box-shadow: none; animation: shake 0.4s ease-in-out; }
 .option-btn.wrong .option-body { box-shadow: inset 0 0 0 9999px var(--accent-incorrect-tint); }
 .option-btn.dimmed { opacity: 0.35; pointer-events: none; }
 .option-btn.timeout { border-color: var(--accent-bet); }
 .option-btn.timeout .option-body { box-shadow: inset 0 0 0 9999px var(--accent-bet-tint); }
-.option-btn.bet:not(.correct):not(.wrong) { border: 2px solid var(--accent-bet); box-shadow: 0 0 16px rgba(245, 158, 11, 0.28); }
+.option-btn.bet:not(.correct):not(.wrong) { border: 2px solid var(--accent-bet); box-shadow: 0 0 16px rgba(224, 168, 85, 0.28); }
 .option-btn.nudge .option-body { animation: nudgeRight 0.9s ease; }
 @keyframes nudgeRight {
   0%, 100% { transform: translateX(0); }
@@ -489,8 +489,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 /* Tier 2 — Q05-Q09: amber warning */
 .endless-hud .streak.tier-2 {
-  color: #F59E0B; border-color: rgba(245, 158, 11, 0.45);
-  background: rgba(245, 158, 11, 0.12); font-weight: 700;
+  color: var(--accent-bet); border-color: rgba(224, 168, 85, 0.45);
+  background: rgba(224, 168, 85, 0.12); font-weight: 700;
 }
 /* Tier 3 — Q10+: Brainy Pink-to-Orchid glow */
 .endless-hud .streak.tier-3 {
@@ -514,16 +514,16 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
 /* ---- Tactile layer: timer escalation, hurt vignette, heart drama, pace pill ---- */
 .q-timer-fill { background: var(--brand-grad-h); }
-.q-timer-fill.t-amber { background: #F59E0B; }
-.q-timer-fill.t-crimson { background: #F22933; }
-.q-timer-text.t-amber { color: #F59E0B; animation: pulse 1s ease-in-out infinite; }
-.q-timer-text.t-crimson { color: #F22933; animation: microshake 0.28s linear infinite; }
+.q-timer-fill.t-amber { background: var(--accent-bet); }
+.q-timer-fill.t-crimson { background: var(--accent-incorrect); }
+.q-timer-text.t-amber { color: var(--accent-bet); animation: pulse 1s ease-in-out infinite; }
+.q-timer-text.t-crimson { color: var(--accent-incorrect); animation: microshake 0.28s linear infinite; }
 .q-timer-wrap { position: relative; }
 
 .pace-pill {
   position: absolute; left: 50%; top: 20px; transform: translateX(-50%) translateY(-4px);
-  padding: 4px 12px; border-radius: 9999px; background: rgba(245, 158, 11, 0.14);
-  border: 1px solid rgba(245, 158, 11, 0.45); color: #F59E0B;
+  padding: 4px 12px; border-radius: 9999px; background: rgba(224, 168, 85, 0.14);
+  border: 1px solid rgba(224, 168, 85, 0.45); color: var(--accent-bet);
   font-family: var(--font-sans); font-size: 14px; font-weight: 400;
   letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap;
   opacity: 0; pointer-events: none; transition: opacity .18s ease, transform .18s ease; z-index: 30;
@@ -532,7 +532,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
 #hurt-vignette {
   position: fixed; inset: 0; pointer-events: none; z-index: 120;
-  box-shadow: inset 0 0 64px rgba(242, 41, 51, 0.45);
+  box-shadow: inset 0 0 64px rgba(232, 103, 94, 0.40);
   opacity: 0; transition: opacity .12s ease;
 }
 #hurt-vignette.show { opacity: 1; }
@@ -546,8 +546,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   85% { transform: translateX(4px); }
 }
 
-.endless-hud .lives { position: relative; color: #F22933; }
-.endless-hud .life { color: #F22933; }
+.endless-hud .lives { position: relative; color: var(--accent-incorrect); }
+.endless-hud .life { color: var(--accent-incorrect); }
 .endless-hud .life.pop { animation: heartPop 0.5s ease forwards; }
 @keyframes heartPop {
   0% { transform: scale(1); opacity: 1; }
@@ -555,7 +555,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   65% { transform: scale(1.1); opacity: .7; }
   100% { transform: scale(0.85); opacity: .25; filter: grayscale(1); }
 }
-.endless-hud .life.last-heart { color: #F22933; animation: lastHeartPulse 1.2s ease-in-out infinite; transform-origin: center; }
+.endless-hud .life.last-heart { color: var(--accent-incorrect); animation: lastHeartPulse 1.2s ease-in-out infinite; transform-origin: center; }
 @keyframes lastHeartPulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.12); }
@@ -572,7 +572,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 .heart-loss-badge {
   position: absolute; left: 100%; top: -4px; margin-left: 8px;
-  font-family: var(--font-sans); font-size: 14px; font-weight: 700; color: #F22933;
+  font-family: var(--font-sans); font-size: 14px; font-weight: 700; color: var(--accent-incorrect);
   animation: badgeFloat 0.9s ease forwards; pointer-events: none; white-space: nowrap;
 }
 @keyframes badgeFloat {
@@ -582,8 +582,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 
 /* Bet suspense: amber lock before the reveal */
-.option-btn.bet-locked { border-color: #F59E0B !important; box-shadow: 0 0 0 4px rgba(245,158,11,0.55), 0 0 24px rgba(245,158,11,0.45) !important; transition: none; }
-.option-btn.bet-locked .option-body { box-shadow: inset 0 0 0 9999px rgba(245,158,11,0.16); }
+.option-btn.bet-locked { border-color: var(--accent-bet) !important; box-shadow: 0 0 0 4px rgba(224,168,85,0.50), 0 0 24px rgba(224,168,85,0.40) !important; transition: none; }
+.option-btn.bet-locked .option-body { box-shadow: inset 0 0 0 9999px rgba(224,168,85,0.16); }
 /* Unchosen answers fade back so the reveal reads cleanly */
 .option-btn { transition: transform .08s ease, border-color .2s, box-shadow .2s, opacity .18s ease; }
 .option-btn.dimmed { opacity: 0.42; }
@@ -927,7 +927,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .bet-token-bolt { display: inline-flex; color: var(--accent-bet); }
 .bet-token-bolt svg { width: 12px; height: 12px; }
 /* three bolts: one per remaining bet */
-.header-pip { display: inline-flex; align-items: center; justify-content: center; width: 12px; height: 16px; color: var(--accent-bet); filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.55)); transition: color .2s, filter .2s, opacity .2s; }
+.header-pip { display: inline-flex; align-items: center; justify-content: center; width: 12px; height: 16px; color: var(--accent-bet); filter: drop-shadow(0 0 4px rgba(224, 168, 85, 0.55)); transition: color .2s, filter .2s, opacity .2s; }
 .header-pip svg { width: 12px; height: 12px; display: block; }
 .header-pip.spent { color: rgba(255, 255, 255, 0.22); opacity: 1; filter: none; animation: pipSpent .35s ease; }
 @keyframes pipSpent { 0% { transform: scale(1.5); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
@@ -935,7 +935,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* Swipe-to-bet day-1 tip */
 .swipe-tip {
   flex-shrink: 0; text-align: center; font-size: 14px; color: var(--ink);
-  background: var(--surface); border: 1px solid rgba(245, 158, 11, 0.45); border-radius: var(--radius-sm);
+  background: var(--surface); border: 1px solid rgba(224, 168, 85, 0.45); border-radius: var(--radius-sm);
   padding: 8px 12px; margin-bottom: 8px; font-weight: 400;
   display: flex; align-items: center; justify-content: center; gap: 8px;
 }
@@ -970,7 +970,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .landing-streak-bar .fire svg { width: 16px; height: 16px; }
 .endless-hud .life { display: inline-flex; }
 .endless-hud .life svg { width: 20px; height: 20px; }
-.endless-hud .lives { color: #F22933; }
+.endless-hud .lives { color: var(--accent-incorrect); }
 .highlights svg { width: 12px; height: 12px; vertical-align: middle; }
 .duel-outcome svg { width: 20px; height: 20px; vertical-align: -4px; margin-left: 4px; }
 .duel-banner .swords svg { width: 16px; height: 16px; vertical-align: middle; }
@@ -3113,8 +3113,8 @@ function brainprintSVG(d, opts = {}) {
   const nodes = g.map(p => {
     if (!p.active) return '';
     const x = p.x.toFixed(2), y = p.y.toFixed(2);
-    if (p.betsWon > p.betsLost) return `<circle cx="${x}" cy="${y}" r="9" fill="rgba(245,158,11,0.18)"/><circle cx="${x}" cy="${y}" r="5" fill="#F59E0B"/>`;
-    if ((p.betsWon + p.betsLost) > 0) return `<circle cx="${x}" cy="${y}" r="5" fill="#1F181C" stroke="#F59E0B" stroke-width="2"/>`;
+    if (p.betsWon > p.betsLost) return `<circle cx="${x}" cy="${y}" r="9" fill="rgba(224,168,85,0.18)"/><circle cx="${x}" cy="${y}" r="5" fill="#E0A855"/>`;
+    if ((p.betsWon + p.betsLost) > 0) return `<circle cx="${x}" cy="${y}" r="5" fill="#1F181C" stroke="#E0A855" stroke-width="2"/>`;
     return `<circle cx="${x}" cy="${y}" r="3.5" fill="#F454B0"/>`;
   }).join('');
   const labels = g.map(p => {
@@ -3345,11 +3345,11 @@ function drawRadarCanvas(ctx, d, cx, cy, maxR, gap) {
   g.forEach(p => {
     if (!p.active) return;
     if (p.betsWon > p.betsLost) {
-      ctx.beginPath(); ctx.arc(p.x, p.y, 16, 0, Math.PI * 2); ctx.fillStyle = 'rgba(245,158,11,0.18)'; ctx.fill();
-      ctx.beginPath(); ctx.arc(p.x, p.y, 9, 0, Math.PI * 2); ctx.fillStyle = '#F59E0B'; ctx.fill();
+      ctx.beginPath(); ctx.arc(p.x, p.y, 16, 0, Math.PI * 2); ctx.fillStyle = 'rgba(224,168,85,0.18)'; ctx.fill();
+      ctx.beginPath(); ctx.arc(p.x, p.y, 9, 0, Math.PI * 2); ctx.fillStyle = '#E0A855'; ctx.fill();
     } else if ((p.betsWon + p.betsLost) > 0) {
       ctx.beginPath(); ctx.arc(p.x, p.y, 9, 0, Math.PI * 2); ctx.fillStyle = '#1F181C'; ctx.fill();
-      ctx.strokeStyle = '#F59E0B'; ctx.lineWidth = 3; ctx.stroke();
+      ctx.strokeStyle = '#E0A855'; ctx.lineWidth = 3; ctx.stroke();
     } else {
       ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, Math.PI * 2); ctx.fillStyle = '#F454B0'; ctx.fill();
     }
@@ -3675,7 +3675,7 @@ const ICONS = {
   boltInk: '<svg width="12" height="12" viewBox="0 0 24 24" fill="#140F12" stroke="none" aria-hidden="true"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg>',
   checkInk12: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#140F12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 12 6 6L20 6"/></svg>',
   xInk12: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#140F12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
-  heartBroken: '<svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path fill="#140F12" stroke="none" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/><path d="M12 5 L10.5 10 L13.5 13 L11.5 19" stroke="#F22933" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>',
+  heartBroken: '<svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path fill="#140F12" stroke="none" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/><path d="M12 5 L10.5 10 L13.5 13 L11.5 19" stroke="#E8675E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>',
   flame: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>',
   swords: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"/><line x1="5" x2="9" y1="14" y2="18"/><line x1="7" x2="4" y1="17" y2="20"/><line x1="3" x2="5" y1="19" y2="21"/></svg>',
   bulb: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>',
@@ -3684,7 +3684,7 @@ const ICONS = {
   target: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
   chess: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2.2"/><path d="M12 8.5c-1.6 0-2.7 1.1-2.7 2.6S10.4 13.5 12 13.5s2.7-1.1 2.7-2.4-1.1-2.6-2.7-2.6z"/><path d="M9 16h6l-1 3H10z"/><path d="M10.5 19h3"/></svg>',
   dice: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.2"/><circle cx="15.5" cy="8.5" r="1.2"/><circle cx="8.5" cy="15.5" r="1.2"/><circle cx="15.5" cy="15.5" r="1.2"/></svg>',
-  heartFill: '<svg width="12" height="12" viewBox="0 0 24 24" fill="#F22933" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>',
+  heartFill: '<svg width="12" height="12" viewBox="0 0 24 24" fill="#E8675E" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>',
   heart: '<svg class="ic-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
   snowflake: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9 4.9 19.1"/></svg>',
   copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
@@ -4133,13 +4133,14 @@ const CATEGORY_ICONS = {
 // ---- Category pill palette: exactly six tints, one per umbrella ----
 // Never amber-ish, so a category can't be mistaken for a bet indicator. Every text
 // colour clears 4.5:1 against --bg-canvas (#140F12).
+const NEUTRAL_CAT = { color: '#B2A4AC', bg: 'rgba(255, 255, 255, 0.06)', border: 'rgba(255, 255, 255, 0.14)' };
 const UMBRELLA_COLORS = {
-  'Science & Nature':  { color: '#6EE7B7', bg: 'rgba(16, 185, 129, 0.14)',  border: 'rgba(16, 185, 129, 0.30)' },
-  'Geography':         { color: '#7DD3FC', bg: 'rgba(56, 189, 248, 0.14)',  border: 'rgba(56, 189, 248, 0.30)' },
-  'History':           { color: '#D6D3D1', bg: 'rgba(214, 211, 209, 0.12)', border: 'rgba(214, 211, 209, 0.26)' },
-  'Sports & Leisure':  { color: '#FDBA74', bg: 'rgba(249, 115, 22, 0.15)',  border: 'rgba(249, 115, 22, 0.32)' },
-  'Pop Culture':       { color: '#FDA4AF', bg: 'rgba(251, 113, 133, 0.14)', border: 'rgba(251, 113, 133, 0.30)' },
-  'Arts & Lit':        { color: '#D8B4FE', bg: 'rgba(192, 132, 252, 0.14)', border: 'rgba(192, 132, 252, 0.30)' },
+  'Science & Nature': NEUTRAL_CAT,
+  'Geography':        NEUTRAL_CAT,
+  'History':          NEUTRAL_CAT,
+  'Sports & Leisure': NEUTRAL_CAT,
+  'Pop Culture':      NEUTRAL_CAT,
+  'Arts & Lit':       NEUTRAL_CAT,
 };
 // Normalises first, so a raw bank tag (SPACE, FOOD & DRINK, MUSIC) still gets the right tint + label.
 function applyCategoryPillStyle(el, rawCategory) {
@@ -5361,7 +5362,7 @@ function launchConfetti() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   const pieces = [];
-  const colors = ['#21C868', '#F454B0', '#F22933', '#F59E0B', '#F3F4F6', '#1F181C'];
+  const colors = ['#5CCB9D', '#F454B0', '#E8675E', '#E0A855', '#F3F4F6', '#1F181C'];
   for (let i=0; i<120; i++) {
     pieces.push({
       x: Math.random()*canvas.width,
