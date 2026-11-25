@@ -238,14 +238,15 @@ live inside the receipt (no floating pill): a 14 px row with the pink flame + `N
 (number at 600) on the left and muted `Next set in Xh Ym` on the right, then a 1 px `--border`
 divider.
 
-1. **Today's Set receipt** (`#1F181C`, radius 16, padding 16), strictly in this order: streak row +
-   divider → `TODAY'S SET · #N` → archetype as the card headline (32/800) → score line (28/800,
-   `nowrap`; only the minus of a negative is crimson) → muted `c/10 correct · Xm Ys` (15 px,
-   `nowrap`) → percentile (4 px gap, nothing in between) → `Bets n/m` (only when a bet was placed) →
-   24 px ten-tile strip (check / X / bolt; misses carry `data-idx`) → optional bets nudge → filled
-   **Challenge a Friend** + square copy button → `Review answers` text link (44 px tap area,
-   `--text-primary`, underline on hover/focus, `margin-bottom: -12px` so the visual gap equals the
-   card's 16 px top padding).
+1. **Today's Set receipt** (`#1F181C`, radius 16, padding 16, flex column), strictly in this order:
+   streak row + divider → `TODAY'S SET · #N` → archetype as the card headline (28/700) → score line
+   (28/700, `nowrap`; only the minus of a negative is crimson) → **meta row** (`c/10 correct · Xm Ys`
+   at 14/400 muted + `Review answers` at 14/700, `align-items: baseline`, `space-between`, both
+   `nowrap`) → percentile → `Bets n/m` (only when a bet was placed) → 24 px ten-tile strip →
+   optional bets nudge → **Challenge a Friend + copy button** (`margin-top: auto`, `padding-top: 12`,
+   so the CTA owns the bottom of the card). Every secondary inline action in the hub — `Review
+   answers`, `Brainprint ↗` — wears the same `.tc-inline-link` class: transparent, borderless,
+   `padding: 0`, 14/700 `#F3F4F6`, underline on hover/focus, `opacity: .7` on tap.
    The nudge reads `No bets placed. A bet on a sure answer scores double.` and shows only when no
    bet was placed **and** `correct >= 6` **and** `stats.played <= 10`. `currentSharePayload()` feeds
    both the results and hub challenge/copy handlers.
@@ -418,6 +419,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`HUB1` Review answers joins the counter line, shared inline-link style, CTA pinned to the card bottom
 `TIME1` per-question time cap at capture + clamped display, dock hairline hidden under the explanation
 `Q20` 20px question stem, countdown hidden while the explanation shows, dwell rail removed
 `COLOR1` softened semantics (mint/coral/amber), neutral category styling, no hardcoded old hues

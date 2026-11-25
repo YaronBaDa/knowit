@@ -285,27 +285,32 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   background: var(--wrong); border-radius: 1px;
   vertical-align: 0.29em; text-indent: -9999px; overflow: hidden;
 }
-.tc-subline { margin-top: 8px; font-family: var(--font-sans); font-size: 14px; line-height: var(--lh-body); color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* Counter + inline Review link on one baseline, directly above the rubric strip */
+.tc-meta-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; width: 100%; margin-top: 8px; }
+.tc-subline { font-family: var(--font-sans); font-size: 14px; line-height: var(--lh-body); color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; min-width: 0; }
+.tc-meta-row .tc-subline { margin-top: 0; }
+/* One inline action treatment for every secondary link in the hub (Review answers, Brainprint ↗) */
+.tc-inline-link {
+  flex-shrink: 0; white-space: nowrap; background: transparent; border: none; padding: 0;
+  font-family: var(--font-sans); font-size: 14px; font-weight: var(--fw-bold);
+  line-height: var(--lh-icon); letter-spacing: 0; color: #F3F4F6;
+  cursor: pointer; text-decoration: none; text-underline-offset: 2px;
+}
+.tc-inline-link:hover, .tc-inline-link:focus-visible { text-decoration: underline; }
+.tc-inline-link:active { opacity: .7; }
 .tc-agg { margin-top: 8px; font-family: var(--font-sans); font-size: 14px; line-height: var(--lh-body); font-weight: var(--fw-regular); color: var(--accent-brand); }
 .tc-bets { margin-top: 8px; font-family: var(--font-sans); font-size: 14px; line-height: var(--lh-body); color: var(--text-secondary); }
 .tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 12px; padding: 0; }
 .tc-grid .rubric-tile[data-idx] { cursor: pointer; }
 .tc-nudge { margin-top: 8px; font-family: var(--font-sans); font-size: 14px; line-height: var(--lh-body); color: var(--text-secondary); }
-.tc-cta-row { display: flex; align-items: stretch; gap: 8px; margin-top: 12px; }
+/* Pinned to the bottom: auto eats any slack, the padding keeps a 12px minimum gap */
+.tc-cta-row { display: flex; align-items: stretch; gap: 8px; margin-top: auto; padding-top: 12px; }
 .tc-cta-row .btn-primary {
   flex: 1 1 auto; width: auto; max-width: none; height: 44px; padding: 0 16px; border-radius: 12px;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap;
 }
 .tc-cta-row .copy-btn { flex: 0 0 44px; width: 44px; height: 44px; padding: 0; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; }
 .tc-cta-row .copy-btn svg { width: 16px; height: 16px; display: block; }
-.tc-review-link {
-  width: 100%; min-height: 44px; margin: 0 0 -12px; padding: 0;
-  display: inline-flex; align-items: center; justify-content: center;
-  background: none; border: none; cursor: pointer;
-  font-family: var(--font-sans); font-size: 14px; font-weight: var(--fw-bold);
-  color: var(--text-primary); text-decoration: none; text-underline-offset: 2px;
-}
-.tc-review-link:hover, .tc-review-link:focus-visible { text-decoration: underline; color: var(--text-primary); }
 
 /* Zone 3 — career Brainprint bridge bar */
 .bp-bridge {
@@ -317,7 +322,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .bp-bridge:active { transform: scale(0.99); }
 .bp-bridge-label { font-size: 14px; line-height: var(--lh-icon); color: var(--text-secondary); min-width: 0; flex: 1 1 auto; }
 .bp-subject { white-space: nowrap; }
-.bp-bridge-cta { font-size: 14px; line-height: var(--lh-icon); font-weight: var(--fw-bold); color: #F3F4F6; white-space: nowrap; }
+.bp-bridge-cta { flex-shrink: 0; }
 
 /* Zone 4 — Endless stage, compact and secondary */
 .endless-teaser {
@@ -1200,7 +1205,10 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
           <div class="tc-eyebrow" id="trophy-eyebrow">TODAY'S SET · #1</div>
           <div class="tc-rank" id="trophy-rank"></div>
           <div class="tc-score" id="hub-points">— pts</div>
-          <div class="tc-subline" id="hub-subline">—</div>
+          <div class="tc-meta-row">
+            <div class="tc-subline" id="hub-subline">—</div>
+            <button class="tc-inline-link" id="btn-view-results" type="button">Review answers</button>
+          </div>
           <div class="tc-agg" id="hub-agg" style="display:none;"></div>
           <div class="tc-bets" id="hub-bets" style="display:none;"></div>
           <div class="tc-grid" id="trophy-grid"></div>
@@ -1209,13 +1217,12 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
             <button class="btn-primary" id="btn-hub-challenge">Challenge a Friend</button>
             <button class="btn-secondary copy-btn" id="btn-hub-copy" aria-label="Copy result"></button>
           </div>
-          <button class="tc-review-link" id="btn-view-results" type="button">Review answers</button>
         </div>
 
         <!-- Zone 3 · career Brainprint bridge -->
         <button class="bp-bridge" id="bp-bridge" type="button">
           <span class="bp-bridge-label" id="bp-bridge-label">Best subject: —</span>
-          <span class="bp-bridge-cta" id="bp-bridge-cta">Brainprint ↗</span>
+          <span class="bp-bridge-cta tc-inline-link" id="bp-bridge-cta">Brainprint ↗</span>
         </button>
 
         <!-- Zone 4 · Endless stage (compact, secondary) -->
