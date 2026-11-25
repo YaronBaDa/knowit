@@ -332,6 +332,13 @@ nothing is summed, and `knowit_progress_v1` is never imported.
   `--font-telemetry` both alias `--font-sans`, so old selectors keep working. The one exception is
   `.backup-code` (export + restore fields), which uses `ui-monospace, Menlo, monospace` so `1/l/I`
   and `0/O` stay distinguishable with no network font.
+- **Type scale is 7 steps, 14 px floor:** 14 (labels, eyebrows, meta, chips, pills, secondary
+  buttons, timers, run badges, category tags) · 16 (question stem, answer buttons, primary CTAs,
+  verdict subtitles, Brainprint rows) · 20 (card titles, modal titles, duel scores, KPI numerals) ·
+  24 (callouts, results stat bar) · 28 (home score, archetype, verdict headline, landing tagline) ·
+  32 (`.type-hero` display utility) · 40 (reserved for the two hero numerals: Daily points and the
+  Endless run on `#hero-score`). `.lives` and `.bp-close` keep `font-size: 20px` because there it
+  sizes the glyph, not copy.
 - Lexend ships **no `tnum` feature** — `font-variant-numeric: tabular-nums` is a no-op there, so live
   numbers are held still with an explicit `min-width`: `.q-timer-text` 7ch (its `00:00.0` format),
   `.endless-hud .streak` 11ch (its `RUN: NN` pill). Verified: the timer renders 56 px for every
@@ -386,6 +393,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`TYPO2` 7-step type scale with a 14px floor (84 declarations remapped)
 `TYPO1` drop JetBrains Mono, OS mono for backup codes, tabular guards, token cleanup
 `0199837` score line replaces stat labels, nudge under grid, accent flame, tighter Review spacing
 `28667a2` in-card streak row, archetype-first order, percentile wording, Review link, bets nudge
