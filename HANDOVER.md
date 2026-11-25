@@ -339,6 +339,10 @@ nothing is summed, and `knowit_progress_v1` is never imported.
   32 (`.type-hero` display utility) · 40 (reserved for the two hero numerals: Daily points and the
   Endless run on `#hero-score`). `.lives` and `.bp-close` keep `font-size: 20px` because there it
   sizes the glyph, not copy.
+- **Two weights only: 400 and 700.** 700 = wordmarks, hero scores, card/modal titles, verdict
+  headlines, CTAs, answer options, active bet/status toggles, toasts. 400 = body, subtitles, notes,
+  14 px metadata, timestamps, countdowns, captions. Google Fonts loads `Lexend:wght@400;700` and
+  `Lexend Zetta:wght@700`; canvas `ctx.font` and the share-card SVG use the same pair.
 - Lexend ships **no `tnum` feature** — `font-variant-numeric: tabular-nums` is a no-op there, so live
   numbers are held still with an explicit `min-width`: `.q-timer-text` 7ch (its `00:00.0` format),
   `.endless-hud .streak` 11ch (its `RUN: NN` pill). Verified: the timer renders 56 px for every
@@ -393,6 +397,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`TYPO3` two-weight system: everything is 400 or 700 (51 CSS + 11 canvas/SVG weights)
 `TYPO2` 7-step type scale with a 14px floor (84 declarations remapped)
 `TYPO1` drop JetBrains Mono, OS mono for backup codes, tabular guards, token cleanup
 `0199837` score line replaces stat labels, nudge under grid, accent flame, tighter Review spacing

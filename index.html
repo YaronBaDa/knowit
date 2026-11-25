@@ -28,7 +28,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lexend+Zetta:wght@700&family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lexend+Zetta:wght@700&family=Lexend:wght@400;700&display=swap" rel="stylesheet">
 <title>KNOWIT</title>
 <style>
 :root {
@@ -109,7 +109,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .header-actions { display: flex; gap: 8px; }
 .icon-btn {
   width: 36px; height: 36px; border-radius: var(--radius-sm); border: 1px solid var(--border);
-  background: var(--surface); color: var(--ink); font-family: var(--font-sans); font-size: 16px; font-weight: 600; cursor: pointer;
+  background: var(--surface); color: var(--ink); font-family: var(--font-sans); font-size: 16px; font-weight: 700; cursor: pointer;
   display: flex; align-items: center; justify-content: center; transition: transform .12s;
 }
 .icon-btn:active { transform: scale(0.92); }
@@ -172,20 +172,20 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 .landing-streak-bar .fire { font-size: 14px; }
 .landing-streak-bar .broken { opacity: 0.55; filter: grayscale(1); }
-.freeze-tag { display: inline-flex; align-items: center; gap: 4px; color: var(--accent-brand); font-size: 14px; font-weight: 600; line-height: 1; }
+.freeze-tag { display: inline-flex; align-items: center; gap: 4px; color: var(--accent-brand); font-size: 14px; font-weight: 400; line-height: 1; }
 .freeze-tag svg { width: 12px; height: 12px; }
-.backup-link { background: none; border: 0; padding: 4px 8px; margin-top: 4px; color: var(--text-secondary); font-family: var(--font-sans); font-size: 14px; font-weight: 500; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.backup-link { background: none; border: 0; padding: 4px 8px; margin-top: 4px; color: var(--text-secondary); font-family: var(--font-sans); font-size: 14px; font-weight: 400; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
 .backup-link:active { color: var(--text-primary); }
 /* Backup modal */
 .backup-title { font-family: var(--font-sans); font-size: 20px; font-weight: 700; line-height: 24px; color: var(--text-primary); }
-.backup-label { font-family: var(--font-sans); font-size: 14px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); }
+.backup-label { font-family: var(--font-sans); font-size: 14px; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); }
 .backup-line { font-family: var(--font-sans); font-size: 14px; line-height: 16px; color: var(--text-secondary); }
 .backup-code { width: 100%; min-height: 64px; resize: vertical; padding: 8px; border-radius: 12px; border: 1px solid var(--border-subtle); background: var(--bg-surface-subtle); color: var(--text-primary); font-family: ui-monospace, Menlo, monospace; font-size: 14px; line-height: 16px; box-sizing: border-box; }
 .backup-code:focus { outline: 2px solid var(--accent-brand); outline-offset: 1px; }
 .backup-hint { font-family: var(--font-sans); font-size: 14px; line-height: 16px; color: var(--text-secondary); min-height: 16px; }
 /* Anonymous aggregate lines on the results card */
 .agg-hardest { font-family: var(--font-sans); font-size: 14px; font-weight: 400; line-height: 16px; color: var(--text-secondary); text-align: center; padding-top: 8px; }
-.agg-line { font-family: var(--font-sans); font-size: 14px; font-weight: 600; line-height: 16px; color: var(--accent-brand); text-align: center; padding-top: 8px; }
+.agg-line { font-family: var(--font-sans); font-size: 14px; font-weight: 400; line-height: 16px; color: var(--accent-brand); text-align: center; padding-top: 8px; }
 #backup-modal .modal-card { display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px; }
 .btn-primary {
   width: 100%; max-width: 280px; height: 52px; padding: 0 20px; border-radius: 12px; border: none;
@@ -196,7 +196,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .btn-primary:active { transform: scale(0.97); }
 .btn-secondary {
   width: 100%; max-width: 280px; height: 40px; padding: 0 16px; border-radius: 12px; border: 1px solid var(--border);
-  background: var(--surface); color: var(--ink); font-size: 16px; font-weight: 600; cursor: pointer;
+  background: var(--surface); color: var(--ink); font-size: 16px; font-weight: 700; cursor: pointer;
   transition: transform .12s; font-family: var(--font-sans);
 }
 .btn-secondary:active { transform: scale(0.97); }
@@ -204,7 +204,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
 /* Stats bar */
 .stats-bar { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-.stat-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; font-size: 14px; font-weight: 600; color: var(--ink-faint); font-family: var(--font-mono); }
+.stat-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; font-size: 14px; font-weight: 400; color: var(--ink-faint); font-family: var(--font-mono); }
 .stat-chip b { color: var(--ink); margin-left: 4px; }
 
 /* Daily lock notice */
@@ -256,14 +256,14 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .tc-streak { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
 .tc-flame { display: inline-flex; color: var(--accent-brand); }
 .tc-flame svg { width: 14px; height: 14px; display: block; }
-.tc-streak-num { font-weight: 600; }
+.tc-streak-num { font-weight: 700; }
 .tc-next { margin-left: auto; }
 .tc-divider { height: 0; border-top: 1px solid var(--border); margin: 12px 0; }
-.tc-eyebrow { font-family: var(--font-sans); font-size: 14px; line-height: 16px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); font-weight: 600; }
+.tc-eyebrow { font-family: var(--font-sans); font-size: 14px; line-height: 16px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); font-weight: 400; }
 /* Archetype is the card's headline */
-.tc-rank { margin-top: 8px; min-height: 36px; font-family: var(--font-sans); font-size: 28px; font-weight: 800; line-height: 36px; letter-spacing: -0.01em; color: #F3F4F6; }
+.tc-rank { margin-top: 8px; min-height: 36px; font-family: var(--font-sans); font-size: 28px; font-weight: 700; line-height: 36px; letter-spacing: -0.01em; color: #F3F4F6; }
 /* Score, then one muted correct/time line, then the percentile — nothing between them */
-.tc-score { margin-top: 12px; font-family: var(--font-sans); font-size: 28px; font-weight: 800; line-height: 32px; letter-spacing: -0.01em; color: var(--text-primary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tc-score { margin-top: 12px; font-family: var(--font-sans); font-size: 28px; font-weight: 700; line-height: 32px; letter-spacing: -0.01em; color: var(--text-primary); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .tc-score .neg-sign {
   /* Drawn bar instead of the glyph: Lexend's minus falls back to a hairline when
      Google Fonts are unavailable, which read as a detached stroke. */
@@ -272,7 +272,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   vertical-align: 0.29em; text-indent: -9999px; overflow: hidden;
 }
 .tc-subline { margin-top: 8px; font-family: var(--font-sans); font-size: 14px; line-height: 20px; color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.tc-agg { margin-top: 8px; font-family: var(--font-sans); font-size: 14px; line-height: 16px; font-weight: 600; color: var(--accent-brand); }
+.tc-agg { margin-top: 8px; font-family: var(--font-sans); font-size: 14px; line-height: 16px; font-weight: 400; color: var(--accent-brand); }
 .tc-bets { margin-top: 8px; font-family: var(--font-sans); font-size: 14px; line-height: 16px; color: var(--text-secondary); }
 .tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 12px; padding: 0; }
 .tc-grid .rubric-tile[data-idx] { cursor: pointer; }
@@ -288,7 +288,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   width: 100%; min-height: 44px; margin: 0 0 -12px; padding: 0;
   display: inline-flex; align-items: center; justify-content: center;
   background: none; border: none; cursor: pointer;
-  font-family: var(--font-sans); font-size: 14px; font-weight: 600;
+  font-family: var(--font-sans); font-size: 14px; font-weight: 700;
   color: var(--text-primary); text-decoration: none; text-underline-offset: 2px;
 }
 .tc-review-link:hover, .tc-review-link:focus-visible { text-decoration: underline; color: var(--text-primary); }
@@ -303,7 +303,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .bp-bridge:active { transform: scale(0.99); }
 .bp-bridge-label { font-size: 14px; line-height: 16px; color: var(--text-secondary); min-width: 0; flex: 1 1 auto; }
 .bp-subject { white-space: nowrap; }
-.bp-bridge-cta { font-size: 14px; line-height: 16px; font-weight: 600; color: #F3F4F6; white-space: nowrap; }
+.bp-bridge-cta { font-size: 14px; line-height: 16px; font-weight: 700; color: #F3F4F6; white-space: nowrap; }
 
 /* Zone 4 — Endless stage, compact and secondary */
 .endless-teaser {
@@ -316,7 +316,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 .et-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; flex-shrink: 0; }
 .et-eyebrow { font-family: var(--font-sans); font-size: 14px; font-weight: 700; line-height: 16px; letter-spacing: 0.08em; color: #F454B0; }
-.et-lives { font-family: var(--font-sans); font-size: 14px; font-weight: 600; line-height: 16px; padding: 4px 8px; border-radius: 999px; background: #140F12; border: 1px solid rgba(255, 255, 255, 0.08); color: var(--text-secondary); }
+.et-lives { font-family: var(--font-sans); font-size: 14px; font-weight: 400; line-height: 16px; padding: 4px 8px; border-radius: 999px; background: #140F12; border: 1px solid rgba(255, 255, 255, 0.08); color: var(--text-secondary); }
 .et-mid { display: flex; align-items: center; gap: 12px; margin: 12px 0; width: 100%; min-width: 0; }
 .et-mark { flex: 0 0 32px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
 .et-mark svg { width: 32px; height: 32px; display: block; }
@@ -342,7 +342,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .a2hs-install {
   margin-top: 8px; height: 32px; padding: 0 12px; border-radius: 8px;
   border: 1px solid var(--accent-brand); background: transparent; color: var(--accent-brand);
-  font-family: var(--font-sans); font-size: 14px; font-weight: 600; cursor: pointer;
+  font-family: var(--font-sans); font-size: 14px; font-weight: 700; cursor: pointer;
 }
 .a2hs-x {
   flex: 0 0 24px; width: 24px; height: 24px; border: none; background: transparent;
@@ -385,7 +385,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   border-radius: 9999px;
   font-family: var(--font-sans);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -412,7 +412,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .option-btn {
   position: relative; overflow: hidden; width: 100%; min-height: 52px; border-radius: 12px;
   border: 1px solid var(--border-subtle); background: var(--bg-surface-subtle); color: var(--text-primary);
-  font-size: 16px; font-weight: 600; font-family: var(--font-sans);
+  font-size: 16px; font-weight: 700; font-family: var(--font-sans);
   cursor: pointer; text-align: left; padding: 0;
   transition: transform .08s ease, border-color .2s, box-shadow .2s;
   touch-action: manipulation; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
@@ -438,7 +438,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .opt-badge.is-check svg { width: 16px; height: 16px; }
 .option-btn .key-hint {
   width: 28px; height: 28px; border-radius: 8px; background: var(--bg-surface); border: 1px solid var(--border-subtle);
-  display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; letter-spacing: 0.03em; color: var(--ink-faint); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; letter-spacing: 0.03em; color: var(--ink-faint); flex-shrink: 0;
   font-family: var(--font-mono);
 }
 .option-btn .bet-reveal {
@@ -448,8 +448,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   opacity: 0;
 }
 .option-btn .bet-reveal svg { width: 20px; height: 20px; }
-.option-btn .bet-reveal .br-label { font-family: var(--font-sans); font-size: 14px; font-weight: 600; letter-spacing: 0.07em; }
-.option-btn .bet-reveal .br-sub { font-family: var(--font-sans); font-size: 14px; font-weight: 600; opacity: .85; }
+.option-btn .bet-reveal .br-label { font-family: var(--font-sans); font-size: 14px; font-weight: 700; letter-spacing: 0.07em; }
+.option-btn .bet-reveal .br-sub { font-family: var(--font-sans); font-size: 14px; font-weight: 700; opacity: .85; }
 .option-btn.correct { border: 2px solid #21C868; box-shadow: none; }
 .option-btn.correct .option-body { box-shadow: inset 0 0 0 9999px rgba(16,185,129,0.18); }
 .option-btn.wrong { border: 2px solid #F22933; box-shadow: none; animation: shake 0.4s ease-in-out; }
@@ -477,7 +477,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .endless-hud .streak {
   font-family: var(--font-telemetry);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: 0.04em;
   font-variant-numeric: tabular-nums;
   min-width: 11ch;
@@ -506,7 +506,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .q-timer-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width .1s linear; }
 .q-timer-fill.urgent { background: var(--warning); }
 .q-timer-fill.danger { background: var(--wrong); }
-.q-timer-text { font-family: var(--font-mono); font-size: 14px; font-weight: 500; color: var(--text-muted); font-variant-numeric: tabular-nums; flex-shrink: 0; letter-spacing: 0.02em; min-width: 7ch; text-align: right; }
+.q-timer-text { font-family: var(--font-mono); font-size: 14px; font-weight: 400; color: var(--text-muted); font-variant-numeric: tabular-nums; flex-shrink: 0; letter-spacing: 0.02em; min-width: 7ch; text-align: right; }
 .q-timer-text.warn { color: var(--warning); animation: pulse 1s ease-in-out infinite; }
 .q-timer-text.danger { color: var(--wrong); animation: microshake 0.28s linear infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
@@ -524,7 +524,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   position: absolute; left: 50%; top: 20px; transform: translateX(-50%) translateY(-4px);
   padding: 4px 12px; border-radius: 9999px; background: rgba(245, 158, 11, 0.14);
   border: 1px solid rgba(245, 158, 11, 0.45); color: #F59E0B;
-  font-family: var(--font-sans); font-size: 14px; font-weight: 600;
+  font-family: var(--font-sans); font-size: 14px; font-weight: 400;
   letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap;
   opacity: 0; pointer-events: none; transition: opacity .18s ease, transform .18s ease; z-index: 30;
 }
@@ -638,10 +638,10 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .hero-score .of { color: var(--ink-dim); font-size: 24px; font-weight: 700; }
 .hero-title { margin-top: 8px; }
 .hero-sub { display: none; font-family: var(--font-mono); font-size: 14px; color: var(--ink-faint); margin-top: 4px; }
-.near-miss { font-family: var(--font-sans); font-size: 14px; font-weight: 600; line-height: 16px; color: var(--accent-bet); margin-top: 8px; }
+.near-miss { font-family: var(--font-sans); font-size: 14px; font-weight: 400; line-height: 16px; color: var(--accent-bet); margin-top: 8px; }
 .streak-badge {
   display: inline-flex; align-items: center; gap: 8px;
-  font-family: var(--font-sans); font-size: 14px; font-weight: 500; letter-spacing: 0.03em; color: var(--ink);
+  font-family: var(--font-sans); font-size: 14px; font-weight: 400; letter-spacing: 0.03em; color: var(--ink);
   background: var(--accent-brand-tint); border: 1px solid rgba(244, 84, 176, 0.35);
   padding: 4px 12px; border-radius: 9999px; margin-top: 12px;
 }
@@ -663,7 +663,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 /* Results: mode eyebrow under the brand header, 8px above the hero */
 .results-eyebrow {
-  font-family: var(--font-sans); font-size: 14px; font-weight: 600; letter-spacing: 0.08em;
+  font-family: var(--font-sans); font-size: 14px; font-weight: 400; letter-spacing: 0.08em;
   text-transform: uppercase; color: var(--text-secondary); text-align: center;
   margin: 0 0 -4px; /* -4 cancels the results-body flex gap so the hero sits 8px below */
   flex-shrink: 0;
@@ -684,9 +684,9 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .sc-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 16px 0; text-align: center; }
 .sc-stat b { display: block; font-family: var(--font-sans); font-size: 24px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; color: #F3F4F6; font-variant-numeric: tabular-nums; }
 .sc-stat-primary b { font-weight: 700; }
-.sc-stat span { display: block; font-family: var(--font-sans); font-size: 14px; font-weight: 600; line-height: 1; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); margin-top: 4px; }
+.sc-stat span { display: block; font-family: var(--font-sans); font-size: 14px; font-weight: 400; line-height: 1; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); margin-top: 4px; }
 .scorecard .grid-hint { margin-top: 8px; text-align: center; }
-.sc-meta { margin-top: 4px; text-align: center; font-family: var(--font-sans); font-size: 14px; font-weight: 600; letter-spacing: 0.04em; color: var(--text-secondary); }
+.sc-meta { margin-top: 4px; text-align: center; font-family: var(--font-sans); font-size: 14px; font-weight: 400; letter-spacing: 0.04em; color: var(--text-secondary); }
 /* Actions + bottom dock (thumb zone) */
 .results-footer {
   flex-shrink: 0; margin-top: auto; width: 100%; max-width: 340px; align-self: center;
@@ -742,7 +742,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .bp-hub-left { display: inline-flex; align-items: center; gap: 8px; min-width: 0; font-size: 14px; line-height: 16px; color: var(--text-secondary); }
 .bp-hub-left svg { width: 12px; height: 12px; flex-shrink: 0; color: var(--accent-bet); }
 .bp-hub-left span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.bp-hub-cta { flex-shrink: 0; color: #F3F4F6; font-weight: 600; }
+.bp-hub-cta { flex-shrink: 0; color: #F3F4F6; font-weight: 700; }
 .bp-trigger-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
 .bp-trigger-text { font-family: var(--font-sans); font-size: 14px; font-weight: 400; line-height: 16px; color: var(--text-secondary); min-width: 0; }
 .bp-trigger-text.is-top { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -752,7 +752,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; gap: 4px;
   height: 40px; padding: 0 16px; border-radius: 12px;
   background-color: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.14); color: #F3F4F6;
-  font-family: var(--font-sans); font-size: 14px; font-weight: 600; line-height: 1; letter-spacing: 0.01em; cursor: pointer;
+  font-family: var(--font-sans); font-size: 14px; font-weight: 400; line-height: 1; letter-spacing: 0.01em; cursor: pointer;
   transition: transform .08s ease, background .2s, border-color .2s;
 }
 .bp-trigger-btn:hover { background-color: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.22); }
@@ -760,7 +760,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .bp-trigger-locked {
   display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 16px; border-radius: 12px;
   border: 1px dashed rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.03); color: var(--text-secondary);
-  font-family: var(--font-sans); font-size: 14px; font-weight: 500; cursor: pointer;
+  font-family: var(--font-sans); font-size: 14px; font-weight: 400; cursor: pointer;
 }
 .trophy-card .bp-trigger-wrap { margin-top: 12px; }
 
@@ -777,7 +777,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 .bp-topbar-left { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
 .bp-wordmark { font-size: 16px; }
-.bp-eyebrow { font-family: var(--font-sans); font-size: 14px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); }
+.bp-eyebrow { font-family: var(--font-sans); font-size: 14px; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); }
 .bp-close {
   width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center;
   background: none; border: none; border-radius: 12px; color: var(--text-secondary);
@@ -805,7 +805,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle); text-align: center;
 }
 .bp-summary b { display: block; font-family: var(--font-sans); font-size: 20px; font-weight: 700; color: var(--text-primary); font-variant-numeric: tabular-nums; line-height: 1.15; }
-.bp-summary span { display: block; font-family: var(--font-sans); font-size: 14px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); margin-top: 4px; }
+.bp-summary span { display: block; font-family: var(--font-sans); font-size: 14px; font-weight: 400; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); margin-top: 4px; }
 .bp-list { display: flex; flex-direction: column; gap: 8px; }
 .bp-list-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 36px; }
 .bp-cat { display: flex; align-items: center; gap: 12px; min-width: 0; }
@@ -815,7 +815,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 .bp-cat-badge svg { width: 16px; height: 16px; display: block; }
 .bp-cat-name {
-  font-family: var(--font-sans); font-size: 16px; font-weight: 600; line-height: 20px;
+  font-family: var(--font-sans); font-size: 16px; font-weight: 700; line-height: 20px;
   letter-spacing: 0; text-transform: none; color: #F3F4F6;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
@@ -849,7 +849,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .duel-modal-vs { font-family: var(--font-sans); font-size: 20px; font-weight: 700; line-height: 1.25; color: var(--text-primary); margin-bottom: 8px; }
 .duel-modal-line { font-family: var(--font-sans); font-size: 14px; font-weight: 400; line-height: 1.45; color: var(--text-secondary); margin-bottom: 16px; }
 .duel-modal-note { color: var(--accent-bet); }
-.duel-name-label { display: block; font-family: var(--font-sans); font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; }
+.duel-name-label { display: block; font-family: var(--font-sans); font-size: 14px; font-weight: 400; color: var(--text-secondary); margin-bottom: 8px; }
 .duel-name-input {
   width: 100%; height: 48px; padding: 0 12px; margin-bottom: 16px; box-sizing: border-box;
   border-radius: 12px; border: 1px solid var(--border); background: var(--bg-surface-subtle);
@@ -888,7 +888,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
 /* Toasts */
 #toast-host { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 100; pointer-events: none; }
-.toast { background: var(--surface); border: 1px solid var(--border); color: var(--ink); padding: 12px 20px; border-radius: 20px; font-size: 14px; font-weight: 600; box-shadow: var(--shadow); margin-top: 8px; animation: toastIn .3s ease; }
+.toast { background: var(--surface); border: 1px solid var(--border); color: var(--ink); padding: 12px 20px; border-radius: 20px; font-size: 14px; font-weight: 700; box-shadow: var(--shadow); margin-top: 8px; animation: toastIn .3s ease; }
 @keyframes toastIn { from { opacity:0; transform:translateY(12px)} to { opacity:1; transform:translateY(0)} }
 
 /* Duel banner */
@@ -896,7 +896,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   display: flex; align-items: center; justify-content: center; gap: 8px;
   background: var(--accent-brand-tint); border: 1px solid rgba(244, 84, 176, 0.35);
   border-radius: var(--radius-sm); padding: 8px 16px; margin-bottom: 12px;
-  font-family: var(--font-mono); font-size: 14px; font-weight: 600; color: var(--accent-brand);
+  font-family: var(--font-mono); font-size: 14px; font-weight: 400; color: var(--accent-brand);
 }
 .duel-banner .swords { font-size: 16px; }
 
@@ -908,10 +908,10 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .duel-card .duel-outcome { font-family: var(--font-sans); font-size: 20px; font-weight: 700; line-height: 1.25; letter-spacing: -0.01em; margin-bottom: 12px; }
 .duel-card .duel-vs { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .duel-card .duel-side { flex: 1; }
-.duel-card .duel-side .d-name { font-family: var(--font-sans); font-size: 14px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
+.duel-card .duel-side .d-name { font-family: var(--font-sans); font-size: 14px; font-weight: 400; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
 .duel-card .duel-side .d-score { font-family: var(--font-mono); font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; min-width: 2.5ch; }
 .duel-card .duel-side .d-time { font-family: var(--font-sans); font-size: 14px; font-weight: 400; letter-spacing: 0; color: var(--text-secondary); }
-.duel-card .duel-divider { font-family: var(--font-sans); font-size: 14px; color: var(--ink-dim); font-weight: 600; letter-spacing: 0.07em; }
+.duel-card .duel-divider { font-family: var(--font-sans); font-size: 14px; color: var(--ink-dim); font-weight: 400; letter-spacing: 0.07em; }
 .duel-card .duel-you .d-score { color: var(--accent); }
 .duel-card .duel-them .d-score { color: var(--ink-faint); }
 
@@ -936,7 +936,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .swipe-tip {
   flex-shrink: 0; text-align: center; font-size: 14px; color: var(--ink);
   background: var(--surface); border: 1px solid rgba(245, 158, 11, 0.45); border-radius: var(--radius-sm);
-  padding: 8px 12px; margin-bottom: 8px; font-weight: 600;
+  padding: 8px 12px; margin-bottom: 8px; font-weight: 400;
   display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 .swipe-tip svg { width: 16px; height: 16px; color: var(--accent-bet); flex-shrink: 0; }
@@ -945,7 +945,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* Visible bet toggle (replaces the hidden-gesture-only affordance) */
 .bet-toggle { flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 36px; margin-bottom: 8px; padding: 0; border-radius: var(--radius-sm); border: 0; background: none; color: var(--text-secondary); font-family: var(--font-sans); font-size: 14px; font-weight: 400; cursor: pointer; touch-action: manipulation; }
 .bet-toggle svg { width: 16px; height: 16px; color: var(--accent-bet); }
-.bet-toggle.armed { background: var(--accent-bet); color: var(--bg-canvas); font-weight: 600; padding: 0 12px; }
+.bet-toggle.armed { background: var(--accent-bet); color: var(--bg-canvas); font-weight: 700; padding: 0 12px; }
 .bet-toggle.armed svg { color: var(--bg-canvas); }
 
 /* Progress strip (daily only) — same rubric tiles as the results grids */
@@ -1007,7 +1007,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .type-question {
   font-family: var(--font-sans);
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.35;
   text-wrap: balance;
   color: var(--text-primary);
@@ -1015,7 +1015,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .type-subtitle {
   font-family: var(--font-sans);
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.35;
   letter-spacing: 0.01em;
   color: var(--text-primary);
@@ -1030,7 +1030,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .type-eyebrow {
   font-family: var(--font-sans);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.2;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -1039,7 +1039,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .type-hud {
   font-family: var(--font-sans);
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.2;
   letter-spacing: 0.03em;
   font-variant-numeric: tabular-nums;
@@ -1073,16 +1073,16 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
 /* .type-question */
 .question-text {
-  font-family: var(--font-sans); font-size: 16px; font-weight: 600;
+  font-family: var(--font-sans); font-size: 16px; font-weight: 700;
   line-height: 1.3; letter-spacing: 0; text-wrap: balance;
 }
 
 /* .type-subtitle — answer cards, buttons, verdict line */
 .option-btn, .btn-primary, .btn-secondary, .btn-emerald,
 #btn-endless, .feedback-strip .fb-result {
-  font-family: var(--font-sans); font-size: 16px; font-weight: 600; line-height: 1.35; letter-spacing: 0.01em;
+  font-family: var(--font-sans); font-size: 16px; font-weight: 700; line-height: 1.35; letter-spacing: 0.01em;
 }
-.option-btn { font-weight: 500; }
+.option-btn { font-weight: 700; }
 
 /* .type-body — secondary copy, feedback notes, hints */
 #next-set-line, .bet-toggle, .feedback-strip .fb-insight, .hero-sub, .highlights,
@@ -1097,14 +1097,14 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* .type-eyebrow */
 .tc-eyebrow, .sc-stat span,
 .modal-card .mlabel, .modal-card .mdyk-label {
-  font-family: var(--font-sans); font-size: 14px; font-weight: 600; line-height: 1.2;
+  font-family: var(--font-sans); font-size: 14px; font-weight: 400; line-height: 1.2;
   letter-spacing: 0.07em; text-transform: uppercase;
 }
 
 /* .type-hud */
 #header-meta, .game-header .meta, #landing-puzzle, .streak-pill,
 .stat-chip, #q-timer-text, .results-footer-meta {
-  font-family: var(--font-sans); font-size: 14px; font-weight: 500; line-height: 1.2;
+  font-family: var(--font-sans); font-size: 14px; font-weight: 400; line-height: 1.2;
   letter-spacing: 0.03em; font-variant-numeric: tabular-nums;
 }
 
@@ -3126,17 +3126,17 @@ function brainprintSVG(d, opts = {}) {
       const blockH = lines.length * lineH + 13;
       let y = p.ly - blockH / 2 + lineH;
       lines.forEach(l => {
-        out += `<text x="${p.lx.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="${fs}" font-weight="600" letter-spacing="0.4" fill="#B2A4AC"${dim}>${escapeHtml(l)}</text>`;
+        out += `<text x="${p.lx.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="${fs}" font-weight="400" letter-spacing="0.4" fill="#B2A4AC"${dim}>${escapeHtml(l)}</text>`;
         y += lineH;
       });
-      out += `<text x="${p.lx.toFixed(2)}" y="${(y + 1).toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="${fs}" font-weight="600" letter-spacing="0.4" fill="#F3F4F6" style="font-variant-numeric: tabular-nums"${dim}>${p.acc}%</text></g>`;
+      out += `<text x="${p.lx.toFixed(2)}" y="${(y + 1).toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="${fs}" font-weight="700" letter-spacing="0.4" fill="#F3F4F6" style="font-variant-numeric: tabular-nums"${dim}>${p.acc}%</text></g>`;
     } else {
       // Compact home radar: names only, no percentages — keeps the chart airy
       const lineH = lh;
       const blockH = lines.length * lineH;
       let y = p.ly - blockH / 2 + lineH;
       lines.forEach(l => {
-        out += `<text x="${p.lx.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="${fs}" font-weight="600" letter-spacing="0.4" fill="#B2A4AC"${dim}>${escapeHtml(l)}</text>`;
+        out += `<text x="${p.lx.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="middle" font-family="Lexend, sans-serif" font-size="${fs}" font-weight="400" letter-spacing="0.4" fill="#B2A4AC"${dim}>${escapeHtml(l)}</text>`;
         y += lineH;
       });
       out += `</g>`;
@@ -3300,8 +3300,8 @@ function closeBrainprint() {
 async function ensureBrandFonts() {
   if (!document.fonts || !document.fonts.load) return;
   const loads = [
-    '700 40px "Lexend Zetta"', '600 17px Lexend', '700 19px Lexend', '700 24px Lexend',
-    '600 13px Lexend', '500 15px Lexend', '700 26px Lexend', '500 12px Lexend',
+    '700 40px "Lexend Zetta"', '400 17px Lexend', '700 19px Lexend', '700 24px Lexend',
+    '400 13px Lexend', '400 15px Lexend', '700 26px Lexend', '400 12px Lexend',
   ].map(f => document.fonts.load(f).catch(() => {}));
   try { await Promise.all(loads); } catch (e) {}
   try { await document.fonts.ready; } catch (e) {}
@@ -3356,7 +3356,7 @@ function drawRadarCanvas(ctx, d, cx, cy, maxR, gap) {
   });
   g.forEach(p => {
     const lines = splitRadarLabel(p.category);
-    ctx.font = '600 17px Lexend, sans-serif';
+    ctx.font = '400 17px Lexend, sans-serif';
     const maxW = Math.max(...lines.map(l => ctx.measureText(l).width), ctx.measureText(`${p.acc}%`).width);
     const lx = Math.min(700 - maxW / 2, Math.max(20 + maxW / 2, p.lx));
     const lineH = 22;
@@ -3382,14 +3382,14 @@ function drawBrainprintCard(ctx, d) {
   ctx.fillRect(0, 0, W, H);
 
   drawTracked(ctx, 'KNOWIT', 48, 76, 40, 3.4, '700', 'left', '#F3F4F6', '"Lexend Zetta", Lexend, sans-serif');
-  drawTracked(ctx, 'BRAINPRINT', 50, 104, 13, 3, '600', 'left', '#B2A4AC', 'Lexend, sans-serif');
-  drawTracked(ctx, 'LIFETIME CATEGORY MAP', 50, 126, 11, 2.4, '500', 'left', 'rgba(178, 164, 172, 0.75)', 'Lexend, sans-serif');
+  drawTracked(ctx, 'BRAINPRINT', 50, 104, 13, 3, '400', 'left', '#B2A4AC', 'Lexend, sans-serif');
+  drawTracked(ctx, 'LIFETIME CATEGORY MAP', 50, 126, 11, 2.4, '400', 'left', 'rgba(178, 164, 172, 0.75)', 'Lexend, sans-serif');
 
   ctx.textAlign = 'right';
   ctx.font = '700 28px Lexend, sans-serif';
   ctx.fillStyle = '#F3F4F6';
   ctx.fillText(`${d.overallAccuracy}%`, 672, 78);
-  ctx.font = '600 12px Lexend, sans-serif';
+  ctx.font = '400 12px Lexend, sans-serif';
   ctx.fillStyle = '#B2A4AC';
   ctx.fillText(`${d.totalAnswered} ANSWERED`, 672, 100);
 
@@ -3405,7 +3405,7 @@ function drawBrainprintCard(ctx, d) {
   ctx.textAlign = 'left';
   ctx.fillStyle = '#F3F4F6';
   ctx.fillText(bpType.name, 48, 184);
-  ctx.font = '500 15px Lexend, sans-serif';
+  ctx.font = '400 15px Lexend, sans-serif';
   ctx.fillStyle = 'rgba(178, 164, 172, 0.92)';
   ctx.fillText(bpType.line, 48, 210);
 
@@ -3415,23 +3415,23 @@ function drawBrainprintCard(ctx, d) {
   ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(48, 728); ctx.lineTo(672, 728); ctx.stroke();
 
-  drawTracked(ctx, 'STRONGEST', 48, 762, 11, 2.6, '600', 'left', '#B2A4AC', 'Lexend, sans-serif');
+  drawTracked(ctx, 'STRONGEST', 48, 762, 11, 2.6, '400', 'left', '#B2A4AC', 'Lexend, sans-serif');
   ctx.textAlign = 'left';
   ctx.font = '700 25px Lexend, sans-serif';
   ctx.fillStyle = '#F454B0';
   ctx.fillText(d.strongest ? `${d.strongest.category} ${d.strongest.accuracy}%` : '—', 48, 794);
 
-  drawTracked(ctx, 'BLINDSPOT', 392, 762, 11, 2.6, '600', 'left', '#B2A4AC', 'Lexend, sans-serif');
+  drawTracked(ctx, 'BLINDSPOT', 392, 762, 11, 2.6, '400', 'left', '#B2A4AC', 'Lexend, sans-serif');
   ctx.textAlign = 'left';
   ctx.font = '700 25px Lexend, sans-serif';
   ctx.fillStyle = '#F3F4F6';
   ctx.fillText(d.blindspot ? `${d.blindspot.category} ${d.blindspot.accuracy}%` : '—', 392, 794);
 
   const betLine = d.betsTotal ? `${d.betsWon}/${d.betsTotal} bets won` : 'no bets yet';
-  ctx.font = '500 15px Lexend, sans-serif';
+  ctx.font = '400 15px Lexend, sans-serif';
   ctx.fillStyle = 'rgba(178, 164, 172, 0.92)';
   ctx.fillText(`${d.totalAnswered} answered · ${d.overallAccuracy}% accuracy · ${betLine}`, 48, 850);
-  ctx.font = '500 12px Lexend, sans-serif';
+  ctx.font = '400 12px Lexend, sans-serif';
   ctx.fillStyle = 'rgba(178, 164, 172, 0.6)';
   ctx.fillText('KNOWIT · Daily trivia', 48, 876);
   ctx.textAlign = 'right';
