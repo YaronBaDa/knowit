@@ -343,6 +343,11 @@ nothing is summed, and `knowit_progress_v1` is never imported.
   headlines, CTAs, answer options, active bet/status toggles, toasts. 400 = body, subtitles, notes,
   14 px metadata, timestamps, countdowns, captions. Google Fonts loads `Lexend:wght@400;700` and
   `Lexend Zetta:wght@700`; canvas `ctx.font` and the share-card SVG use the same pair.
+- **Three line-heights, three trackings.** `line-height` is only `1` (icons, pills, chips, buttons),
+  `1.2` (20 px+ headings, titles, verdicts, hero numerals) or `1.4` (14–16 px body, stems, options,
+  notes). `letter-spacing` is only `-0.01em` (20 px+ display), `0` (body, stems, options, counters)
+  or `0.04em` (uppercase eyebrows, category pills, badges, wordmark). Uppercase labels came down
+  from 0.06–0.08em to 0.04em so 14 px tracked text stays on one line at 360 px.
 - Lexend ships **no `tnum` feature** — `font-variant-numeric: tabular-nums` is a no-op there, so live
   numbers are held still with an explicit `min-width`: `.q-timer-text` 7ch (its `00:00.0` format),
   `.endless-hud .streak` 11ch (its `RUN: NN` pill). Verified: the timer renders 56 px for every
@@ -397,6 +402,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`TYPO4` 3 line-heights (1/1.2/1.4) + 3 trackings (-0.01/0/0.04em), tighter uppercase labels
 `TYPO3` two-weight system: everything is 400 or 700 (51 CSS + 11 canvas/SVG weights)
 `TYPO2` 7-step type scale with a 14px floor (84 declarations remapped)
 `TYPO1` drop JetBrains Mono, OS mono for backup codes, tabular guards, token cleanup
