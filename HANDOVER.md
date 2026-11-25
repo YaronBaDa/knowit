@@ -256,6 +256,14 @@ divider.
    `Play Endless`.
 4. **Install hint** (`#a2hs`) — streak ≥ 3, not standalone, `knowit_a2hs_dismissed` unset.
 
+**Time is capped per question.** `DAILY_QUESTION_LIMIT_MS = 20000` and `endlessTimeLimit(i)` feed
+`answerLimitMs(i, mode)` → `questionTimeLimit()` / `capQuestionTime(ms)`, which the timer, the
+`handleAnswer`/`handleTimeout` capture and the resume offset all use. A backgrounded tab or a resumed
+save therefore records at most the limit for that question (and resumes into a timeout rather than an
+hour-long question). Stored results are never rewritten: every display (hub receipt, results stat
+bar, share text, duel card/modal, aggregate POST) reads through `cappedTotalMs()` / `cappedSeconds()`,
+so a run never shows more than `questions x limit`.
+
 **Playing screen answered state.** On answer or timeout `#screen-playing` gains `.is-answered`: the
 countdown row is hidden with `visibility: hidden; opacity: 0` (it keeps its box, so nothing jumps), the
 bet toggle is removed from the flow, and the explanation strip takes that space. `renderQuestion()`
@@ -410,6 +418,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`TIME1` per-question time cap at capture + clamped display, dock hairline hidden under the explanation
 `Q20` 20px question stem, countdown hidden while the explanation shows, dwell rail removed
 `COLOR1` softened semantics (mint/coral/amber), neutral category styling, no hardcoded old hues
 `TYPO4` 3 line-heights (1/1.2/1.4) + 3 trackings (-0.01/0/0.04em), tighter uppercase labels

@@ -508,6 +508,9 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* Answered: the bet control is spent, so its slot goes to the explanation instead of
    squeezing the question. The stage keeps the stem's height and nothing jumps. */
 #screen-playing.is-answered .bet-toggle { display: none !important; }
+/* The answer dock's full-bleed hairline would run on under the explanation card; in the
+   answered state the card's own border is the only line. */
+#screen-playing.is-answered .options-grid { border-top-color: transparent; }
 .q-timer-bar { flex: 1; height: 4px; background: var(--border); border-radius: 4px; overflow: hidden; }
 .q-timer-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width .1s linear; }
 .q-timer-fill.urgent { background: var(--warning); }
@@ -3546,7 +3549,7 @@ function saveResult() {
       answers: state.answers.map(compactAnswer),
       duel: state.duel || null,
       // Elapsed run time, persisted so the receipt reads correctly after a reload
-      durationSec: Math.round(state.answers.reduce((sum, a) => sum + (a.time || 0), 0) / 1000),
+      durationSec: Math.round(cappedSeconds(state.answers, state.mode)),
       completedAt: Date.now(),
     }));
   } catch(e){}
@@ -3821,9 +3824,10 @@ function renderHub() {
     points = sumPoints(answers);
     const correct = answers.filter(a => a.correct).length;
     const total = answers.length || 10;
-    const secs = Number.isFinite(savedRes.durationSec)
-      ? savedRes.durationSec
-      : answers.reduce((s, a) => s + (a.time || 0), 0) / 1000;
+    const secs = Math.min(
+      Number.isFinite(savedRes.durationSec) ? savedRes.durationSec : cappedSeconds(answers, 'daily'),
+      answers.length * (DAILY_QUESTION_LIMIT_MS / 1000)
+    );
     const betUsed = answers.filter(a => a.bet).length;
     const betHit = answers.filter(a => a.bet && a.correct).length;
     const arch = getArchetype(correct, total, secs, betUsed, betHit, points);
@@ -4412,6 +4416,29 @@ function endlessTimeLimit(questionIndex) {
   if (questionIndex < 10) return 10000;  // Q6–Q10
   return 8000;                           // Q11+
 }
+// The per-question clock lives here and nowhere else: the timer, the captured answer time and
+// every display of a stored time go through it, so time spent in a backgrounded tab (or a
+// resumed save) can never grow a question's time past the limit.
+const DAILY_QUESTION_LIMIT_MS = 20000;
+function answerLimitMs(index, mode) {
+  return mode === 'endless' ? endlessTimeLimit(index) : DAILY_QUESTION_LIMIT_MS;
+}
+function questionTimeLimit() {
+  return answerLimitMs(state.currentQ, state.mode);
+}
+function capQuestionTime(ms) {
+  const cap = questionTimeLimit();
+  const v = Number(ms);
+  return Math.min(Number.isFinite(v) && v > 0 ? v : 0, cap);
+}
+// Display-only clamp: stored results are never rewritten, they are just read through this.
+function cappedTotalMs(answers, mode) {
+  const list = Array.isArray(answers) ? answers : [];
+  return list.reduce((sum, a, i) => sum + Math.min(Math.max(0, Number(a.time) || 0), answerLimitMs(i, mode)), 0);
+}
+function cappedSeconds(answers, mode) {
+  return cappedTotalMs(answers, mode) / 1000;
+}
 function startQTimer(offsetMs = 0) {
   const bar = $('q-timer-fill');
   const txt = $('q-timer-text');
@@ -4420,7 +4447,7 @@ function startQTimer(offsetMs = 0) {
     if (state.screen !== 'playing' || state.waiting) return;
     const elapsed = performance.now() - start;
     const sec = elapsed / 1000;
-    const max = state.mode === 'endless' ? endlessTimeLimit(state.currentQ) : 20000;
+    const max = questionTimeLimit();
     const pct = Math.max(0, 100 - (elapsed / max) * 100);
     const remain = Math.max(0, (max - elapsed) / 1000);
     bar.style.width = pct + '%';
@@ -4474,9 +4501,10 @@ function startDaily() {
       if (saved.duel) state.duel = saved.duel;
       if (state.answers.length === 10) { finishGame(); return; }
       // Clock keeps running: only resume the offset if the saved question is still the current one
-      state.resumeOffsetMs = (saved.qShownIndex === state.answers.length && typeof saved.qShownAt === 'number')
+      const away = (saved.qShownIndex === state.answers.length && typeof saved.qShownAt === 'number')
         ? Math.max(0, Date.now() - saved.qShownAt)
         : 0;
+      state.resumeOffsetMs = Math.min(away, questionTimeLimit());
     } else {
       clearProgress();
     }
@@ -4597,7 +4625,7 @@ $('feedback-strip').addEventListener('click', maybeSkipFeedback);
 function handleTimeout() {
   if (state.waiting) return;
   const q = state.questions[state.currentQ];
-  const time = performance.now() - state.qStartTime;
+  const time = capQuestionTime(performance.now() - state.qStartTime);
   // An armed bet is a commitment: timing out costs the full −2 and spends the bet
   const wasArmed = state.mode === 'daily' && state.armed && state.betsLeft > 0;
   const timeoutPoints = wasArmed ? -2 : -1;
@@ -4642,7 +4670,7 @@ function handleAnswer(idx) {
   stopQTimer();
   const q = state.questions[state.currentQ];
   const correct = idx === q.correctIndex;
-  const time = performance.now() - state.qStartTime;
+  const time = capQuestionTime(performance.now() - state.qStartTime);
   const bet = state.armed && state.betsLeft > 0;
   state.waiting = true;
   state.armed = false;
@@ -4759,7 +4787,7 @@ function loadAggregates(answers, puzzleNum) {
     puzzle: puzzleNum,
     points,
     correctByPos: answers.map(a => !!a.correct),
-    seconds: Math.round(answers.reduce((s, a) => s + (a.time || 0), 0) / 1000),
+    seconds: Math.round(cappedSeconds(answers, 'daily')),
     playerId,
   };
   // One attempt only — never retried from the results screen.
@@ -4855,7 +4883,7 @@ function buildDailySharePayload(answers, puzzleNum, streak, channel, topPct) {
   const totalPoints = sumPoints(answers);
   const correct = answers.filter(a => a.correct).length;
   const total = answers.length;
-  const totalTimeSec = answers.reduce((s, a) => s + (a.time || 0), 0) / 1000;
+  const totalTimeSec = cappedSeconds(answers, 'daily');
   const betUsed = answers.filter(a => a.bet).length;
   const betHit = answers.filter(a => a.bet && a.correct).length;
   const arch = getArchetype(correct, total, totalTimeSec, betUsed, betHit, totalPoints);
@@ -4875,7 +4903,7 @@ function finishGame(opts = {}) {
   stopQTimer();
   const total = state.answers.length;
   const correct = state.answers.filter(a=>a.correct).length;
-  const totalTimeMs = state.answers.reduce((s,a)=>s+a.time,0);
+  const totalTimeMs = cappedTotalMs(state.answers, state.mode);
   const totalTimeSec = totalTimeMs / 1000;
   const avgMs = total > 0 ? Math.round(totalTimeMs / total) : 0;
   const today = getToday();
@@ -5080,24 +5108,25 @@ function finishGame(opts = {}) {
   // Duel result card
   if (state.duel && state.mode === 'daily') {
     const d = state.duel;
+    const themTime = Math.min(Math.max(0, Number(d.time) || 0), total * (DAILY_QUESTION_LIMIT_MS / 1000));
     $('duel-card').style.display = 'block';
     $('duel-them-name').textContent = d.name;
     $('duel-them-score').textContent = fmtPts(d.score);
-    $('duel-them-time').textContent = fmtTimeSec(d.time);
+    $('duel-them-time').textContent = fmtTimeSec(themTime);
     $('duel-you-score').textContent = fmtPts(totalPoints);
     $('duel-you-time').textContent = fmtTimeSec(totalTimeSec);
     const losing = `Outplayed by ${d.name}.`;
     let outcome = 'Dead heat.', oIcon = null, oColor = 'var(--accent-warm)';
     if (totalPoints > d.score) { outcome = 'Outsmarted them.'; oIcon = 'trophy'; oColor = 'var(--correct)'; }
     else if (totalPoints < d.score) { outcome = losing; oIcon = 'skull'; oColor = 'var(--wrong)'; }
-    else if (totalTimeSec < d.time) { outcome = 'Outsmarted them.'; oIcon = 'trophy'; oColor = 'var(--correct)'; }
-    else if (totalTimeSec > d.time) { outcome = losing; oIcon = 'skull'; oColor = 'var(--wrong)'; }
+    else if (totalTimeSec < themTime) { outcome = 'Outsmarted them.'; oIcon = 'trophy'; oColor = 'var(--correct)'; }
+    else if (totalTimeSec > themTime) { outcome = losing; oIcon = 'skull'; oColor = 'var(--wrong)'; }
     $('duel-outcome').innerHTML = `${outcome}${oIcon ? ICONS[oIcon] : ''}`;
     $('duel-outcome').style.color = oColor;
     // Only a run just played counts as a duel result — viewing saved results is not a new duel
     if (!unranked) {
-      track('duel_result', { outcome: totalPoints > d.score || (totalPoints === d.score && totalTimeSec < d.time) ? 'win'
-        : (totalPoints < d.score || (totalPoints === d.score && totalTimeSec > d.time) ? 'loss' : 'tie') });
+      track('duel_result', { outcome: totalPoints > d.score || (totalPoints === d.score && totalTimeSec < themTime) ? 'win'
+        : (totalPoints < d.score || (totalPoints === d.score && totalTimeSec > themTime) ? 'loss' : 'tie') });
     }
   } else {
     $('duel-card').style.display = 'none';
@@ -5149,7 +5178,8 @@ function viewTodaysResults(duelOverride) {
 // ---- Duel pre-game modal ----
 function openDuelModal(duelP, opts = {}) {
   state.pendingDuel = duelP;
-  $('duel-modal-vs').textContent = `${duelP.name} scored ${fmtPts(duelP.score)} in ${fmtTimeSec(duelP.time)}. Beat them.`;
+  const duelCap = 10 * (DAILY_QUESTION_LIMIT_MS / 1000);
+  $('duel-modal-vs').textContent = `${duelP.name} scored ${fmtPts(duelP.score)} in ${fmtTimeSec(Math.min(duelP.time, duelCap))}. Beat them.`;
   $('duel-name').value = getPlayerName();
   const note = $('duel-modal-note');
   if (opts.replayDay) {
