@@ -323,12 +323,19 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 - Palette: canvas `#140F12`, card `#1F181C`, recessed `#1A1418`, primary `#F3F4F6`, secondary
   `#B2A4AC`; pink `#F454B0`, glow `#FF6EB4`, orchid `#A855F7`; amber `#F59E0B` (bets only), emerald
-  `#21C868`, crimson `#F22933`, ice `#7DD3FC`.
+  `#21C868`, crimson `#F22933`. `--accent-brand` is the only pink token (`--brand-pink` merged into
+  it); ice, indigo, glow, orchid and the unused correct-tint tokens were removed.
 - Brand gradient: `--brand-grad`, `--brand-cta-grad`; the SVG `#knowit-grad` lives in a **zero-size
   SVG** (paint servers inside a `display:none` subtree silently fail in Chrome).
-- Fonts: **Lexend Zetta** for the KNOWIT wordmark only; **Lexend** for everything else;
-  **JetBrains Mono** (`--font-telemetry`) only for the Endless run badge. `--font-mono` is still an
-  alias of Lexend for legacy bits.
+- Fonts: **Lexend Zetta** for the KNOWIT wordmark only (`.hub-wordmark`, `#screen-results
+  .hub-wordmark`, `.bp-wordmark`); **Lexend** for everything else. `--font-mono` and
+  `--font-telemetry` both alias `--font-sans`, so old selectors keep working. The one exception is
+  `.backup-code` (export + restore fields), which uses `ui-monospace, Menlo, monospace` so `1/l/I`
+  and `0/O` stay distinguishable with no network font.
+- Lexend ships **no `tnum` feature** — `font-variant-numeric: tabular-nums` is a no-op there, so live
+  numbers are held still with an explicit `min-width`: `.q-timer-text` 7ch (its `00:00.0` format),
+  `.endless-hud .streak` 11ch (its `RUN: NN` pill). Verified: the timer renders 56 px for every
+  sample and the run pill 88 px for RUN: 00 → 99.
 - Strict 4 px grid (1/2 px borders exempt). Interactive secondary buttons are 12 px radius / 40 px
   everywhere, including the receipt; `9999px` pills are reserved for non-interactive status/category badges.
 - Rubric tiles: 24 px tall, radius 4, 4 px gaps; one renderer (`applyRubricTile`) for all four
@@ -379,6 +386,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`TYPO1` drop JetBrains Mono, OS mono for backup codes, tabular guards, token cleanup
 `0199837` score line replaces stat labels, nudge under grid, accent flame, tighter Review spacing
 `28667a2` in-card streak row, archetype-first order, percentile wording, Review link, bets nudge
 `6b138d0` home: challenge-first receipt, labelled stats, tappable misses, compact Endless, install hint

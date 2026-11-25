@@ -28,7 +28,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lexend+Zetta:wght@700&family=Lexend:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lexend+Zetta:wght@700&family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
 <title>KNOWIT</title>
 <style>
 :root {
@@ -49,19 +49,13 @@
   --accent-incorrect-text: #FF5C63;
   --accent-bet: #F59E0B;
   --accent-brand: #F454B0;
-  --accent-indigo: #FF7BC8;
-  --accent-ice: #7DD3FC;   /* same tint as the Geography category */
 
   /* Brand gradient system — Brainy Pink → Orchid */
   --brand-grad: linear-gradient(135deg, #FF6EB4 0%, #F454B0 50%, #A855F7 100%);
   --brand-grad-h: linear-gradient(90deg, #FF6EB4 0%, #F454B0 50%, #A855F7 100%);
   --brand-cta-grad: linear-gradient(135deg, #FF63B1 0%, #E13C9D 100%);
-  --brand-pink: #F454B0;
-  --brand-glow: #FF6EB4;
-  --brand-orchid: #A855F7;
 
   /* Soft glow / background-wash tints */
-  --accent-correct-tint: rgba(33, 200, 104, 0.14);
   --accent-incorrect-tint: rgba(242, 41, 51, 0.16);
   --accent-bet-tint: rgba(245, 158, 11, 0.14);
   --accent-brand-tint: rgba(244, 84, 176, 0.14);
@@ -93,7 +87,7 @@
   --font-display: 'Lexend Zetta', sans-serif;
   /* labels/counters now use Lexend; the token name is kept so sizes stay untouched */
   --font-mono: var(--font-sans);
-  --font-telemetry: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-telemetry: var(--font-sans);
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -178,15 +172,15 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 .landing-streak-bar .fire { font-size: 12px; }
 .landing-streak-bar .broken { opacity: 0.55; filter: grayscale(1); }
-.freeze-tag { display: inline-flex; align-items: center; gap: 4px; color: var(--accent-ice); font-size: 12px; font-weight: 600; line-height: 1; }
+.freeze-tag { display: inline-flex; align-items: center; gap: 4px; color: var(--accent-brand); font-size: 12px; font-weight: 600; line-height: 1; }
 .freeze-tag svg { width: 12px; height: 12px; }
 .backup-link { background: none; border: 0; padding: 4px 8px; margin-top: 4px; color: var(--text-secondary); font-family: var(--font-sans); font-size: 12px; font-weight: 500; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
 .backup-link:active { color: var(--text-primary); }
 /* Backup modal */
-.backup-title { font-family: var(--font-display); font-size: 20px; font-weight: 700; line-height: 24px; color: var(--text-primary); }
+.backup-title { font-family: var(--font-sans); font-size: 20px; font-weight: 700; line-height: 24px; color: var(--text-primary); }
 .backup-label { font-family: var(--font-sans); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); }
 .backup-line { font-family: var(--font-sans); font-size: 12px; line-height: 16px; color: var(--text-secondary); }
-.backup-code { width: 100%; min-height: 64px; resize: vertical; padding: 8px; border-radius: 12px; border: 1px solid var(--border-subtle); background: var(--bg-surface-subtle); color: var(--text-primary); font-family: var(--font-mono); font-size: 12px; line-height: 16px; box-sizing: border-box; }
+.backup-code { width: 100%; min-height: 64px; resize: vertical; padding: 8px; border-radius: 12px; border: 1px solid var(--border-subtle); background: var(--bg-surface-subtle); color: var(--text-primary); font-family: ui-monospace, Menlo, monospace; font-size: 12px; line-height: 16px; box-sizing: border-box; }
 .backup-code:focus { outline: 2px solid var(--accent-brand); outline-offset: 1px; }
 .backup-hint { font-family: var(--font-sans); font-size: 12px; line-height: 16px; color: var(--text-secondary); min-height: 16px; }
 /* Anonymous aggregate lines on the results card */
@@ -260,7 +254,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* Streak + countdown inside the card, then the hairline divider */
 .tc-streak-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; font-family: var(--font-sans); font-size: 14px; line-height: 16px; color: var(--text-secondary); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .tc-streak { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
-.tc-flame { display: inline-flex; color: var(--brand-pink); }
+.tc-flame { display: inline-flex; color: var(--accent-brand); }
 .tc-flame svg { width: 14px; height: 14px; display: block; }
 .tc-streak-num { font-weight: 600; }
 .tc-next { margin-left: auto; }
@@ -278,7 +272,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   vertical-align: 0.29em; text-indent: -9999px; overflow: hidden;
 }
 .tc-subline { margin-top: 8px; font-family: var(--font-sans); font-size: 15px; line-height: 20px; color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.tc-agg { margin-top: 8px; font-family: var(--font-sans); font-size: 13px; line-height: 16px; font-weight: 600; color: var(--brand-pink); }
+.tc-agg { margin-top: 8px; font-family: var(--font-sans); font-size: 13px; line-height: 16px; font-weight: 600; color: var(--accent-brand); }
 .tc-bets { margin-top: 8px; font-family: var(--font-sans); font-size: 13px; line-height: 16px; color: var(--text-secondary); }
 .tc-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-top: 12px; padding: 0; }
 .tc-grid .rubric-tile[data-idx] { cursor: pointer; }
@@ -330,8 +324,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .et-headline { font-family: var(--font-sans); font-size: 20px; font-weight: 700; line-height: 24px; color: #F3F4F6; }
 .et-sub { font-family: var(--font-sans); font-size: 13px; line-height: 16px; font-weight: 400; color: var(--text-secondary); margin-top: 4px; }
 .btn-outline-brand {
-  width: 100%; height: 44px; border-radius: 12px; border: 1px solid var(--brand-pink);
-  background: transparent; color: var(--brand-pink);
+  width: 100%; height: 44px; border-radius: 12px; border: 1px solid var(--accent-brand);
+  background: transparent; color: var(--accent-brand);
   font-family: var(--font-sans); font-size: 16px; font-weight: 700; cursor: pointer;
   transition: transform .12s, background .12s;
 }
@@ -347,7 +341,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .a2hs-text { font-family: var(--font-sans); font-size: 12px; line-height: 16px; color: var(--text-secondary); }
 .a2hs-install {
   margin-top: 8px; height: 32px; padding: 0 12px; border-radius: 8px;
-  border: 1px solid var(--brand-pink); background: transparent; color: var(--brand-pink);
+  border: 1px solid var(--accent-brand); background: transparent; color: var(--accent-brand);
   font-family: var(--font-sans); font-size: 13px; font-weight: 600; cursor: pointer;
 }
 .a2hs-x {
@@ -486,6 +480,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   font-weight: 500;
   letter-spacing: 0.04em;
   font-variant-numeric: tabular-nums;
+  min-width: 11ch;
+  text-align: center;
   color: rgba(243, 244, 246, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.12);
   padding: 4px 12px; border-radius: 9999px;
@@ -510,7 +506,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .q-timer-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width .1s linear; }
 .q-timer-fill.urgent { background: var(--warning); }
 .q-timer-fill.danger { background: var(--wrong); }
-.q-timer-text { font-family: var(--font-mono); font-size: 12px; font-weight: 500; color: var(--text-muted); font-variant-numeric: tabular-nums; flex-shrink: 0; letter-spacing: 0.02em; }
+.q-timer-text { font-family: var(--font-mono); font-size: 12px; font-weight: 500; color: var(--text-muted); font-variant-numeric: tabular-nums; flex-shrink: 0; letter-spacing: 0.02em; min-width: 7ch; text-align: right; }
 .q-timer-text.warn { color: var(--warning); animation: pulse 1s ease-in-out infinite; }
 .q-timer-text.danger { color: var(--wrong); animation: microshake 0.28s linear infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
@@ -913,7 +909,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .duel-card .duel-vs { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .duel-card .duel-side { flex: 1; }
 .duel-card .duel-side .d-name { font-family: var(--font-sans); font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
-.duel-card .duel-side .d-score { font-family: var(--font-mono); font-size: 24px; font-weight: 700; }
+.duel-card .duel-side .d-score { font-family: var(--font-mono); font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; min-width: 2.5ch; }
 .duel-card .duel-side .d-time { font-family: var(--font-sans); font-size: 12px; font-weight: 400; letter-spacing: 0; color: var(--text-secondary); }
 .duel-card .duel-divider { font-family: var(--font-sans); font-size: 12px; color: var(--ink-dim); font-weight: 600; letter-spacing: 0.07em; }
 .duel-card .duel-you .d-score { color: var(--accent); }
@@ -968,7 +964,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* Inline SVG icons */
 .hero-title { display: flex; align-items: center; justify-content: center; gap: 8px; }
 .hero-title svg { width: 20px; height: 20px; color: var(--accent); flex-shrink: 0; }
-.hero-title svg.ic-heart { color: var(--brand-pink); }
+.hero-title svg.ic-heart { color: var(--accent-brand); }
 .hero-title.aurora svg { color: var(--ice); }
 .landing-streak-bar .fire { display: inline-flex; color: var(--accent-brand); }
 .landing-streak-bar .fire svg { width: 16px; height: 16px; }
@@ -1052,9 +1048,12 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
 /* ---- Adoption: one tier per component. Metrics only — colours stay local. ---- */
 
-/* .type-brand */
-.landing-body h2, .hub-wordmark {
+/* .type-brand — wordmark only; the landing tagline is Lexend */
+.hub-wordmark {
   font-family: var(--font-display); font-weight: 700; letter-spacing: 0.04em; line-height: 1.1;
+}
+.landing-body h2 {
+  font-family: var(--font-sans); font-weight: 700; letter-spacing: 0.04em; line-height: 1.1;
 }
 
 /* .type-hero */
