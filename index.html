@@ -83,6 +83,13 @@
   --aurora: linear-gradient(90deg, #F454B0, #5CCB9D);
   --radius: 16px;
   --radius-sm: 12px;
+  /* Type scale — the only six sizes in the app */
+  --fs-14: 14px;
+  --fs-16: 16px;
+  --fs-20: 20px;
+  --fs-24: 24px;
+  --fs-28: 28px;
+  --fs-32: 32px;
   --font-sans: 'Lexend', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-display: 'Lexend Zetta', sans-serif;
   /* labels/counters now use Lexend; the token name is kept so sizes stay untouched */
@@ -1055,53 +1062,53 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
 /* .type-hero */
 .hero-score {
-  font-family: var(--font-sans); font-size: 40px; font-weight: 700;
+  font-family: var(--font-sans); font-size: var(--fs-32); font-weight: 700;
   line-height: 1.2; letter-spacing: -0.01em; font-variant-numeric: tabular-nums;
 }
 
 /* .type-title */
 .game-header h1, .et-title, .modal-card .mq {
-  font-family: var(--font-sans); font-size: 20px; font-weight: 700; line-height: 1.2; letter-spacing: -0.01em;
+  font-family: var(--font-sans); font-size: var(--fs-20); font-weight: 700; line-height: 1.2; letter-spacing: -0.01em;
 }
-.tc-score-fallback { font-family: var(--font-sans); font-size: 20px; font-weight: 700; line-height: 1.2; color: var(--text-primary); }
+.tc-score-fallback { font-family: var(--font-sans); font-size: var(--fs-20); font-weight: 700; line-height: 1.2; color: var(--text-primary); }
 
 /* Results verdict: the emotional headline of the screen */
-#hero-title { font-family: var(--font-sans); font-size: 28px; font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; color: var(--text-primary); }
+#hero-title { font-family: var(--font-sans); font-size: var(--fs-28); font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; color: var(--text-primary); }
 
 /* .type-question — one step above the 16px answer cards */
 .question-text {
-  font-family: var(--font-sans); font-size: 20px; font-weight: 700;
+  font-family: var(--font-sans); font-size: var(--fs-20); font-weight: 700;
   line-height: 1.2; letter-spacing: 0; text-wrap: balance;
 }
 
 /* .type-subtitle — answer cards, buttons, verdict line */
 .option-btn, .btn-primary, .btn-secondary, .btn-emerald,
 #btn-endless, .feedback-strip .fb-result {
-  font-family: var(--font-sans); font-size: 16px; font-weight: 700; line-height: 1; letter-spacing: 0;
+  font-family: var(--font-sans); font-size: var(--fs-16); font-weight: 700; line-height: 1; letter-spacing: 0;
 }
 .option-btn { font-weight: 700; }
 
 /* .type-body — secondary copy, feedback notes, hints */
 #next-set-line, .bet-toggle, .feedback-strip .fb-insight, .hero-sub, .highlights,
 .modal-card .mdyk, .toast, .duel-card .d-time, #rm-picked, .grid-hint {
-  font-family: var(--font-sans); font-size: 14px; font-weight: 400; line-height: 1; letter-spacing: 0;
+  font-family: var(--font-sans); font-size: var(--fs-14); font-weight: 400; line-height: 1; letter-spacing: 0;
 }
 
 /* Feedback box owns its own type scale (16/20 verdict, 12/16 body) */
-.feedback-strip .fb-result { font-size: 16px; line-height: 1.4; }
-.feedback-strip .fb-insight { font-size: 14px; line-height: 1.4; }
+.feedback-strip .fb-result { font-size: var(--fs-16); line-height: 1.4; }
+.feedback-strip .fb-insight { font-size: var(--fs-14); line-height: 1.4; }
 
 /* .type-eyebrow */
 .tc-eyebrow, .sc-stat span,
 .modal-card .mlabel, .modal-card .mdyk-label {
-  font-family: var(--font-sans); font-size: 14px; font-weight: 400; line-height: 1;
+  font-family: var(--font-sans); font-size: var(--fs-14); font-weight: 400; line-height: 1;
   letter-spacing: 0.04em; text-transform: uppercase;
 }
 
 /* .type-hud */
 #header-meta, .game-header .meta, #landing-puzzle, .streak-pill,
 .stat-chip, #q-timer-text, .results-footer-meta {
-  font-family: var(--font-sans); font-size: 14px; font-weight: 400; line-height: 1;
+  font-family: var(--font-sans); font-size: var(--fs-14); font-weight: 400; line-height: 1;
   letter-spacing: 0; font-variant-numeric: tabular-nums;
 }
 
