@@ -165,7 +165,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .landing-footer #btn-daily { width: 100%; max-width: 340px; margin-top: 4px; } /* + 4px footer gap = 8px above the CTA */
 .landing-body h2 { font-size: 28px; margin: 0; color: var(--text-primary); }
 .landing-body p { font-size: 16px; color: var(--ink-faint); max-width: 320px; margin: 0; line-height: 1.4; }
-.landing-streak-bar {
+.landing-streak-bar { font-variant-numeric: tabular-nums;
   display: flex; align-items: center; justify-content: center; gap: 4px;
   background: none; border: 0; border-radius: 0; padding: 0;
   font-family: var(--font-sans); font-size: 14px; font-weight: 400; line-height: 1.4; color: var(--text-secondary);
@@ -180,7 +180,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .backup-title { font-family: var(--font-sans); font-size: 20px; font-weight: 700; line-height: 1.2; color: var(--text-primary); }
 .backup-label { font-family: var(--font-sans); font-size: 14px; font-weight: 400; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-secondary); }
 .backup-line { font-family: var(--font-sans); font-size: 14px; line-height: 1.4; color: var(--text-secondary); }
-.backup-code { width: 100%; min-height: 64px; resize: vertical; padding: 8px; border-radius: 12px; border: 1px solid var(--border-subtle); background: var(--bg-surface-subtle); color: var(--text-primary); font-family: ui-monospace, Menlo, monospace; font-size: 14px; line-height: 1.4; box-sizing: border-box; }
+.backup-code { width: 100%; min-height: 64px; resize: vertical; padding: 8px; border-radius: 12px; border: 1px solid var(--border-subtle); background: var(--bg-surface-subtle); color: var(--text-primary); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px; line-height: 1.4; box-sizing: border-box; }
 .backup-code:focus { outline: 2px solid var(--accent-brand); outline-offset: 1px; }
 .backup-hint { font-family: var(--font-sans); font-size: 14px; line-height: 1.4; color: var(--text-secondary); min-height: 16px; }
 /* Anonymous aggregate lines on the results card */
@@ -204,7 +204,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
 /* Stats bar */
 .stats-bar { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-.stat-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; font-size: 14px; font-weight: 400; color: var(--ink-faint); font-family: var(--font-mono); }
+.stat-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; font-size: 14px; font-weight: 400; color: var(--ink-faint); font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 .stat-chip b { color: var(--ink); margin-left: 4px; }
 
 /* Daily lock notice */
@@ -634,7 +634,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .hero-score { display: none; }
 .hero-score .of { color: var(--ink-dim); font-size: 24px; font-weight: 700; }
 .hero-title { margin-top: 8px; }
-.hero-sub { display: none; font-family: var(--font-mono); font-size: 14px; color: var(--ink-faint); margin-top: 4px; }
+.hero-sub { font-variant-numeric: tabular-nums; display: none; font-family: var(--font-mono); font-size: 14px; color: var(--ink-faint); margin-top: 4px; }
 .near-miss { font-family: var(--font-sans); font-size: 14px; font-weight: 400; line-height: 1.4; color: var(--accent-bet); margin-top: 8px; }
 .streak-badge {
   display: inline-flex; align-items: center; gap: 8px;
@@ -696,7 +696,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .results-footer #btn-endless-result { width: 100%; max-width: none; }
 .copy-btn { flex: 0 0 44px; width: 44px; height: 44px; min-height: 44px; padding: 0; border-radius: 12px; }
 .copy-btn svg { width: 20px; height: 20px; }
-.results-footer-meta { display: flex; align-items: center; justify-content: center; gap: 4px; font-family: var(--font-mono); font-size: 14px; color: var(--text-secondary); }
+.results-footer-meta { font-variant-numeric: tabular-nums; display: flex; align-items: center; justify-content: center; gap: 4px; font-family: var(--font-mono); font-size: 14px; color: var(--text-secondary); }
 .results-footer .footer-dot { opacity: 0.6; }
 .results-footer.no-count .footer-dot { display: none; }
 .copy-ok { font-size: 16px; font-weight: 700; line-height: 1; }
@@ -889,7 +889,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 @keyframes toastIn { from { opacity:0; transform:translateY(12px)} to { opacity:1; transform:translateY(0)} }
 
 /* Duel banner */
-.duel-banner {
+.duel-banner { font-variant-numeric: tabular-nums;
   display: flex; align-items: center; justify-content: center; gap: 8px;
   background: var(--accent-brand-tint); border: 1px solid rgba(244, 84, 176, 0.35);
   border-radius: var(--radius-sm); padding: 8px 16px; margin-bottom: 12px;
