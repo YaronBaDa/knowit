@@ -265,6 +265,16 @@ hour-long question). Stored results are never rewritten: every display (hub rece
 bar, share text, duel card/modal, aggregate POST) reads through `cappedTotalMs()` / `cappedSeconds()`,
 so a run never shows more than `questions x limit`.
 
+**Boot + splash.** `#boot` is a fixed, full-screen lockup (72 px symbol, `KNOWIT` at 20 px
+`var(--font-display)`, 8 px gap, both centred) in the initial HTML, so it paints before the 3.5 MB
+script parses; it fades out 420 ms after `load` (2.5 s hard fallback) and is removed from the DOM.
+Lexend Zetta 700 (latin, ~15 KB woff2) is **embedded as a base64 `@font-face` with `font-display:
+block`**, and the Google Fonts link now serves Lexend only — the wordmark can never fall back to a
+system face, on first paint or offline. `manifest.webmanifest` ships 192/512 `any` icons plus a
+512 `maskable` one (generated from `#knowit-symbol` on `#140F12`), which is what Android uses to draw
+the PWA splash; the splash's own app-name line is rendered by the OS in the system font and cannot be
+styled from the page.
+
 **Review Answers carousel (`#screen-review`).** The home receipt's `Review answers`, and a tap on any
 miss tile, open a full-screen review: a 48 px flex header (`[symbol] KNOWIT · #n REVIEW` on the left,
 40 px ✕ on the right), a 10-tile scrubber on the rubric geometry (24 px tall, 4 px radius, 4 px gaps,
@@ -432,6 +442,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`BOOT1` brand boot lockup, embedded Zetta wordmark face, 192/512/maskable icons
 `REVIEW2` reveal-style options, clean header lockup, true point deltas, 24px scrubber, no back link
 `REVIEW1` swipeable Review Answers carousel replacing the home→results review hop
 `HUB1` Review answers joins the counter line, shared inline-link style, CTA pinned to the card bottom

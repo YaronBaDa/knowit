@@ -3,7 +3,7 @@
 // - Icons / manifest / og-image: cache-first, they never change between releases.
 // - Cross-origin requests (analytics, fonts, API) are left to the browser entirely.
 // BUMP `CACHE` ON EVERY RELEASE: activate deletes every cache that isn't this one.
-const CACHE = 'knowit-v38';
+const CACHE = 'knowit-v39';
 
 const SHELL = [
   './',
@@ -12,11 +12,14 @@ const SHELL = [
   './favicon.ico',
   './favicon.png',
   './apple-touch-icon.png',
+  './icon-192.png',
+  './icon-512.png',
+  './icon-maskable-512.png',
   './og-image.png',
 ];
 
 // Same-origin files that are safe to serve from cache first.
-const STATIC_FILES = new Set(['manifest.webmanifest', 'favicon.ico', 'favicon.png', 'apple-touch-icon.png', 'og-image.png']);
+const STATIC_FILES = new Set(['manifest.webmanifest', 'favicon.ico', 'favicon.png', 'apple-touch-icon.png', 'og-image.png', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png']);
 
 const INDEX_URL = new URL('index.html', self.location.href).href;
 
