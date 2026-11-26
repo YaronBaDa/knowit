@@ -266,14 +266,17 @@ bar, share text, duel card/modal, aggregate POST) reads through `cappedTotalMs()
 so a run never shows more than `questions x limit`.
 
 **Review Answers carousel (`#screen-review`).** The home receipt's `Review answers`, and a tap on any
-miss tile, open a full-screen review instead of the results screen: a 48 px header (KNOWIT Zetta
-wordmark, centred `DAILY #n REVIEW` eyebrow, 40 px close), a 10-tile scrubber (28 px tiles, emerald /
-crimson, bolt when bet) two-way synced with a horizontally snapped 10-slide track (`flex: 1`, each
-slide exactly one track width, vertical scroll inside a slide when a card is taller than 640 px), and
-a thumb dock (`← Previous` / `Next Miss →` / `Next →` / `Done` + `Back to Home`). It opens on the
-first miss (or Q1 on a 10/10), and the card shows the question, the four options (correct filled
-emerald with ✓, the player's wrong pick filled crimson with `✕ Your pick`, the rest dimmed) and the
-explanation. Tap or swipe both drive the scrubber and the dock labels.
+miss tile, open a full-screen review: a 48 px flex header (`[symbol] KNOWIT · #n REVIEW` on the left,
+40 px ✕ on the right), a 10-tile scrubber on the rubric geometry (24 px tall, 4 px radius, 4 px gaps,
+emerald/crimson, 12 px bolt when the question was bet, 2 px white border on the active tile) two-way
+synced with a horizontally snapped 10-slide track (each slide exactly one track width; a slide scrolls
+vertically only when its card is taller than the viewport), and a dock holding just `← Previous` /
+`Next Miss →` / `Next →` / `Done` (48 px). It opens on the first miss (Q1 on a 10/10). Each card is
+three zones: the 20 px stem, the four options in the in-game reveal language (dark surface + 2 px
+emerald border + ✓, dark surface + 2 px crimson border + `✕ Your pick`, everything else at 42 %
+opacity), then a hairline divider, the `EXPLANATION` label and the note. The per-slide delta is derived
+from the answer itself (`correct` + `bet`), never from stored points, so a missed bet reads
+`−2 pts (Bet Missed ⚡)` in crimson and a timeout reads `−1 pt (Too slow)`.
 
 **Playing screen answered state.** On answer or timeout `#screen-playing` gains `.is-answered`: the
 countdown row is hidden with `visibility: hidden; opacity: 0` (it keeps its box, so nothing jumps), the
@@ -429,6 +432,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`REVIEW2` reveal-style options, clean header lockup, true point deltas, 24px scrubber, no back link
 `REVIEW1` swipeable Review Answers carousel replacing the home→results review hop
 `HUB1` Review answers joins the counter line, shared inline-link style, CTA pinned to the card bottom
 `TIME1` per-question time cap at capture + clamped display, dock hairline hidden under the explanation
