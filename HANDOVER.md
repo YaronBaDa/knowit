@@ -233,7 +233,16 @@ purpose — it stays dark in every theme. `?s=b` is appended to the URL line.
 `#screen-results` stays for Endless run-overs, `?vs=` ghost duels (head-to-head card) and unranked
 replays; `finishGame()` decides with `toHub` and `viewTodaysResults()`/Review forces results.
 
-**Post-completion home** (`.is-completed`), four zones on a 12 px rhythm. The streak and countdown
+**Post-completion home** (`.is-completed`) is a full-height flex column: `#screen-landing.is-completed`
+takes `height/min-height: 100dvh`, `justify-content: space-between`, a 12 px gap and
+`padding-bottom: max(16px, env(safe-area-inset-bottom))`, so the last card always finishes at the safe
+area with no dead space. The brand header, the Brainprint bridge and the Endless card keep their
+intrinsic height (`flex: 0 0 auto`); the Today's Set receipt is `flex: 1 0 auto` with
+`justify-content: space-between` — it grows to take every spare pixel but never squashes its content,
+and the Challenge row is its last child (17 px of card padding below it). Below 700 px height the
+body padding and stack gap drop to 8 px so the Endless card still clears the safe area at 360x640.
+
+Four zones on a 12 px rhythm. The streak and countdown
 live inside the receipt (no floating pill): a 14 px row with the pink flame + `N-day streak`
 (number at 600) on the left and muted `Next set in Xh Ym` on the right, then a 1 px `--border`
 divider.
@@ -442,6 +451,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`HOME1` full-height receipt card, icon-free left-aligned Endless card
 `BOOT1` brand boot lockup, embedded Zetta wordmark face, 192/512/maskable icons
 `REVIEW2` reveal-style options, clean header lockup, true point deltas, 24px scrubber, no back link
 `REVIEW1` swipeable Review Answers carousel replacing the home→results review hop

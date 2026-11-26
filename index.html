@@ -255,11 +255,19 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
 /* ---- Completed-day hub: 4-zone hierarchy (habit bar → receipt → bridge → endless) ---- */
 .hub-head, .hub-cards { display: none; }
+/* Completed home owns the full viewport: header, receipt, bridge and Endless card all
+   fit inside 100dvh with the bottom safe area respected and no trailing dead space. */
+#screen-landing.is-completed {
+  height: 100dvh; min-height: 100dvh;
+  display: flex; flex-direction: column; justify-content: space-between; gap: 12px;
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  overflow: hidden;
+}
 #screen-landing.is-completed .landing-body {
-  flex: 1; min-height: 0;
+  flex: 1 1 auto; min-height: 0;
   display: flex; flex-direction: column; align-items: center;
-  justify-content: flex-start; gap: 12px;
-  padding-top: 12px; padding-bottom: 16px;
+  justify-content: space-between; gap: 12px;
+  padding-top: 12px; padding-bottom: 0;
 }
 #screen-landing.is-completed .landing-body::before,
 #screen-landing.is-completed .landing-body::after { content: none; }
@@ -283,12 +291,17 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 #screen-landing.is-completed .completed-stack { display: flex; flex-direction: column; gap: 12px; flex: 1 1 auto; min-height: 0; margin-top: 0; }
 #screen-landing.is-completed .landing-footer { display: none; }
+/* Short phones: tighten the rhythm just enough that the Endless card clears the safe area */
+@media (max-height: 700px) {
+  #screen-landing.is-completed .landing-body { padding-top: 8px; gap: 8px; }
+  #screen-landing.is-completed .completed-stack { gap: 8px; }
+}
 
-/* Zone 2 — TODAY'S SET receipt */
+/* Zone 2 — TODAY'S SET receipt: fills the height left by the header, bridge and Endless card */
 .trophy-card {
   width: 100%; background: #1F181C; border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 16px; padding: 16px; text-align: left;
-  flex: 0 0 auto; display: flex; flex-direction: column;
+  flex: 1 0 auto; min-height: 0; display: flex; flex-direction: column; justify-content: space-between;
 }
 /* Streak + countdown inside the card, then the hairline divider */
 .tc-streak-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; font-family: var(--font-sans); font-size: 14px; line-height: var(--lh-icon); color: var(--text-secondary); white-space: nowrap; font-variant-numeric: tabular-nums; }
@@ -329,7 +342,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .tc-grid .rubric-tile[data-idx] { cursor: pointer; }
 .tc-nudge { margin-top: 8px; font-family: var(--font-sans); font-size: 14px; line-height: var(--lh-body); color: var(--text-secondary); }
 /* Pinned to the bottom: auto eats any slack, the padding keeps a 12px minimum gap */
-.tc-cta-row { display: flex; align-items: stretch; gap: 8px; margin-top: auto; padding-top: 12px; }
+.tc-cta-row { display: flex; align-items: stretch; gap: 8px; margin-top: 12px; }
 .tc-cta-row .btn-primary {
   flex: 1 1 auto; width: auto; max-width: none; height: 44px; padding: 0 16px; border-radius: 12px;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap;
@@ -361,12 +374,12 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .et-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; flex-shrink: 0; }
 .et-eyebrow { font-family: var(--font-sans); font-size: 14px; font-weight: var(--fw-bold); line-height: var(--lh-body); letter-spacing: 0.04em; color: #F454B0; }
 .et-lives { font-family: var(--font-sans); font-size: 14px; font-weight: var(--fw-regular); line-height: var(--lh-icon); padding: 4px 8px; border-radius: 999px; background: #140F12; border: 1px solid rgba(255, 255, 255, 0.08); color: var(--text-secondary); }
-.et-mid { display: flex; align-items: center; gap: 12px; margin: 12px 0; width: 100%; min-width: 0; }
-.et-mark { flex: 0 0 32px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
-.et-mark svg { width: 32px; height: 32px; display: block; }
-.et-copy { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; text-align: left; }
+.et-mid {
+  display: flex; flex-direction: column; align-items: flex-start; text-align: left;
+  gap: 4px; width: 100%; min-width: 0; margin: 12px 0;
+}
 .et-headline { font-family: var(--font-sans); font-size: 20px; font-weight: var(--fw-bold); line-height: var(--lh-heading); color: #F3F4F6; }
-.et-sub { font-family: var(--font-sans); font-size: 14px; line-height: var(--lh-body); font-weight: var(--fw-regular); color: var(--text-secondary); margin-top: 4px; }
+.et-sub { font-family: var(--font-sans); font-size: 14px; line-height: var(--lh-body); font-weight: var(--fw-regular); color: var(--text-secondary); }
 .btn-outline-brand {
   width: 100%; height: 44px; border-radius: 12px; border: 1px solid var(--accent-brand);
   background: transparent; color: var(--accent-brand);
@@ -1390,11 +1403,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
             <span class="et-lives">3 LIVES</span>
           </div>
           <div class="et-mid">
-            <span class="et-mark" aria-hidden="true"><svg viewBox="0 0 48 48" preserveAspectRatio="xMidYMid meet"><use href="#knowit-symbol"></use></svg></span>
-            <div class="et-copy">
-              <div class="et-headline" id="et-headline">Want to keep going?</div>
-              <div class="et-sub" id="gt-line">Best run: 0</div>
-            </div>
+            <div class="et-headline" id="et-headline">Want to keep going?</div>
+            <div class="et-sub" id="gt-line">Best run: 0</div>
           </div>
           <button class="btn-outline-brand" id="btn-endless">Play Endless</button>
         </div>
