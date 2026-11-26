@@ -265,6 +265,16 @@ hour-long question). Stored results are never rewritten: every display (hub rece
 bar, share text, duel card/modal, aggregate POST) reads through `cappedTotalMs()` / `cappedSeconds()`,
 so a run never shows more than `questions x limit`.
 
+**Review Answers carousel (`#screen-review`).** The home receipt's `Review answers`, and a tap on any
+miss tile, open a full-screen review instead of the results screen: a 48 px header (KNOWIT Zetta
+wordmark, centred `DAILY #n REVIEW` eyebrow, 40 px close), a 10-tile scrubber (28 px tiles, emerald /
+crimson, bolt when bet) two-way synced with a horizontally snapped 10-slide track (`flex: 1`, each
+slide exactly one track width, vertical scroll inside a slide when a card is taller than 640 px), and
+a thumb dock (`← Previous` / `Next Miss →` / `Next →` / `Done` + `Back to Home`). It opens on the
+first miss (or Q1 on a 10/10), and the card shows the question, the four options (correct filled
+emerald with ✓, the player's wrong pick filled crimson with `✕ Your pick`, the rest dimmed) and the
+explanation. Tap or swipe both drive the scrubber and the dock labels.
+
 **Playing screen answered state.** On answer or timeout `#screen-playing` gains `.is-answered`: the
 countdown row is hidden with `visibility: hidden; opacity: 0` (it keeps its box, so nothing jumps), the
 bet toggle is removed from the flow, and the explanation strip takes that space. `renderQuestion()`
@@ -419,6 +429,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`REVIEW1` swipeable Review Answers carousel replacing the home→results review hop
 `HUB1` Review answers joins the counter line, shared inline-link style, CTA pinned to the card bottom
 `TIME1` per-question time cap at capture + clamped display, dock hairline hidden under the explanation
 `Q20` 20px question stem, countdown hidden while the explanation shows, dwell rail removed
