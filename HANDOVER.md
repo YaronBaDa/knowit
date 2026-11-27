@@ -128,8 +128,15 @@ shows `rgba(230,180,80,.16)`, then springs back over 250ms `cubic-bezier(.34,1.5
 every inline style. `cancelPeek()` fires on pointerdown / touchstart / keydown / wheel (capture,
 passive), at the top of `handleAnswer()` and at the start of each render, so taps and drags are never
 delayed — a real right-swipe afterwards still arms the bet.
-- `#screen-results` — hero score/title, duel card, scorecard (grid + stat bar + agg lines),
-  blindspot highlights, Brainprint trigger, share text, bottom dock.
+- `#screen-results` — two mutually exclusive layouts. **Daily**: hero score/title, duel card,
+  scorecard (grid + stat bar + agg lines), blindspot highlights, Brainprint trigger, share text,
+  bottom dock. **Endless** (`.is-endless`, which hides every block above): `#endless-result` in
+  three zones — the run card (ENDLESS MODE + `Best run: n`, a 40px correct-count numeral,
+  `n/m correct · verdict`, an optional amber near-miss line, a flat 24px tile strip that wraps
+  past ten tiles, the `time · Tap a heart to review` line, then Review answers / Share), a single
+  Brainprint bridge row (`Top: <subject> (<pct>%)` + `Brainprint ↗`), and a dock with a 48px pink
+  Play Again over a 40px Home. Tiles carry no border, shadow or well: mint for hits, coral with the
+  broken-heart glyph for misses, and a missed tile jumps Review to that question.
 
 Overlays: `#brainprint-modal` (a **full-bleed page**, not a card), `#review-modal`, `#duel-modal`,
 `#backup-modal`, `#toast-host`, `#hurt-vignette`, `#confetti-canvas`.
@@ -486,6 +493,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`ENDRES1` endless results rebuilt as card -> bridge -> dock; hero shows correct answers
 `BET1` always-on swipe prompt with state copy, Q1 peek-and-spring for first-time bettors
 `ENDLESS1` fix: inactive completed home pushed the game screen below the fold; Endless entry delegated
 `VOICE1` headline + bet/clock caption on the receipt
