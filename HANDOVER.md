@@ -107,6 +107,25 @@ Single classic `<script>` (not a module), plain ES2018+, helper `$(id)`, functio
 level. Structure top→bottom: `<head>` (meta, manifest, Plausible, Google Fonts, one `<style>`), SVG
 sprite/defs, three screens, modals, then the script.
 
+### Buttons
+
+One system, defined at `:root`: `--btn-h-lg: 48px`, `--btn-h-md: 44px`, `--btn-h-sm: 40px`,
+`--btn-r: 12px`, `--btn-pad-lg/md/sm: 0 20/16/12px`.
+
+- **Primary** (`.btn-primary`, `#er-again`, `.bp-share`) — 48, `0 20px`, 16/700, brand pink on `--on-brand`.
+- **Secondary** (`.btn-secondary`, `.er-btn`, `.rv-btn`) — 44, `0 16px`, 16/700 or 14/700 for the
+  compact endless pair, one surface: `rgba(255,255,255,.04)` + `1px rgba(255,255,255,.14)`.
+- **Brand outline** (`.btn-outline-brand`) — 44, secondary geometry, brand border + brand text.
+- **Icon** (`.icon-btn`, `.audio-btn`, `.rv-close`, `.bp-close`) — 40, no padding, 20px glyph;
+  `.copy-btn` inherits the height of the row it sits in (44, or 48 beside a primary).
+- **Compact rows** (`.bp-bridge`, `.er-bridge .er-btn`, `.bet-toggle`) — 40, in-card only.
+- **Text links** (`.tc-inline-link`, `.backup-link`, `.link-home`) — 14/700 in body colour, no chrome,
+  with a `::after` hit expander that gives a 44px target without moving layout.
+- Tiles (`.er-tile`, `.rv-tile`) are 24px display elements, not buttons; chips (`.et-lives`,
+  `.category-pill`) are 24px pills. `.option-btn` is an answer card sized by its content.
+
+Never introduce a new height, radius or padding for a button: pick one of the three tiers.
+
 ### Screens
 - `#screen-landing` — pre-completion hero **and** the post-completion hub (toggled by
   `.is-completed` on the screen). Same DOM node serves both states.
@@ -493,6 +512,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`BTNSYS1` button consolidation: 9 heights -> 3, one secondary surface, tokens for radius/padding
 `ENDRES1` endless results rebuilt as card -> bridge -> dock; hero shows correct answers
 `BET1` always-on swipe prompt with state copy, Q1 peek-and-spring for first-time bettors
 `ENDLESS1` fix: inactive completed home pushed the game screen below the fold; Endless entry delegated

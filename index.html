@@ -51,6 +51,14 @@
   --text-primary: #F3F4F6;
   --text-secondary: #B2A4AC;
   --on-brand: #140F12;
+  /* Button system: three heights, one radius, three paddings. Nothing else. */
+  --btn-h-lg: 48px;   /* the single primary CTA on a screen, and anything in its row */
+  --btn-h-md: 44px;   /* every other tappable control */
+  --btn-h-sm: 40px;   /* header utilities and compact in-card rows */
+  --btn-r: 12px;
+  --btn-pad-lg: 0 20px;
+  --btn-pad-md: 0 16px;
+  --btn-pad-sm: 0 12px;
 
   /* Semantic actions & feedback */
   --accent-correct: #5CCB9D;
@@ -131,9 +139,9 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .game-header .meta { color: var(--ink-faint); }
 .header-actions { display: flex; gap: 8px; }
 .icon-btn {
-  width: 36px; height: 36px; border-radius: var(--radius-sm); border: 1px solid var(--border);
-  background: var(--surface); color: var(--ink); font-family: var(--font-sans); font-size: 16px; font-weight: var(--fw-bold); cursor: pointer;
-  display: flex; align-items: center; justify-content: center; transition: transform .12s;
+  width: var(--btn-h-sm); height: var(--btn-h-sm); border-radius: var(--btn-r); border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04); color: var(--ink); font-family: var(--font-sans); font-size: var(--fs-16); font-weight: var(--fw-bold); cursor: pointer;
+  padding: 0; display: flex; align-items: center; justify-content: center; transition: transform .12s;
 }
 .icon-btn:active { transform: scale(0.92); }
 
@@ -213,8 +221,9 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .landing-streak-bar .broken { opacity: 0.55; filter: grayscale(1); }
 .freeze-tag { display: inline-flex; align-items: center; gap: 4px; color: var(--accent-brand); font-size: 14px; font-weight: var(--fw-regular); line-height: var(--lh-icon); }
 .freeze-tag svg { width: 12px; height: 12px; }
-.backup-link { background: none; border: 0; padding: 4px 8px; margin-top: 4px; color: var(--text-secondary); font-family: var(--font-sans); font-size: 14px; font-weight: var(--fw-regular); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.backup-link { position: relative; background: none; border: 0; padding: 4px 8px; margin-top: 4px; color: var(--text-secondary); font-family: var(--font-sans); font-size: 14px; font-weight: var(--fw-regular); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
 .backup-link:active { color: var(--text-primary); }
+.backup-link::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 44px; transform: translateY(-50%); }
 /* Backup modal */
 .backup-title { font-family: var(--font-sans); font-size: 20px; font-weight: var(--fw-bold); line-height: var(--lh-heading); color: var(--text-primary); }
 .backup-label { font-family: var(--font-sans); font-size: 14px; font-weight: var(--fw-regular); letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-secondary); }
@@ -227,15 +236,15 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .agg-line { font-family: var(--font-sans); font-size: 14px; font-weight: var(--fw-regular); line-height: var(--lh-body); color: var(--accent-brand); text-align: center; padding-top: 8px; }
 #backup-modal .modal-card { display: flex; flex-direction: column; gap: 8px; padding-bottom: 20px; }
 .btn-primary {
-  width: 100%; max-width: 280px; height: 52px; padding: 0 20px; border-radius: 12px; border: none;
+  width: 100%; max-width: 280px; height:var(--btn-h-lg); padding:var(--btn-pad-lg); border-radius: 12px; border: none;
   background: #F454B0; background-image: var(--brand-cta-grad); color: #140F12; font-size: 16px; font-weight: var(--fw-bold); cursor: pointer;
   box-shadow: 0 4px 16px rgba(244, 84, 176, 0.24); transition: transform .12s, filter .12s; font-family: var(--font-sans);
 }
 .btn-primary:hover { filter: brightness(1.06); }
 .btn-primary:active { transform: scale(0.97); }
 .btn-secondary {
-  width: 100%; max-width: 280px; height: 40px; padding: 0 16px; border-radius: 12px; border: 1px solid var(--border);
-  background: var(--surface); color: var(--ink); font-size: 16px; font-weight: var(--fw-bold); cursor: pointer;
+  width: 100%; max-width: 280px; height:var(--btn-h-md); padding:var(--btn-pad-md); border-radius: var(--btn-r);
+  border: 1px solid rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.04); color: var(--ink); font-size: 16px; font-weight: var(--fw-bold); cursor: pointer;
   transition: transform .12s; font-family: var(--font-sans);
 }
 .btn-secondary:active { transform: scale(0.97); }
@@ -340,12 +349,15 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .tc-meta-row .tc-subline { margin-top: 0; }
 /* One inline action treatment for every secondary link in the hub (Review answers, Brainprint ↗) */
 .tc-inline-link {
+  position: relative;
   flex-shrink: 0; white-space: nowrap; background: transparent; border: none; padding: 0;
   font-family: var(--font-sans); font-size: 14px; font-weight: var(--fw-bold);
   line-height: var(--lh-icon); letter-spacing: 0; color: #F3F4F6;
   cursor: pointer; text-decoration: none; text-underline-offset: 2px;
 }
 .tc-inline-link:hover, .tc-inline-link:focus-visible { text-decoration: underline; }
+/* Text links keep their 14px look but get a 44px tap target without moving layout */
+.tc-inline-link::after { content: ''; position: absolute; left: -8px; right: -8px; top: 50%; height: 44px; transform: translateY(-50%); }
 .tc-inline-link:active { opacity: .7; }
 .tc-agg { margin-top: 8px; font-family: var(--font-sans); font-size: 14px; line-height: var(--lh-body); font-weight: var(--fw-regular); color: var(--accent-brand); }
 .tc-bets { margin-top: 8px; font-family: var(--font-sans); font-size: 14px; line-height: var(--lh-body); color: var(--text-secondary); }
@@ -355,10 +367,10 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* Pinned to the bottom: auto eats any slack, the padding keeps a 12px minimum gap */
 .tc-cta-row { display: flex; align-items: stretch; gap: 8px; margin-top: 12px; }
 .tc-cta-row .btn-primary {
-  flex: 1 1 auto; width: auto; max-width: none; height: 44px; padding: 0 16px; border-radius: 12px;
+  flex: 1 1 auto; width: auto; max-width: none; height:var(--btn-h-lg); padding:var(--btn-pad-lg); border-radius: 12px;
   display: inline-flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap;
 }
-.tc-cta-row .copy-btn { flex: 0 0 44px; width: 44px; height: 44px; padding: 0; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; }
+.tc-cta-row .copy-btn { flex: 0 0 48px; width: 48px; height: 48px; padding: 0; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; }
 .tc-cta-row .copy-btn svg { width: 16px; height: 16px; display: block; }
 
 /* Zone 3 — career Brainprint bridge bar */
@@ -366,7 +378,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px;
   padding: 12px 16px; border-radius: 12px; background: #1F181C;
   border: 1px solid rgba(255, 255, 255, 0.08); cursor: pointer; text-align: left;
-  font-family: var(--font-sans); flex: 0 0 auto; transition: transform .12s;
+  font-family: var(--font-sans); font-size: var(--fs-14); flex: 0 0 auto; transition: transform .12s;
 }
 .bp-bridge:active { transform: scale(0.99); }
 .bp-bridge-label { font-size: 14px; line-height: var(--lh-icon); color: var(--text-secondary); min-width: 0; flex: 1 1 auto; }
@@ -392,7 +404,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .et-headline { font-family: var(--font-sans); font-size: 20px; font-weight: var(--fw-bold); line-height: var(--lh-heading); color: #F3F4F6; }
 .et-sub { font-family: var(--font-sans); font-size: 14px; line-height: var(--lh-body); font-weight: var(--fw-regular); color: var(--text-secondary); }
 .btn-outline-brand {
-  width: 100%; height: 44px; border-radius: 12px; border: 1px solid var(--accent-brand);
+  width: 100%; height:var(--btn-h-md); padding: var(--btn-pad-md); border-radius: var(--btn-r); border: 1px solid var(--accent-brand);
   background: transparent; color: var(--accent-brand);
   font-family: var(--font-sans); font-size: 16px; font-weight: var(--fw-bold); cursor: pointer;
   transition: transform .12s, background .12s;
@@ -664,7 +676,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* Unchosen answers fade back so the reveal reads cleanly */
 .option-btn { transition: transform .08s ease, border-color .2s, box-shadow .2s, opacity .18s ease; }
 .option-btn.dimmed { opacity: 0.42; }
-.audio-btn { width: 36px; height: 36px; }
+.audio-btn { width:var(--btn-h-sm); height:var(--btn-h-sm); }
 .audio-btn svg { width: 16px; height: 16px; }
 .audio-btn.is-muted { opacity: .55; }
 
@@ -761,7 +773,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 .results-footer .action-row { display: flex; gap: 8px; align-items: stretch; }
 .results-footer .action-row #btn-challenge { flex: 1 1 auto; width: auto; max-width: none; }
-.results-footer #btn-endless-result { width: 100%; max-width: none; }
+.results-footer #btn-endless-result { width: 100%; max-width: none; height: var(--btn-h-md); }
 .copy-btn { flex: 0 0 44px; width: 44px; height: 44px; min-height: 44px; padding: 0; border-radius: 12px; }
 .copy-btn svg { width: 20px; height: 20px; }
 .results-footer-meta { font-variant-numeric: tabular-nums; display: flex; align-items: center; justify-content: center; gap: 4px; font-family: var(--font-mono); font-size: 14px; color: var(--text-secondary); }
@@ -814,16 +826,16 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .er-meta { font-family: var(--font-sans); font-size: var(--fs-14); font-weight: var(--fw-regular); line-height: var(--lh-body); color: var(--text-secondary); font-variant-numeric: tabular-nums; }
 .er-actions { display: flex; gap: 8px; width: 100%; }
 .er-btn {
-  flex: 1 1 0; height: 40px; min-height: 40px; border-radius: 12px; padding: 0 12px;
+  flex: 1 1 0; height: var(--btn-h-md); min-height: var(--btn-h-md); border-radius: 12px; padding: var(--btn-pad-md);
   background-color: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.14);
   font-family: var(--font-sans); font-size: var(--fs-14); font-weight: var(--fw-bold); color: #F3F4F6;
   display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;
 }
 .er-bridge { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
 .er-bridge-label { font-family: var(--font-sans); font-size: var(--fs-14); font-weight: var(--fw-regular); line-height: var(--lh-body); color: var(--text-secondary); min-width: 0; }
-.er-bridge .er-btn { flex: 0 0 auto; }
+.er-bridge .er-btn { flex: 0 0 auto; height: var(--btn-h-sm); min-height: var(--btn-h-sm); padding: var(--btn-pad-sm); }
 .er-dock { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: auto; }
-.er-dock #er-again { width: 100%; height: 48px; min-height: 48px; border-radius: 12px; font-size: var(--fs-16); font-weight: var(--fw-bold); }
+.er-dock #er-again { width: 100%; height: var(--btn-h-lg); min-height: var(--btn-h-lg); border-radius: var(--btn-r); font-size: var(--fs-16); font-weight: var(--fw-bold); }
 .er-dock #er-home { flex: 0 0 auto; width: 100%; }
 
 /* Share text stays constructed but hidden from UI */
@@ -899,8 +911,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .bp-wordmark { font-size: 16px; }
 .bp-eyebrow { font-family: var(--font-sans); font-size: 14px; font-weight: var(--fw-regular); letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-secondary); }
 .bp-close {
-  width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center;
-  background: none; border: none; border-radius: 12px; color: var(--text-secondary);
+  width: var(--btn-h-sm); height: var(--btn-h-sm); display: inline-flex; align-items: center; justify-content: center;
+  background: none; border: none; border-radius: var(--btn-r); color: var(--text-secondary);
   font-family: var(--font-sans); font-size: 20px; line-height: var(--lh-icon); padding: 0; cursor: pointer; flex-shrink: 0;
 }
 .bp-close:active { color: var(--text-primary); background: rgba(255, 255, 255, 0.06); }
@@ -949,7 +961,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 .bp-dock .bp-share {
   display: block; width: 100%; max-width: 448px; margin: 0 auto;
-  height: 48px; border-radius: 12px; flex-shrink: 0;
+  height: var(--btn-h-lg); border-radius: var(--btn-r); flex-shrink: 0;
 }
 .bp-share:disabled { opacity: .75; }
 }
@@ -1064,7 +1076,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
 /* Visible bet toggle (replaces the hidden-gesture-only affordance) */
 /* Swipe-to-bet prompt above Option A: directional, always on, one line at 360px */
-.bet-toggle { flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; height: 36px; margin-bottom: 8px; padding: 0; border-radius: var(--radius-sm); border: 0; background: none; color: var(--text-secondary); font-family: var(--font-sans); font-size: var(--fs-14); font-weight: var(--fw-regular); line-height: var(--lh-body); letter-spacing: 0; white-space: nowrap; cursor: pointer; touch-action: manipulation; }
+.bet-toggle { flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; height: var(--btn-h-sm); margin-bottom: 8px; padding: 0; border-radius: var(--btn-r); border: 0; background: none; color: var(--text-secondary); font-family: var(--font-sans); font-size: var(--fs-14); font-weight: var(--fw-regular); line-height: var(--lh-body); letter-spacing: 0; white-space: nowrap; cursor: pointer; touch-action: manipulation; }
 .bet-toggle svg { width: 14px; height: 14px; color: var(--accent-bet); flex-shrink: 0; }
 .bet-toggle.is-spent svg { opacity: 0.4; }
 .bet-toggle.armed { background: var(--accent-bet); color: var(--bg-canvas); font-weight: var(--fw-bold); padding: 0 12px; }
@@ -1116,7 +1128,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   overflow: hidden; text-overflow: ellipsis;
 }
 .rv-close {
-  width: 40px; height: 40px; flex: 0 0 40px; border-radius: 12px;
+  width: var(--btn-h-sm); height: var(--btn-h-sm); flex: 0 0 var(--btn-h-sm); padding: 0; border-radius: var(--btn-r);
   background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.14);
   color: #F3F4F6; font-family: var(--font-sans); font-size: 16px; line-height: var(--lh-icon);
   display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
@@ -1132,6 +1144,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 .rv-tile {
   height: 24px; border-radius: 4px; cursor: pointer; padding: 0;
+  font-family: var(--font-sans); font-size: var(--fs-14);
   display: flex; align-items: center; justify-content: center;
   border: 2px solid transparent; transition: border-color .12s, transform .12s;
 }
@@ -1216,7 +1229,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 .rv-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
 .rv-btn {
-  height: 48px; border-radius: 12px; cursor: pointer;
+  height:var(--btn-h-md); padding: var(--btn-pad-md); border-radius: var(--btn-r); cursor: pointer;
   font-family: var(--font-sans); font-size: 16px; font-weight: var(--fw-bold); line-height: var(--lh-icon);
   transition: transform .12s, opacity .12s;
 }
