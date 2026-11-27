@@ -256,8 +256,10 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 /* ---- Completed-day hub: 4-zone hierarchy (habit bar → receipt → bridge → endless) ---- */
 .hub-head, .hub-cards { display: none; }
 /* Completed home owns the full viewport: header, receipt, bridge and Endless card all
-   fit inside 100dvh with the bottom safe area respected and no trailing dead space. */
-#screen-landing.is-completed {
+   fit inside 100dvh with the bottom safe area respected and no trailing dead space.
+   Must be scoped to .active: an unconditional display:flex here kept the finished home
+   in the flow underneath every other screen, which pushed the game screen below the fold. */
+#screen-landing.is-completed.active {
   height: 100dvh; min-height: 100dvh;
   display: flex; flex-direction: column; justify-content: space-between; gap: 12px;
   padding-bottom: max(16px, env(safe-area-inset-bottom));
@@ -295,6 +297,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 @media (max-height: 700px) {
   #screen-landing.is-completed .landing-body { padding-top: 8px; gap: 8px; }
   #screen-landing.is-completed .completed-stack { gap: 8px; }
+  #screen-landing.is-completed .trophy-card { padding: 12px; }
 }
 
 /* Zone 2 — TODAY'S SET receipt: fills the height left by the header, bridge and Endless card */
@@ -372,7 +375,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
 /* Zone 4 — Endless stage, compact and secondary */
 .endless-teaser {
-  width: 100%; max-width: none; text-align: left;
+  width: 100%; max-width: none; text-align: left; cursor: pointer;
   flex: 0 0 auto; min-height: 0;
   display: flex; flex-direction: column;
   padding: 16px; border-radius: 16px;
@@ -1785,6 +1788,26 @@ class AudioEngine {
   wrong() { this.thud(); }
 }
 const audio = new AudioEngine();
+
+/* Endless entry point. One delegated, capture-phase handler owns the whole
+   affordance — the card itself, the home button and the results button — so the
+   tap cannot be lost to wiring order, and a failure reports instead of doing
+   nothing. Registered here, before the rest of init, on purpose. */
+function safeStartEndless() {
+  try { startEndless(); }
+  catch (err) {
+    try { console.error('KNOWIT: Endless failed to start', err); } catch (e) {}
+    try { toast('Could not start Endless — reload the app.'); } catch (e) {}
+  }
+}
+document.addEventListener('click', (e) => {
+  const t = e.target;
+  const hit = t && t.closest ? t.closest('#endless-teaser, #btn-endless, #btn-endless-result') : null;
+  if (!hit || e.__knEndless) return;
+  e.__knEndless = true;                      // the card and its button are one target
+  try { audio.click(); } catch (err) {}
+  safeStartEndless();
+}, true);
 
 // Mute preference lives in localStorage so it survives reloads
 function loadMuted() {
@@ -5751,8 +5774,6 @@ document.addEventListener('keydown', e => {
 
 // ---- Buttons ----
 $('btn-daily').onclick = ()=>{ audio.click(); startDaily(); };
-$('btn-endless').onclick = ()=>{ audio.click(); startEndless(); };
-$('btn-endless-result').onclick = ()=>{ audio.click(); startEndless(); };
 $('btn-practice').onclick = ()=>{ audio.click(); startDaily(); };
 $('btn-view-results').onclick = ()=>{ audio.click(); openReviewCarousel(); };
 // Bridge bar: the whole row is the Brainprint affordance

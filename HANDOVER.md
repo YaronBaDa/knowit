@@ -233,7 +233,10 @@ purpose — it stays dark in every theme. `?s=b` is appended to the URL line.
 `#screen-results` stays for Endless run-overs, `?vs=` ghost duels (head-to-head card) and unranked
 replays; `finishGame()` decides with `toHub` and `viewTodaysResults()`/Review forces results.
 
-**Post-completion home** (`.is-completed`) is a full-height flex column: `#screen-landing.is-completed`
+**Post-completion home** (`.is-completed.active` — the `.active` is load-bearing: without it the
+finished home kept `display: flex` while inactive, stayed in the flow under every other screen and
+pushed the question screen below the fold, which read as "Play Endless does nothing").
+It is a full-height flex column: `#screen-landing.is-completed`
 takes `height/min-height: 100dvh`, `justify-content: space-between`, a 12 px gap and
 `padding-bottom: max(16px, env(safe-area-inset-bottom))`, so the last card always finishes at the safe
 area with no dead space. The brand header, the Brainprint bridge and the Endless card keep their
@@ -466,6 +469,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`ENDLESS1` fix: inactive completed home pushed the game screen below the fold; Endless entry delegated
 `VOICE1` headline + bet/clock caption on the receipt
 `HOME1` full-height receipt card, icon-free left-aligned Endless card
 `BOOT1` brand boot lockup, embedded Zetta wordmark face, 192/512/maskable icons
