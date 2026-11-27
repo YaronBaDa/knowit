@@ -771,6 +771,61 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .results-footer .link-home { min-height: 44px; display: inline-flex; align-items: center; padding: 0 12px; text-underline-offset: 4px; }
 .grid-hint { font-size: 14px; color: var(--ink-dim); font-family: var(--font-mono); margin-top: -4px; }
 
+/* ---- Endless run summary: its own three-zone layout; daily blocks are hidden here ---- */
+#screen-results.is-endless .results-eyebrow,
+#screen-results.is-endless .results-hero,
+#screen-results.is-endless .scorecard,
+#screen-results.is-endless .highlights,
+#screen-results.is-endless .bp-trigger-wrap,
+#screen-results.is-endless .results-footer,
+#screen-results.is-endless .duel-card { display: none !important; }
+#screen-results.is-endless .results-body { gap: 16px; padding-bottom: 0; justify-content: flex-start; }
+.endless-result { display: none; }
+#screen-results.is-endless .endless-result {
+  width: 100%; max-width: 340px; flex: 1 1 auto; min-height: 0;
+  display: flex; flex-direction: column; justify-content: flex-start; gap: 16px; text-align: left;
+}
+.er-card {
+  width: 100%; background: #1F181C; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px;
+  padding: 20px; display: flex; flex-direction: column; justify-content: space-between; gap: 20px;
+  flex: 0 0 auto;
+}
+.er-group { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.er-group.body { gap: 8px; }
+.er-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.er-eyebrow { font-family: var(--font-sans); font-size: var(--fs-14); font-weight: var(--fw-bold); line-height: var(--lh-body); letter-spacing: 0.04em; color: #F454B0; }
+.er-best { font-family: var(--font-sans); font-size: var(--fs-14); font-weight: var(--fw-regular); line-height: var(--lh-body); color: var(--text-secondary); white-space: nowrap; }
+.er-score { font-family: var(--font-sans); font-size: 40px; font-weight: var(--fw-bold); line-height: var(--lh-heading); letter-spacing: -0.01em; color: #F3F4F6; font-variant-numeric: tabular-nums; }
+.er-verdict { font-family: var(--font-sans); font-size: var(--fs-16); font-weight: var(--fw-bold); line-height: var(--lh-heading); color: var(--text-secondary); }
+.er-near { font-family: var(--font-sans); font-size: var(--fs-14); font-weight: var(--fw-regular); line-height: var(--lh-body); color: var(--accent-bet); }
+/* Flat rubric strip: no well, no bevel, no shadows, no trailing slot */
+.er-tiles { display: flex; flex-wrap: nowrap; gap: 6px; width: 100%; }
+.er-tiles.wraps { flex-wrap: wrap; }
+.er-tile {
+  flex: 1 1 0; min-width: 0; height: 24px; border-radius: 4px;
+  border: none; box-shadow: none; outline: none;
+  display: flex; align-items: center; justify-content: center; background: none;
+}
+.er-tiles.wraps .er-tile { flex: 0 0 24px; }
+.er-tile.ok { background: var(--accent-correct); }
+.er-tile.bad { background: var(--accent-incorrect); cursor: pointer; }
+.er-tile.bad:active { transform: scale(0.94); }
+.er-tile svg { width: 12px; height: 12px; display: block; }
+.er-meta { font-family: var(--font-sans); font-size: var(--fs-14); font-weight: var(--fw-regular); line-height: var(--lh-body); color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.er-actions { display: flex; gap: 8px; width: 100%; }
+.er-btn {
+  flex: 1 1 0; height: 40px; min-height: 40px; border-radius: 12px; padding: 0 12px;
+  background-color: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.14);
+  font-family: var(--font-sans); font-size: var(--fs-14); font-weight: var(--fw-bold); color: #F3F4F6;
+  display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;
+}
+.er-bridge { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
+.er-bridge-label { font-family: var(--font-sans); font-size: var(--fs-14); font-weight: var(--fw-regular); line-height: var(--lh-body); color: var(--text-secondary); min-width: 0; }
+.er-bridge .er-btn { flex: 0 0 auto; }
+.er-dock { display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: auto; }
+.er-dock #er-again { width: 100%; height: 48px; min-height: 48px; border-radius: 12px; font-size: var(--fs-16); font-weight: var(--fw-bold); }
+.er-dock #er-home { flex: 0 0 auto; width: 100%; }
+
 /* Share text stays constructed but hidden from UI */
 .share-text { display: none; }
 
@@ -1528,6 +1583,37 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
     </div>
     <div class="results-body">
       <div class="results-eyebrow" id="result-eyebrow">TODAY'S SET</div>
+
+      <!-- Endless run summary: card → Brainprint bridge → dock (daily blocks are hidden) -->
+      <div class="endless-result" id="endless-result">
+        <div class="er-card" id="er-card">
+          <div class="er-group">
+            <div class="er-top">
+              <span class="er-eyebrow">ENDLESS MODE</span>
+              <span class="er-best" id="er-best">Best run: 0</span>
+            </div>
+            <div class="er-score" id="er-score">0</div>
+            <div class="er-verdict" id="er-verdict">0/0 correct</div>
+            <div class="er-near" id="er-near" style="display:none;"></div>
+          </div>
+          <div class="er-group body">
+            <div class="er-tiles" id="er-tiles"></div>
+            <div class="er-meta" id="er-meta"></div>
+          </div>
+          <div class="er-actions">
+            <button class="er-btn" id="er-review" type="button">Review answers</button>
+            <button class="er-btn" id="er-share" type="button">Share</button>
+          </div>
+        </div>
+        <div class="er-bridge">
+          <span class="er-bridge-label" id="er-bridge-label">Top: —</span>
+          <button class="er-btn" id="er-bridge" type="button">Brainprint ↗</button>
+        </div>
+        <div class="er-dock">
+          <button class="btn-primary" id="er-again" type="button">Play Again</button>
+          <button class="er-btn" id="er-home" type="button">Home</button>
+        </div>
+      </div>
       <!-- Hero score -->
       <div class="results-hero">
         <div class="hero-score" id="hero-score">9<span class="of">/10</span></div>
@@ -5314,6 +5400,54 @@ function buildDailySharePayload(answers, puzzleNum, streak, channel, topPct) {
     shareFull: `${head}\n${grid}\n${arch.name} (${fmtTimeSec(totalTimeSec)})${blindspot ? ` · Blindspot: ${blindspot}` : ''}\n${getDuelUrl(totalPoints, totalTimeSec)}&s=${src}`,
   };
 }
+function renderEndlessSummary(o) {
+  const runScore = o.correct;
+  $('er-best').textContent = `Best run: ${stats.bestEndless}`;
+  $('er-score').textContent = String(runScore);
+  $('er-verdict').textContent = `${runScore}/${o.total} correct · ${o.verdict}`;
+  const diff = stats.bestEndless - runScore;
+  const near = $('er-near');
+  if (diff === 1 || diff === 2) {
+    near.textContent = `${diff} away from tying your best run.`;
+    near.style.display = 'block';
+  } else {
+    near.style.display = 'none';
+    near.textContent = '';
+  }
+
+  // Flat strip: one tile per question attempted, misses carry the broken heart
+  const host = $('er-tiles');
+  host.innerHTML = '';
+  host.classList.toggle('wraps', state.answers.length > 10);
+  state.answers.forEach((a, i) => {
+    const tile = document.createElement('div');
+    tile.className = 'er-tile ' + (a.correct ? 'ok' : 'bad');
+    if (!a.correct) {
+      tile.innerHTML = ICONS.heartBroken;
+      tile.dataset.idx = String(i);
+      tile.setAttribute('role', 'button');
+      tile.setAttribute('tabindex', '0');
+      tile.setAttribute('aria-label', `Question ${i + 1}: missed, open review`);
+    }
+    host.appendChild(tile);
+  });
+  $('er-meta').textContent = `${fmtTimeSec(o.totalTimeSec)} · Tap a heart to review`;
+
+  // Bridge: best subject of this run
+  const cats = {};
+  state.answers.forEach(a => {
+    const u = normalizeCategory(a.category);
+    if (!cats[u]) cats[u] = { total: 0, correct: 0 };
+    cats[u].total++;
+    if (a.correct) cats[u].correct++;
+  });
+  const best = Object.entries(cats).sort((a, b) =>
+    (b[1].correct / b[1].total) - (a[1].correct / a[1].total) || b[1].total - a[1].total)[0];
+  $('er-bridge-label').textContent = best
+    ? `Top: ${best[0]} (${Math.round(100 * best[1].correct / best[1].total)}%)`
+    : 'Top: —';
+}
+
 function finishGame(opts = {}) {
   const replay = !!opts.replay;
   const unranked = replay || !!state.replayDay;   // replays never write stats/results/progress
@@ -5387,6 +5521,11 @@ function finishGame(opts = {}) {
     }
   }
 
+  // Endless runs get their own three-zone layout; the daily blocks are hidden by .is-endless
+  const isEndlessRun = state.mode !== 'daily';
+  $('screen-results').classList.toggle('is-endless', isEndlessRun);
+  $('endless-result').style.display = isEndlessRun ? 'flex' : 'none';
+
   // Hero
   if (state.mode === 'daily') {
     $('hero-score').textContent = fmtPts(totalPoints);
@@ -5420,6 +5559,9 @@ function finishGame(opts = {}) {
       subEl.style.display = 'none';
       subEl.textContent = (wasBestRun ? 'NEW BEST RUN' : `BEST RUN: ${stats.bestEndless}`) + ` • Total ${fmtTimeSec(totalTimeSec)}`;
     }
+    // Endless summary panel: hero is the CORRECT count, not questions attempted
+    renderEndlessSummary({ correct, total, totalTimeSec, verdict: eT[0] });
+
     // Near-miss: finished one or two questions short of the all-time best
     const nm = $('near-miss');
     const shortBy = prevBestEndless - run;
@@ -5865,7 +6007,7 @@ function openReviewCarousel(startIdx) {
   rv.items = items;
   renderReviewScrubber();
   renderReviewSlides();
-  $('rv-eyebrow').textContent = `· #${getDailyNum()} REVIEW`;
+  $('rv-eyebrow').textContent = state.mode === 'daily' ? `· #${getDailyNum()} REVIEW` : 'ENDLESS REVIEW';
   const firstMiss = items.findIndex(a => a && a.q && !a.correct);
   const open = (typeof startIdx === 'number' && startIdx >= 0 && startIdx < items.length)
     ? startIdx
@@ -6106,6 +6248,26 @@ $('btn-copy').innerHTML = ICONS.copy;
 $('btn-hub-challenge').innerHTML = `${ICONS.swords}<span class="btn-label">Challenge a Friend</span>`;
 $('btn-hub-copy').innerHTML = ICONS.copy;
 $('btn-endless-result').innerHTML = `${ICONS.heart}<span class="btn-label">Play Endless</span>`;
+// ---- Endless summary panel actions ----
+$('er-again').onclick = () => { audio.click(); startEndless(); };
+$('er-home').onclick = () => { audio.click(); showScreen('landing'); renderLanding(); };
+$('er-review').onclick = () => { audio.click(); openReviewCarousel(0); };
+$('er-share').onclick = () => { audio.click(); track('share_tap', { type: 'endless' }); copyText(state.shareFull || state.shareClean, $('er-share'), 'Share'); };
+$('er-bridge').onclick = () => { audio.click(); openBrainprint(); };
+$('er-tiles').addEventListener('click', (e) => {
+  const t = e.target.closest('.er-tile.bad[data-idx]');
+  if (!t) return;
+  audio.click();
+  openReviewCarousel(Number(t.dataset.idx));
+});
+$('er-tiles').addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const t = e.target.closest('.er-tile.bad[data-idx]');
+  if (!t) return;
+  e.preventDefault();
+  audio.click();
+  openReviewCarousel(Number(t.dataset.idx));
+});
 // Review modal: tap wrong grid cell → open; backdrop/close button → close
 $('share-visual').addEventListener('click', e => {
   const cell = e.target.closest('.rubric-tile[data-idx]');
