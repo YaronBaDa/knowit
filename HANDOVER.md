@@ -274,6 +274,21 @@ hour-long question). Stored results are never rewritten: every display (hub rece
 bar, share text, duel card/modal, aggregate POST) reads through `cappedTotalMs()` / `cappedSeconds()`,
 so a run never shows more than `questions x limit`.
 
+**Voice system (`VOICE`).** The finished-day receipt's verdict is now a band headline plus one
+caption. `VOICE.headline` holds seven pools keyed by correct answers (`c0`, `c1_2`, `c3_4`, `c5_6`,
+`c7_8`, `c9`, `c10`); `VOICE.line` holds eight pools keyed by the bet/clock outcome. Both picks are
+pure functions of stored data — `voiceHeadline(correct, puzzle)` indexes with
+`(puzzle * 7 + correct * 3) % pool.length`, `voiceLine(answers, puzzle)` with
+`(puzzle * 5 + betsUsed + timeouts) % pool.length` — so a stored result always renders the same copy
+and consecutive puzzles in one band cannot collide (pool of ten, step of seven). Line priority:
+`timeoutMany` → `betsAllHit`/`betsAllMissed` → `oneHit`/`oneMiss`/`betsMixed` → `timeout1` →
+`noBets`; `{k}` is replaced with the timeout count. Flags come from the stored answers only
+(`bet` boolean, timeout = `picked === null`); if either flag is absent the caption is skipped and the
+headline shows alone. `fitVoiceHeadline()` keeps the 28px headline on one line — it tightens tracking
+to -0.02em, then applies a small `scaleX` (0.93 at worst, four strings at 360px) — and never changes
+font-size, so the card height is stable. Nothing is written back to storage and the share text,
+Brainprint and Endless copy are untouched.
+
 **Boot + splash.** `#boot` is a fixed, full-screen lockup (72 px symbol, `KNOWIT` at 20 px
 `var(--font-display)`, 8 px gap, both centred) in the initial HTML, so it paints before the 3.5 MB
 script parses; it fades out 420 ms after `load` (2.5 s hard fallback) and is removed from the DOM.
@@ -451,6 +466,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`VOICE1` headline + bet/clock caption on the receipt
 `HOME1` full-height receipt card, icon-free left-aligned Endless card
 `BOOT1` brand boot lockup, embedded Zetta wordmark face, 192/512/maskable icons
 `REVIEW2` reveal-style options, clean header lockup, true point deltas, 24px scrubber, no back link

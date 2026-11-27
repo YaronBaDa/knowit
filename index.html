@@ -313,7 +313,15 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .tc-divider { height: 0; border-top: 1px solid var(--border); margin: 12px 0; }
 .tc-eyebrow { font-family: var(--font-sans); font-size: 14px; line-height: var(--lh-body); letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-secondary); font-weight: var(--fw-regular); }
 /* Archetype is the card's headline */
-.tc-rank { margin-top: 8px; min-height: 36px; font-family: var(--font-sans); font-size: 28px; font-weight: var(--fw-bold); line-height: var(--lh-heading); letter-spacing: -0.01em; color: #F3F4F6; }
+/* Voice line: one 14px secondary row, never wraps, adds a single text line of height */
+.tc-voice {
+  margin-top: 4px; font-family: var(--font-sans); font-size: var(--fs-14);
+  font-weight: var(--fw-regular); line-height: var(--lh-icon);
+  color: var(--text-secondary); white-space: nowrap; overflow: hidden;
+  text-overflow: clip; text-align: left;
+}
+/* Headline: one line, always. fitVoiceHeadline() only ever tightens it into the card. */
+.tc-rank { margin-top: 8px; min-height: 36px; font-family: var(--font-sans); font-size: 28px; font-weight: var(--fw-bold); line-height: var(--lh-heading); letter-spacing: -0.01em; color: #F3F4F6; white-space: nowrap; overflow: visible; transform-origin: left center; }
 /* Score, then one muted correct/time line, then the percentile — nothing between them */
 .tc-score { margin-top: 12px; font-family: var(--font-sans); font-size: 28px; font-weight: var(--fw-bold); line-height: var(--lh-heading); letter-spacing: -0.01em; color: var(--text-primary); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .tc-score .neg-sign {
@@ -1376,6 +1384,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
           <div class="tc-eyebrow" id="trophy-eyebrow">TODAY'S SET · #1</div>
           <div class="tc-rank" id="trophy-rank"></div>
           <div class="tc-score" id="hub-points">— pts</div>
+          <div class="tc-voice" id="hub-voice" style="display:none;"></div>
           <div class="tc-meta-row">
             <div class="tc-subline" id="hub-subline">—</div>
             <button class="tc-inline-link" id="btn-view-results" type="button">Review answers</button>
@@ -3041,6 +3050,78 @@ let state = {
 // Every raw bank tag (SPACE, MATH, TRAVEL, FOOD & DRINK, …) folds into one of these six,
 // in this fixed clockwise order. The radar and the modal list both read this array.
 const UMBRELLA_CATEGORIES = ['Science & Nature', 'Geography', 'History', 'Sports & Leisure', 'Pop Culture', 'Arts & Lit'];
+
+/* Voice system for the finished-day receipt. Copy is fixed; only the pick is computed.
+   headline is keyed by correct count, line by the bet/clock outcome. */
+const VOICE = {
+  headline: {
+    c0:    ["Flawlessly wrong.","A perfect zero.","Impressive, somehow.","Statistically unlikely.","Did you mean to?","Consistent, at least.","Even guessing helps.","The universe objects.","Zero. Respect.","Bold strategy: none."],
+    c1_2:  ["Stumped.","Not your day.","Rough one.","Lights were off.","Tomorrow, maybe.","Brain buffering.","A learning day.","Blank. Mostly.","Nearly a shutout.","The set won."],
+    c3_4:  ["Warming up.","Half asleep.","Some lights on.","Getting there.","Mixed bag.","A few sparks.","Respectable guessing.","Almost awake.","Needs coffee.","Room to grow."],
+    c5_6:  ["Solidly average.","Perfectly fine.","The middle path.","Dependable.","Respectable.","Not bad at all.","Quietly competent.","Pub quiz material.","Held your own.","Decent. Annoyingly."],
+    c7_8:  ["Sharp.","Now we're talking.","Show-off.","Smug is earned.","Annoyingly good.","Dinner-party ready.","Big brain hours.","Quick on the draw.","Clean work.","Know-it-all, almost."],
+    c9:    ["One away.","So close it hurts.","Nearly flawless.","Painfully close.","That one question.","Ninety percent genius.","Almost untouchable.","The one that got away.","Almost, almost.","Brilliant, minus one."],
+    c10:   ["Flawless.","Untouchable.","Insufferably perfect.","Full marks.","Is this cheating?","Ten for ten.","Textbook.","Unbearable. Respect.","Brain on fire.","Genius, confirmed."]
+  },
+  line: {
+    betsAllHit:   ["Called every shot.","Doubled down. Delivered.","Bets: perfect.","Confidence, justified.","The receipts are real."],
+    betsAllMissed:["Doubled down. Face-planted.","Confidence: misplaced.","Bold. Wrong.","Hubris, delivered.","Never in doubt. Often wrong."],
+    betsMixed:    ["Some bets landed.","Hit and miss.","Half your confidence held.","Mostly calibrated.","Gambler's average."],
+    oneHit:       ["One bet, one hit.","Picked your moment.","Bet small, won big."],
+    oneMiss:      ["One bet, one regret.","Picked the wrong moment.","One bet. Zero luck."],
+    noBets:       ["Played it safe.","Bets unused.","Not a gambler.","The bets stay in the drawer.","Safety first."],
+    timeout1:     ["The clock won once.","One question got away.","Slow on one."],
+    timeoutMany:  ["The clock had a good day.","Time was not on your side.","The clock won {k} times."]
+  }
+};
+
+// Score band for the headline pool, keyed by correct answers out of ten.
+function voiceBand(correct) {
+  if (correct <= 0) return 'c0';
+  if (correct <= 2) return 'c1_2';
+  if (correct <= 4) return 'c3_4';
+  if (correct <= 6) return 'c5_6';
+  if (correct <= 8) return 'c7_8';
+  if (correct === 9) return 'c9';
+  return 'c10';
+}
+// Deterministic pick: same stored result always renders the same line, and two
+// consecutive puzzles in one band can never collide (pool of ten, step of 7).
+function voiceHeadline(correct, puzzleNo) {
+  const pool = VOICE.headline[voiceBand(correct)];
+  if (!pool || !pool.length) return '';
+  return pool[(puzzleNo * 7 + correct * 3) % pool.length];
+}
+// Reads the stored result only: bet flags and timeouts (picked === null). Returns
+// null when the flags are missing, which suppresses the line and keeps the headline.
+function voiceInputs(answers) {
+  if (!Array.isArray(answers) || answers.length === 0) return null;
+  const hasBetFlag = answers.some(a => a && typeof a.bet === 'boolean');
+  const hasPick = answers.some(a => a && Object.prototype.hasOwnProperty.call(a, 'picked'));
+  if (!hasBetFlag || !hasPick) return null;
+  return {
+    betsUsed: answers.filter(a => a && a.bet).length,
+    betsHit: answers.filter(a => a && a.bet && a.correct).length,
+    timeouts: answers.filter(a => a && a.picked === null).length
+  };
+}
+function voiceLine(answers, puzzleNo) {
+  const v = voiceInputs(answers);
+  if (!v) return '';
+  const { betsUsed, betsHit, timeouts } = v;
+  let key = null;
+  if (timeouts >= 2) key = 'timeoutMany';
+  else if (betsUsed >= 2 && betsHit === betsUsed) key = 'betsAllHit';
+  else if (betsUsed >= 2 && betsHit === 0) key = 'betsAllMissed';
+  else if (betsUsed === 1) key = betsHit === 1 ? 'oneHit' : 'oneMiss';
+  else if (betsUsed >= 2) key = 'betsMixed';
+  else if (timeouts === 1) key = 'timeout1';
+  else if (betsUsed === 0) key = 'noBets';
+  if (!key) return '';
+  const pool = VOICE.line[key];
+  if (!pool || !pool.length) return '';
+  return pool[(puzzleNo * 5 + betsUsed + timeouts) % pool.length].replace('{k}', String(timeouts));
+}
 const UMBRELLA_RULES = {
   'Science & Nature':  ['science', 'nature', 'space', 'math', 'maths', 'biology', 'tech', 'technology', 'medicine', 'medical', 'physics', 'chemistry', 'astronomy', 'environment', 'earth', 'animals', 'animal', 'wildlife', 'anatomy', 'engineering'],
   'Geography':         ['geography', 'travel', 'landmarks', 'landmark', 'countries', 'country', 'world', 'capitals', 'capital', 'cities', 'city', 'maps'],
@@ -3951,6 +4032,24 @@ function showScreen(name) {
   $('screen-'+name).classList.add('active');
   state.screen = name;
 }
+// Keeps the 28px headline on one line: tighten tracking first, then a hair of
+// horizontal compression. Never touches font-size, so the card height is stable.
+window.addEventListener('resize', () => { if (document.getElementById('trophy-card').offsetParent) fitVoiceHeadline(); });
+
+function fitVoiceHeadline() {
+  const el = $('trophy-rank');
+  if (!el) return;
+  el.style.letterSpacing = '';
+  el.style.transform = '';
+  const avail = el.clientWidth;
+  if (!avail) return;
+  if (el.scrollWidth <= avail) return;
+  el.style.letterSpacing = '-0.02em';
+  if (el.scrollWidth <= avail) return;
+  const k = Math.min(1, (avail - 1) / el.scrollWidth);
+  el.style.transform = `scaleX(${k.toFixed(3)})`;
+}
+
 // Boot lockup: fade out once the app has painted, never leave it covering the UI.
 function dismissBoot() {
   const el = $('boot');
@@ -4039,6 +4138,7 @@ function renderHub() {
   const hasRes = !!(savedRes && savedRes.date === getToday() && Array.isArray(savedRes.answers));
   const scoreEl = $('hub-points'), subEl = $('hub-subline');
   const betsEl = $('hub-bets'), nudgeEl = $('hub-nudge'), rankEl = $('trophy-rank');
+  const voiceEl = $('hub-voice');
   const gridEl = $('trophy-grid');
   gridEl.innerHTML = '';
   let points = 0;
@@ -4061,7 +4161,15 @@ function renderHub() {
       ? `<span class="neg-sign">−</span>${Math.abs(points)} pts`
       : `${points} pts`;
     subEl.textContent = `${correct}/${total} correct · ${fmtDuration(secs)}`;
-    rankEl.textContent = arch.name;
+    // Voice: band headline in place of the verdict, one caption under the points
+    const puzzleNo = savedRes.puzzle || getDailyNum();
+    rankEl.textContent = voiceHeadline(correct, puzzleNo) || arch.name;
+    const lineText = voiceLine(answers, puzzleNo);
+    if (voiceEl) {
+      voiceEl.textContent = lineText;
+      voiceEl.style.display = lineText ? 'block' : 'none';
+    }
+    fitVoiceHeadline();
 
     // Bets line once a bet was placed; otherwise the nudge has its own slot under the grid
     if (betUsed > 0) {
@@ -4089,6 +4197,7 @@ function renderHub() {
     betsEl.textContent = '';
     nudgeEl.style.display = 'none';
     rankEl.textContent = "Today's set complete.";
+    if (voiceEl) { voiceEl.style.display = 'none'; voiceEl.textContent = ''; }
     $('hub-agg').style.display = 'none';
     $('hub-agg').textContent = '';
   }
