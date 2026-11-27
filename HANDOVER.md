@@ -110,7 +110,24 @@ sprite/defs, three screens, modals, then the script.
 ### Screens
 - `#screen-landing` — pre-completion hero **and** the post-completion hub (toggled by
   `.is-completed` on the screen). Same DOM node serves both states.
-- `#screen-playing` — question, options, bet toggle, feedback box, HUD.
+- `#screen-playing` — question, options, bet toggle (= the swipe prompt), feedback box, HUD.
+
+**Bet discoverability.** The prompt above Option A is `#bet-toggle` itself — a real 36px button, one
+line, 14px/400 secondary copy with a 14px amber bolt (`var(--accent-bet)`, gap 6px). `updateBetUI()`
+derives its copy from `lifetimeBetsPlaced()`: no lifetime bets → `Swipe an answer right to bet
+(+2 / −2)`; otherwise → `Swipe right to bet · +2 / −2 (n left)`; at zero bets → `0 bets remaining`
+with the bolt at `opacity: .4`; armed → `Bet armed · pick your answer`. `lifetimeBetsPlaced()` reads
+`stats.betsUsed`, falling back to the `betsWon + betsLost` sum across `stats.categories`. The one-shot
+`#swipe-tip` and `#bet-intro` panels are no longer displayed (markup and their localStorage keys
+stay) and `showSwipeTip()` is gone.
+
+**Q1 peek.** `maybePeekBet()` runs from `renderQuestion()` only when the mode is daily, the question
+is Q1 and unanswered, `lifetimeBetsPlaced()` is 0 and `prefers-reduced-motion` is not set. 250ms
+after render, Option A's `.option-body` slides 12px right over 200ms `ease-out` while `.bet-reveal`
+shows `rgba(230,180,80,.16)`, then springs back over 250ms `cubic-bezier(.34,1.56,.64,1)` and clears
+every inline style. `cancelPeek()` fires on pointerdown / touchstart / keydown / wheel (capture,
+passive), at the top of `handleAnswer()` and at the start of each render, so taps and drags are never
+delayed — a real right-swipe afterwards still arms the bet.
 - `#screen-results` — hero score/title, duel card, scorecard (grid + stat bar + agg lines),
   blindspot highlights, Brainprint trigger, share text, bottom dock.
 
@@ -469,6 +486,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`BET1` always-on swipe prompt with state copy, Q1 peek-and-spring for first-time bettors
 `ENDLESS1` fix: inactive completed home pushed the game screen below the fold; Endless entry delegated
 `VOICE1` headline + bet/clock caption on the receipt
 `HOME1` full-height receipt card, icon-free left-aligned Endless card
