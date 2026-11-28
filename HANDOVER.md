@@ -140,13 +140,21 @@ with the bolt at `opacity: .4`; armed → `Bet armed · pick your answer`. `life
 `#swipe-tip` and `#bet-intro` panels are no longer displayed (markup and their localStorage keys
 stay) and `showSwipeTip()` is gone.
 
-**Q1 peek.** `maybePeekBet()` runs from `renderQuestion()` only when the mode is daily, the question
-is Q1 and unanswered, `lifetimeBetsPlaced()` is 0 and `prefers-reduced-motion` is not set. 250ms
-after render, Option A's `.option-body` slides 12px right over 200ms `ease-out` while `.bet-reveal`
-shows `rgba(230,180,80,.16)`, then springs back over 250ms `cubic-bezier(.34,1.56,.64,1)` and clears
-every inline style. `cancelPeek()` fires on pointerdown / touchstart / keydown / wheel (capture,
-passive), at the top of `handleAnswer()` and at the start of each render, so taps and drags are never
-delayed — a real right-swipe afterwards still arms the bet.
+**Q1 peek.** `maybePeekBet()` runs from `renderQuestion()` at the start of **every** daily session:
+mode is daily, the question is Q1 and unanswered, `betsLeft > 0`, the run was not resumed
+(`state.resumeOffsetMs`), and `prefers-reduced-motion` is not set — first-time and returning bettors
+alike. 250ms after render, Option A's `.option-body` slides **16px** right over 200ms `ease-out` while
+the solid amber `.bet-reveal` fades in, then springs back over 250ms `cubic-bezier(.34,1.56,.64,1)`
+and clears every inline style. The timer re-checks mode, bets, and unanswered state before animating.
+`cancelPeek()` fires on pointerdown / touchstart / keydown / wheel (capture, passive), at the top of
+`handleAnswer()` and at the start of each render, so taps and drags are never delayed — a real
+right-swipe afterwards still arms the bet.
+
+**Bet underlay.** `.bet-reveal` is one horizontal row (bolt 14px + `BET · +2 / −2` at 14/700,
+`letter-spacing: .04em`, `line-height: 1`) centred vertically in a 136px panel, `padding: 0 16px`,
+`gap: 6px`, amber fill on `--on-brand` ink. The drag is clamped at 136px (threshold still 56px), so a
+full swipe exposes the whole badge while a short peek shows only the amber and the bolt. Never stack
+this badge into rows: the panel is only as tall as the option card.
 - `#screen-results` — two mutually exclusive layouts. **Daily**: hero score/title, duel card,
   scorecard (grid + stat bar + agg lines), blindspot highlights, Brainprint trigger, share text,
   bottom dock. **Endless** (`.is-endless`, which hides every block above): `#endless-result` in
@@ -512,6 +520,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`BET2` peek on every daily session at 16px; bet underlay is one horizontal row
 `BTNSYS1` button consolidation: 9 heights -> 3, one secondary surface, tokens for radius/padding
 `ENDRES1` endless results rebuilt as card -> bridge -> dock; hero shows correct answers
 `BET1` always-on swipe prompt with state copy, Q1 peek-and-spring for first-time bettors

@@ -522,14 +522,17 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   font-family: var(--font-mono);
 }
 .option-btn .bet-reveal {
-  position: absolute; left: 0; top: 0; bottom: 0; width: 96px; z-index: 1;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-  background: var(--accent-bet); color: var(--bg-canvas);
+  position: absolute; left: 0; top: 0; bottom: 0; width: 136px; z-index: 1;
+  display: flex; flex-direction: row; align-items: center; justify-content: flex-start;
+  gap: 6px; height: 100%; padding: 0 16px; white-space: nowrap;
+  background: var(--accent-bet); color: var(--on-brand);
   opacity: 0;
 }
-.option-btn .bet-reveal svg { width: 20px; height: 20px; }
-.option-btn .bet-reveal .br-label { font-family: var(--font-sans); font-size: 14px; font-weight: var(--fw-bold); letter-spacing: 0; }
-.option-btn .bet-reveal .br-sub { font-family: var(--font-sans); font-size: 14px; font-weight: var(--fw-bold); opacity: .85; }
+.option-btn .bet-reveal svg { width: 14px; height: 14px; fill: currentColor; flex-shrink: 0; }
+.option-btn .bet-reveal .br-label {
+  font-family: var(--font-sans); font-size: var(--fs-14); font-weight: var(--fw-bold);
+  line-height: var(--lh-icon); letter-spacing: 0.04em;
+}
 .option-btn.correct { border: 2px solid var(--accent-correct); box-shadow: none; }
 .option-btn.correct .option-body { box-shadow: inset 0 0 0 9999px rgba(92,203,157,0.18); }
 .option-btn.wrong { border: 2px solid var(--accent-incorrect); box-shadow: none; animation: shake 0.4s ease-in-out; }
@@ -4663,7 +4666,7 @@ function renderQuestion() {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'option-btn';
-    btn.innerHTML = `<span class="bet-reveal">${ICONS.lightning}<span class="br-label">BET</span><span class="br-sub">+2 / −2</span></span><span class="option-body"><span class="key-hint">${String.fromCharCode(65+idx)}</span><span class="option-text">${escapeHtml(opt)}</span></span>`;
+    btn.innerHTML = `<span class="bet-reveal"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M13 2 3 14h7l-1 8 10-12h-7z" fill="currentColor"/></svg><span class="br-label">BET · +2 / −2</span></span><span class="option-body"><span class="key-hint">${String.fromCharCode(65+idx)}</span><span class="option-text">${escapeHtml(opt)}</span></span>`;
     btn.title = 'Swipe right to bet, or tap to answer';
     attachSwipe(btn, idx);
     grid.appendChild(btn);
@@ -4736,11 +4739,13 @@ function maybePeekBet() {
   if (state.mode !== 'daily') return;
   if (state.currentQ !== 0 || (state.answers && state.answers.length)) return;
   if (state.waiting) return;
-  if (lifetimeBetsPlaced() !== 0) return;
+  if (!(state.betsLeft > 0)) return;
+  if (state.resumeOffsetMs) return;      // resumed mid-question, not a fresh session
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   peekTimer = setTimeout(() => {
     peekTimer = null;
     if (state.mode !== 'daily' || state.screen !== 'playing' || state.waiting) return;
+    if (!(state.betsLeft > 0) || (state.answers && state.answers.length)) return;
     const btn = document.querySelector('#options-grid .option-btn');
     if (!btn) return;
     const body = btn.querySelector('.option-body');
@@ -4748,9 +4753,8 @@ function maybePeekBet() {
     if (!body) return;
     peekActive = true;
     body.style.transition = 'transform 200ms ease-out';
-    body.style.transform = 'translateX(12px)';
+    body.style.transform = 'translateX(16px)';
     if (reveal) {
-      reveal.style.background = 'rgba(230, 180, 80, 0.16)';
       reveal.style.transition = 'opacity 200ms ease-out';
       reveal.style.opacity = '1';
     }
@@ -4817,7 +4821,7 @@ function attachSwipe(btn, idx) {
       else return;
     }
     if (dx > 0) e.preventDefault();
-    const amt = Math.max(0, Math.min(dx, 96));
+    const amt = Math.max(0, Math.min(dx, 136));
     body.style.transition = 'none';
     body.style.transform = `translateX(${amt}px)`;
     if (reveal) reveal.style.opacity = String(Math.min(1, amt / THRESHOLD));
