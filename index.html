@@ -52,9 +52,8 @@
   --text-secondary: #B2A4AC;
   --on-brand: #140F12;
   /* Button system: three heights, one radius, three paddings. Nothing else. */
-  --btn-h-lg: 48px;   /* the single primary CTA on a screen, and anything in its row */
-  --btn-h-md: 44px;   /* every other tappable control */
-  --btn-h-sm: 40px;   /* header utilities and compact in-card rows */
+  --btn-h-lg: 48px;   /* every button: primary, secondary, outline, dock, cards */
+  --btn-h-sm: 40px;   /* utilities that are not buttons: header icons, in-card text rows */
   --btn-r: 12px;
   --btn-pad-lg: 0 20px;
   --btn-pad-md: 0 16px;
@@ -253,7 +252,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .btn-primary:hover { filter: brightness(1.06); }
 .btn-primary:active { transform: scale(0.97); }
 .btn-secondary {
-  width: 100%; max-width: 280px; height:var(--btn-h-md); padding:var(--btn-pad-md); border-radius: var(--btn-r);
+  width: 100%; max-width: 280px; height:var(--btn-h-lg); padding:var(--btn-pad-md); border-radius: var(--btn-r);
   border: 1px solid rgba(255, 255, 255, 0.14); background: rgba(255, 255, 255, 0.04); color: var(--ink); font-size: 16px; font-weight: var(--fw-bold); cursor: pointer;
   transition: transform .12s; font-family: var(--font-sans);
 }
@@ -316,7 +315,11 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 @media (max-height: 700px) {
   #screen-landing.is-completed .landing-body { padding-top: 8px; gap: 8px; }
   #screen-landing.is-completed .completed-stack { gap: 8px; }
-  #screen-landing.is-completed .trophy-card { padding: 12px; }
+  #screen-landing.is-completed .trophy-card { padding: 12px 12px 8px; }
+  /* Short phones: the percentile and the coaching nudge are the first things to go,
+     so the sheet still ends on the safe area instead of scrolling. */
+  #screen-landing.is-completed .tc-agg,
+  #screen-landing.is-completed .tc-nudge { display: none !important; }
 }
 
 /* Zone 2 — TODAY'S SET receipt: fills the height left by the header, bridge and Endless card */
@@ -414,7 +417,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .et-headline { font-family: var(--font-sans); font-size: 20px; font-weight: var(--fw-bold); line-height: var(--lh-heading); color: #F3F4F6; }
 .et-sub { font-family: var(--font-sans); font-size: 14px; line-height: var(--lh-body); font-weight: var(--fw-regular); color: var(--text-secondary); }
 .btn-outline-brand {
-  width: 100%; height:var(--btn-h-md); padding: var(--btn-pad-md); border-radius: var(--btn-r); border: 1px solid var(--accent-brand);
+  width: 100%; height:var(--btn-h-lg); padding: var(--btn-pad-md); border-radius: var(--btn-r); border: 1px solid var(--accent-brand);
   background: transparent; color: var(--accent-brand);
   font-family: var(--font-sans); font-size: 16px; font-weight: var(--fw-bold); cursor: pointer;
   transition: transform .12s, background .12s;
@@ -786,8 +789,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 .results-footer .action-row { display: flex; gap: 8px; align-items: stretch; }
 .results-footer .action-row #btn-challenge { flex: 1 1 auto; width: auto; max-width: none; }
-.results-footer #btn-endless-result { width: 100%; max-width: none; height: var(--btn-h-md); }
-.copy-btn { flex: 0 0 44px; width: 44px; height: 44px; min-height: 44px; padding: 0; border-radius: 12px; }
+.results-footer #btn-endless-result { width: 100%; max-width: none; height: var(--btn-h-lg); }
+.copy-btn { flex: 0 0 var(--btn-h-lg); width: var(--btn-h-lg); height: var(--btn-h-lg); min-height: var(--btn-h-lg); padding: 0; border-radius: var(--btn-r); }
 .copy-btn svg { width: 20px; height: 20px; }
 .results-footer-meta { font-variant-numeric: tabular-nums; display: flex; align-items: center; justify-content: center; gap: 4px; font-family: var(--font-mono); font-size: 14px; color: var(--text-secondary); }
 .results-footer .footer-dot { opacity: 0.6; }
@@ -839,7 +842,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .er-meta { font-family: var(--font-sans); font-size: var(--fs-14); font-weight: var(--fw-regular); line-height: var(--lh-body); color: var(--text-secondary); font-variant-numeric: tabular-nums; }
 .er-actions { display: flex; gap: 8px; width: 100%; }
 .er-btn {
-  flex: 1 1 0; height: var(--btn-h-md); min-height: var(--btn-h-md); border-radius: 12px; padding: var(--btn-pad-md);
+  flex: 1 1 0; height: var(--btn-h-lg); min-height: var(--btn-h-lg); border-radius: 12px; padding: var(--btn-pad-md);
   background-color: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.14);
   font-family: var(--font-sans); font-size: var(--fs-14); font-weight: var(--fw-bold); color: #F3F4F6;
   display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;
@@ -1242,7 +1245,7 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 }
 .rv-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
 .rv-btn {
-  height:var(--btn-h-md); padding: var(--btn-pad-md); border-radius: var(--btn-r); cursor: pointer;
+  height:var(--btn-h-lg); padding: var(--btn-pad-md); border-radius: var(--btn-r); cursor: pointer;
   font-family: var(--font-sans); font-size: 16px; font-weight: var(--fw-bold); line-height: var(--lh-icon);
   transition: transform .12s, opacity .12s;
 }

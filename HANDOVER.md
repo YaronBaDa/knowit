@@ -124,6 +124,44 @@ every child `white-space: nowrap`), the primary CTA, then Backup 16px below it
 
 ### Buttons
 
+Two heights only, defined at `:root`: **`--btn-h-lg: 48px` for every button**
+(`--btn-r: 12px`, `--btn-pad-lg/md/sm: 0 20/16/12px`) and **`--btn-h-sm: 40px` for utilities that are
+not buttons** (header mute/close, the Brainprint bridge row, the swipe hint row, the review close).
+
+Hierarchy is carried by fill, never by size: a primary and a secondary sitting on the same screen —
+or stacked in the same dock — are the same height. Do not reintroduce a mid tier.
+
+- **Primary** (`.btn-primary`, `#er-again`, `.bp-share`, `#btn-daily`) — 48, `0 20px`, 16/700, brand
+  pink on `--on-brand`.
+- **Secondary** (`.btn-secondary`, `.er-btn`, `.rv-btn`, `.btn-outline-brand`) — 48, `0 16px`,
+  16/700 (`.er-btn` is 14/700), surface `rgba(255,255,255,.04)` + `1px rgba(255,255,255,.14)`. The
+  brand-outline variant keeps the same geometry and swaps in a pink border + pink text.
+- **Icon** (`.icon-btn`, `.audio-btn`, `.rv-close`, `.bp-close`) — 40, no padding, 20px glyph;
+  `.copy-btn` is 48 so it matches the row it sits in.
+- **Text links** (`.tc-inline-link`, `.backup-link`, `.link-home`) — 14/700 in body colour, no chrome,
+  with a `::after` hit expander that gives a 44px target without moving layout.
+- Tiles (`.er-tile`, `.rv-tile`) are 24px display elements, not buttons; chips (`.et-lives`,
+  `.category-pill`) are 24px pills. `.option-btn` is an answer card sized by its content.
+- Below 700px of viewport height the finished-day card drops its percentile and coaching-nudge rows
+  so the sheet still ends on the safe area.
+
+### Pre-completion footer
+
+`.landing-footer` holds one centred stack: `#lf-meta` (flex column, `gap: 4px`, `margin-bottom: 16px`,
+every child `white-space: nowrap`), the primary CTA, then Backup 16px below it
+(`text-decoration: none`, `opacity: .8`, 44px hit area from its `::after`).
+
+- **Line 1** (`#streak-bar`) — flame (14px, `--accent-bet`) + `N-day streak` (700, `--text-primary`) +
+  `· Freeze ready` (400, `--text-secondary`, only when `stats.freezes > 0`). At streak 0 the same row
+  renders `Daily #N` (700) with no flame, and line 2 is hidden.
+- **Line 2** (`#landing-puzzle`, class `lf-sub`) — `Daily #N · Play today to keep it` (400, secondary),
+  hidden once the day is complete.
+- Pink appears exactly once in the dock: the CTA. The freeze tag is deliberately not brand-coloured.
+
+`renderStreakBar()` owns both lines; `renderLanding()` no longer writes `#landing-puzzle`.
+
+### Buttons
+
 One system, defined at `:root`: `--btn-h-lg: 48px`, `--btn-h-md: 44px`, `--btn-h-sm: 40px`,
 `--btn-r: 12px`, `--btn-pad-lg/md/sm: 0 20/16/12px`.
 
@@ -535,6 +573,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`BTNSYS2` one button height (48); hierarchy comes from fill only
 `LFOOT1` pre-completion footer: centred 2-line meta stack, one pink focal point
 `BET2` peek on every daily session at 16px; bet underlay is one horizontal row
 `BTNSYS1` button consolidation: 9 heights -> 3, one secondary surface, tokens for radius/padding
