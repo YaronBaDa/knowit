@@ -203,25 +203,35 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 0;
   padding: 12px 0 max(20px, env(safe-area-inset-bottom));
   background: var(--bg-canvas);
 }
-.landing-footer #landing-puzzle { margin: 0; }
-.landing-footer #streak-bar { margin: 0; }
-.landing-footer #btn-daily { width: 100%; max-width: 340px; margin-top: 4px; } /* + 4px footer gap = 8px above the CTA */
+/* One centred stack: streak line, then the daily/habit line. Both never wrap. */
+.lf-meta {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  gap: 4px; width: 100%; margin-bottom: 16px;
+}
+.lf-meta > * { white-space: nowrap; }
+.lf-sub {
+  font-family: var(--font-sans); font-size: var(--fs-14); font-weight: var(--fw-regular);
+  line-height: var(--lh-body); letter-spacing: 0; color: var(--text-secondary);
+}
+.landing-footer #btn-daily { width: 100%; max-width: 340px; margin-top: 0; }
 .landing-body h2 { font-size: 28px; margin: 0; color: var(--text-primary); }
 .landing-body p { font-size: 16px; color: var(--ink-faint); max-width: 320px; margin: 0; line-height: var(--lh-body); }
 .landing-streak-bar { font-variant-numeric: tabular-nums;
   display: flex; align-items: center; justify-content: center; gap: 4px;
   background: none; border: 0; border-radius: 0; padding: 0;
-  font-family: var(--font-sans); font-size: 14px; font-weight: var(--fw-regular); line-height: var(--lh-body); color: var(--text-secondary);
+  font-family: var(--font-sans); font-size: var(--fs-14); font-weight: var(--fw-regular);
+  line-height: var(--lh-icon); letter-spacing: 0; color: var(--text-secondary); white-space: nowrap;
 }
-.landing-streak-bar .fire { font-size: 14px; }
+.landing-streak-bar #streak-text { font-weight: var(--fw-bold); color: var(--text-primary); }
+.landing-streak-bar .fire { font-size: var(--fs-14); color: var(--accent-bet); }
 .landing-streak-bar .broken { opacity: 0.55; filter: grayscale(1); }
-.freeze-tag { display: inline-flex; align-items: center; gap: 4px; color: var(--accent-brand); font-size: 14px; font-weight: var(--fw-regular); line-height: var(--lh-icon); }
+.freeze-tag { display: inline-flex; align-items: center; gap: 4px; color: var(--text-secondary); font-size: var(--fs-14); font-weight: var(--fw-regular); line-height: var(--lh-icon); }
 .freeze-tag svg { width: 12px; height: 12px; }
-.backup-link { position: relative; background: none; border: 0; padding: 4px 8px; margin-top: 4px; color: var(--text-secondary); font-family: var(--font-sans); font-size: 14px; font-weight: var(--fw-regular); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.backup-link { position: relative; background: none; border: 0; padding: 0; margin-top: 16px; color: var(--text-secondary); font-family: var(--font-sans); font-size: var(--fs-14); font-weight: var(--fw-regular); line-height: var(--lh-icon); text-decoration: none; opacity: 0.8; cursor: pointer; }
 .backup-link:active { color: var(--text-primary); }
 .backup-link::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 44px; transform: translateY(-50%); }
 /* Backup modal */
@@ -1103,8 +1113,8 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 .hero-title svg { width: 20px; height: 20px; color: var(--accent); flex-shrink: 0; }
 .hero-title svg.ic-heart { color: var(--accent-brand); }
 .hero-title.aurora svg { color: var(--ice); }
-.landing-streak-bar .fire { display: inline-flex; color: var(--accent-brand); }
-.landing-streak-bar .fire svg { width: 16px; height: 16px; }
+.landing-streak-bar .fire { display: inline-flex; }
+.landing-streak-bar .fire svg { width: 14px; height: 14px; }
 .endless-hud .life { display: inline-flex; }
 .endless-hud .life svg { width: 20px; height: 20px; }
 .endless-hud .lives { color: var(--accent-incorrect); }
@@ -1511,12 +1521,15 @@ html, body { height: 100%; margin: 0; font-family: var(--font-sans); background:
 
     <!-- thumb-zone footer: Daily #N + primary CTA -->
     <div class="landing-footer" id="landing-footer">
-      <div class="landing-streak-bar" id="streak-bar" style="display:none;">
-        <span class="fire" id="streak-fire"></span>
-        <span id="streak-text"></span>
-        <span class="freeze-tag" id="streak-freeze" style="display:none;"></span>
+      <!-- Footer meta: one centred stack, two single-line rows -->
+      <div class="lf-meta" id="lf-meta">
+        <div class="landing-streak-bar" id="streak-bar" style="display:none;">
+          <span class="fire" id="streak-fire"></span>
+          <span id="streak-text"></span>
+          <span class="freeze-tag" id="streak-freeze" style="display:none;"></span>
+        </div>
+        <div class="lf-sub" id="landing-puzzle"></div>
       </div>
-      <div class="grid-hint" id="landing-puzzle"></div>
       <button class="btn-primary" id="btn-daily">Play Today's Set</button>
       <button class="backup-link" id="btn-backup" type="button">Backup</button>
     </div>
@@ -4222,7 +4235,6 @@ function renderLanding() {
   renderLandingStats();
   renderStreakBar();
 
-  $('landing-puzzle').textContent = `Daily #${getDailyNum()}`;
   $('landing-footer').style.display = completedToday ? 'none' : 'flex';
   $('btn-daily').style.display = completedToday ? 'none' : 'block';
   $('daily-lock').style.display = 'none';
@@ -4395,25 +4407,35 @@ function renderLandingStats() {
 function renderStreakBar() {
   const bar = $('streak-bar');
   const fire = $('streak-fire');
+  const tag = $('streak-freeze');
+  const sub = $('landing-puzzle');
   const eff = effectiveStreak(stats);
+  const dayNum = getDailyNum();
   if (eff > 0) {
+    // Line 1: flame + streak (bold, primary) + "· Freeze ready" (regular, secondary)
     bar.style.display = 'flex';
-    $('streak-text').textContent = stats.completedDaily === getToday()
-      ? `${eff}-day streak`
-      : `${eff}-day streak · Play today to keep it`;
+    $('streak-text').textContent = `${eff}-day streak`;
     fire.innerHTML = ICONS.flame;
     fire.classList.remove('broken');
-    const tag = $('streak-freeze');
     if (stats.freezes > 0) {
-      tag.innerHTML = `${ICONS.snowflake}<span>Freeze ready</span>`;
+      tag.innerHTML = `${ICONS.snowflake}<span>· Freeze ready</span>`;
       tag.style.display = 'inline-flex';
     } else {
       tag.innerHTML = '';
       tag.style.display = 'none';
     }
+    // Line 2: the day and the habit cue
+    sub.textContent = `Daily #${dayNum} · Play today to keep it`;
+    sub.style.display = stats.completedDaily === getToday() ? 'none' : 'block';
   } else {
-    // no live streak: the line stays out of the way entirely
-    bar.style.display = 'none';
+    // No live streak: a single line, the day only
+    bar.style.display = 'flex';
+    fire.innerHTML = '';
+    $('streak-text').textContent = `Daily #${dayNum}`;
+    tag.innerHTML = '';
+    tag.style.display = 'none';
+    sub.style.display = 'none';
+    sub.textContent = '';
   }
 }
 

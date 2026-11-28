@@ -107,6 +107,21 @@ Single classic `<script>` (not a module), plain ES2018+, helper `$(id)`, functio
 level. Structure top→bottom: `<head>` (meta, manifest, Plausible, Google Fonts, one `<style>`), SVG
 sprite/defs, three screens, modals, then the script.
 
+### Pre-completion footer
+
+`.landing-footer` holds one centred stack: `#lf-meta` (flex column, `gap: 4px`, `margin-bottom: 16px`,
+every child `white-space: nowrap`), the primary CTA, then Backup 16px below it
+(`text-decoration: none`, `opacity: .8`, 44px hit area from its `::after`).
+
+- **Line 1** (`#streak-bar`) — flame (14px, `--accent-bet`) + `N-day streak` (700, `--text-primary`) +
+  `· Freeze ready` (400, `--text-secondary`, only when `stats.freezes > 0`). At streak 0 the same row
+  renders `Daily #N` (700) with no flame, and line 2 is hidden.
+- **Line 2** (`#landing-puzzle`, class `lf-sub`) — `Daily #N · Play today to keep it` (400, secondary),
+  hidden once the day is complete.
+- Pink appears exactly once in the dock: the CTA. The freeze tag is deliberately not brand-coloured.
+
+`renderStreakBar()` owns both lines; `renderLanding()` no longer writes `#landing-puzzle`.
+
 ### Buttons
 
 One system, defined at `:root`: `--btn-h-lg: 48px`, `--btn-h-md: 44px`, `--btn-h-sm: 40px`,
@@ -520,6 +535,7 @@ nothing is summed, and `knowit_progress_v1` is never imported.
 
 ## 16. Recent history (newest first)
 
+`LFOOT1` pre-completion footer: centred 2-line meta stack, one pink focal point
 `BET2` peek on every daily session at 16px; bet underlay is one horizontal row
 `BTNSYS1` button consolidation: 9 heights -> 3, one secondary surface, tokens for radius/padding
 `ENDRES1` endless results rebuilt as card -> bridge -> dock; hero shows correct answers
